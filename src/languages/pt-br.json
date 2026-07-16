@@ -69,6 +69,10 @@
 		"greatSession": "QUE BRINCADEIRA LINDA!",
 		"sessionComplete": "Sessão concluída",
 		"playAgain": "Brincar mais",
+		"backToHome": "Voltar para a página inicial",
+		"share": "Compartilhar",
+		"shareText": "Acabamos de brincar no Magic Smash e apertamos {presses} teclas com uma sequência de {streak}! 🎉 Venha brincar também:",
+		"linkCopied": "Link copiado!",
 		"encouragement": [
 			"Que legal!",
 			"Você conseguiu!",

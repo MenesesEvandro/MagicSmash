@@ -151,7 +151,7 @@
             <option value="15">15 min</option>
           </select>
           <button class="secondary-button end-session-button hidden" id="endSessionButton" type="button">
-            <span aria-hidden="true">⏹</span> <span data-i18n="endSession">Encerrar brincadeira agora</span>
+            <span data-i18n="endSession">Encerrar brincadeira agora</span>
           </button>
         </div>
 
@@ -243,7 +243,11 @@
         <p class="eyebrow" data-i18n="greatSession">QUE BRINCADEIRA LINDA!</p>
         <h2 data-i18n="sessionComplete">Sessão concluída</h2>
         <div class="end-stats"><div><strong id="endPresses">0</strong><span data-i18n="keysPressed">teclas apertadas</span></div><div><strong id="endUnique">0</strong><span data-i18n="uniqueKeys">teclas diferentes</span></div><div><strong id="endStreak">0</strong><span data-i18n="bestStreak">melhor sequência</span></div></div>
-        <button class="primary-button" id="playAgain" type="button"><span aria-hidden="true">↻</span> <span data-i18n="playAgain">Brincar mais</span></button>
+        <button class="primary-button" id="playAgain" type="button"><span data-i18n="playAgain">Brincar mais</span></button>
+        <div class="end-dialog-actions">
+          <button class="secondary-button" id="goHomeButton" type="button"><span data-i18n="backToHome">Voltar para a página inicial</span></button>
+          <button class="secondary-button" id="shareButton" type="button"><span data-i18n="share">Compartilhar</span></button>
+        </div>
       </div>
     </dialog>
 

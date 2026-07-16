@@ -69,6 +69,10 @@
 		"greatSession": "QUELLE BELLE PARTIE !",
 		"sessionComplete": "Partie terminée",
 		"playAgain": "Rejouer",
+		"backToHome": "Retour à l'accueil",
+		"share": "Partager",
+		"shareText": "On vient de jouer à Magic Smash et on a appuyé sur {presses} touches avec une série de {streak} ! 🎉 Viens jouer toi aussi :",
+		"linkCopied": "Lien copié !",
 		"encouragement": [
 			"Génial !",
 			"Tu as réussi !",

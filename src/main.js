@@ -23,6 +23,7 @@ import {
 	setColorMode,
 	setLanguage,
 	setTheme,
+	shareSessionResults,
 	showIosInstallTip,
 	showUpdateBanner,
 	updateDuration,
@@ -108,6 +109,11 @@ $("#playAgain").addEventListener("click", () => {
 	$("#endDialog").close();
 	startGame();
 });
+$("#goHomeButton").addEventListener("click", () => {
+	$("#endDialog").close();
+	window.scrollTo({ top: 0, behavior: "smooth" });
+});
+$("#shareButton").addEventListener("click", () => shareSessionResults());
 $("#endSessionButton").addEventListener("click", () => {
 	closePanel();
 	endGame();
