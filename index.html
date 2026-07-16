@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#7048e8" />
     <title>Magic Smash</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-512.png" type="image/png" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Magic Smash" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -98,6 +104,10 @@
                 </div>
               </div>
             </div>
+            <div class="ios-install-tip hidden" id="iosInstallTip">
+              <p data-i18n="iosInstallTip">No iPhone ou iPad, toque no botão Compartilhar e depois em "Adicionar à Tela de Início" para instalar o Magic Smash.</p>
+              <button class="text-button" id="dismissIosTip" type="button" data-i18n="gotIt">Entendi</button>
+            </div>
           </section>
         </div>
 
@@ -183,6 +193,11 @@
           <input id="letterSize" type="range" min="0" max="2" value="1" aria-label="Tamanho das letras" />
         </div>
         <button class="secondary-button" id="fullscreenButton" type="button"><span aria-hidden="true">⛶</span> <span data-i18n="fullscreen">Abrir em tela cheia</span></button>
+
+        <div class="update-banner hidden" id="updateBanner">
+          <p data-i18n="updateAvailable">Uma nova versão está pronta.</p>
+          <button class="secondary-button" id="updateNowButton" type="button" data-i18n="updateNow">Atualizar agora</button>
+        </div>
       </section>
 
       <section class="panel-content hidden" id="statsPanel">

@@ -2,6 +2,11 @@ import { $, $$ } from "./dom.js";
 import { startBackgroundShuffle } from "./effects.js";
 import { pressKey, pressPointer, startGame, updateStats } from "./game.js";
 import { languages, loadLanguages, populateLanguageSelect, t } from "./i18n.js";
+import {
+	dismissIosInstallTip,
+	registerServiceWorker,
+	shouldShowIosInstallTip,
+} from "./pwa.js";
 import { data, initialData, resetStats, saveData, state } from "./state.js";
 import { themeIcons } from "./themes.js";
 import {
@@ -11,6 +16,8 @@ import {
 	setColorMode,
 	setLanguage,
 	setTheme,
+	showIosInstallTip,
+	showUpdateBanner,
 	updateDuration,
 	updateLetterSize,
 	updateSound,
@@ -129,4 +136,6 @@ function initializeApp() {
 	updateStats();
 }
 
+registerServiceWorker(showUpdateBanner);
+if (shouldShowIosInstallTip()) showIosInstallTip(dismissIosInstallTip);
 initializeApp();

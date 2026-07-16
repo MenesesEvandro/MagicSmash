@@ -421,6 +421,24 @@ h1 {
 	text-align: left;
 	box-shadow: 0 9px 24px rgba(77, 57, 128, 0.06);
 }
+.ios-install-tip {
+	margin-top: 10px;
+	padding: 10px 12px;
+	background: var(--accent-soft);
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 6px 12px;
+}
+.ios-install-tip p {
+	margin: 0;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--accent-deep);
+	line-height: 1.4;
+}
 .quick-options-title {
 	color: var(--muted);
 	font-size: 9px;
@@ -893,6 +911,23 @@ h1 {
 	grid-template-columns: 45px 1fr auto;
 	align-items: center;
 	column-gap: 11px;
+}
+.update-banner {
+	background: var(--accent-soft);
+	border-radius: 16px;
+	padding: 15px;
+	display: grid;
+	gap: 10px;
+	text-align: left;
+}
+.update-banner p {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 800;
+	color: var(--accent-deep);
+}
+.update-banner .secondary-button {
+	width: 100%;
 }
 .child-card p,
 .setting-row p {

@@ -1,0 +1,33 @@
+{
+	"id": "/",
+	"name": "Magic Smash",
+	"short_name": "Magic Smash",
+	"description": "Offline keyboard playground for toddlers — press any key, something delightful happens. No ads, no tracking, no internet needed.",
+	"start_url": "./index.html",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "any",
+	"lang": "en",
+	"theme_color": "#7048e8",
+	"background_color": "#f1edff",
+	"icons": [
+		{
+			"src": "icons/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "icons/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "icons/icon-maskable-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}

@@ -22,6 +22,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 - **An optional first name** for whoever's playing, saved locally.
 - **6 languages** — Portuguese (Brazil), English, Spanish, French, German, and Italian, so parents and kids anywhere in the world can play in the words they use at home, not just mine. If this turns out to be useful beyond my own living room, more languages will probably show up over time (thank you, Google Translate, for the first draft of every one after Portuguese — contributions from actual speakers very welcome).
 - **Works fully offline** — open `index.html` and play, no server, account, or install required.
+- **Installable, and updates never happen behind your back.** When served over `http(s)` (as opposed to opened straight from disk), it's a full PWA: a service worker caches the app shell after the first visit, so it keeps working with no connection, and it can be installed to a tablet's home screen like a native app, icon and all. It also stays on whatever version was installed — if a newer one is ever downloaded in the background, the app just shows a small "new version ready" note in Settings and waits. Nothing swaps out from under your kid mid-session; you decide when to update, the same way you'd decide to update any app. iOS never shows an install prompt on its own, so on an iPhone or iPad the welcome screen shows a small one-time tip pointing at Safari's Share → Add to Home Screen.
 
 ## Getting started
 
@@ -52,8 +53,11 @@ npm run check   # lint + format together, with fixes
 - `index.html` — the app shell
 - `styles.css` — all styling
 - `app.js` — generated bundle (don't edit directly — run `npm run build`)
-- `src/` — the source, as ES modules: `dom.js`, `state.js`, `themes.js`, `i18n.js`, `audio.js`, `effects.js`, `game.js`, `ui.js`, `main.js`
+- `src/` — the source, as ES modules: `dom.js`, `state.js`, `themes.js`, `i18n.js`, `audio.js`, `effects.js`, `game.js`, `ui.js`, `pwa.js`, `main.js`
 - `src/languages/` — translation files and the language manifest
+- `manifest.webmanifest` — the web app manifest (name, icons, colors) used for installing
+- `sw.js` — the service worker; caches the app shell for offline use once served over `http(s)`. Not part of the `src/` bundle — it has to ship as its own file.
+- `icons/` — app icons (192, 512, a maskable 512, and an iOS `apple-touch-icon`)
 - `scripts/build.mjs` — the build script
 - `biome.json` — lint/format config
 
@@ -79,9 +83,9 @@ The workflow:
 5. Open the app (`index.html`) and try the golden path plus whatever you changed.
 6. Open a pull request describing what changed.
 
-One firm rule: nothing that phones home. No analytics, no CDNs at runtime, no "just one little fetch". If a change would make the app need the internet or share anything about the child using it, it doesn't belong here — that constraint is the product.
+**One firm rule**: nothing that phones home. No analytics, no CDNs at runtime, no "just one little fetch". If a change would make the app need the internet or share anything about the child using it, it doesn't belong here — that constraint is the product.
 
-Small PRs are easier to review than big ones, so feel free to open an issue first if you want to talk through an idea.
+Small PRs are easier to review than big ones, so feel free to open an issue first if you want to talk through an idea. Not sure what to work on? See [ROADMAP.md](ROADMAP.md) for ideas.
 
 ## License
 
