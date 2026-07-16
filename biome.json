@@ -6,7 +6,7 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!app.js"]
+		"includes": ["**", "!app.js", "!sw.js"]
 	},
 	"formatter": {
 		"enabled": true

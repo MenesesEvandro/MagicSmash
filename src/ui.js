@@ -112,3 +112,27 @@ export function closePanel() {
 	$("#sidePanel").setAttribute("aria-hidden", "true");
 	$("#scrim").classList.remove("show");
 }
+
+export function showUpdateBanner(applyUpdate) {
+	$("#updateBanner").classList.remove("hidden");
+	$("#updateNowButton").addEventListener(
+		"click",
+		(event) => {
+			event.currentTarget.disabled = true;
+			applyUpdate();
+		},
+		{ once: true },
+	);
+}
+
+export function showIosInstallTip(onDismiss) {
+	$("#iosInstallTip").classList.remove("hidden");
+	$("#dismissIosTip").addEventListener(
+		"click",
+		() => {
+			$("#iosInstallTip").classList.add("hidden");
+			onDismiss();
+		},
+		{ once: true },
+	);
+}
