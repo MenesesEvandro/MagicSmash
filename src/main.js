@@ -1,6 +1,12 @@
 import { $, $$ } from "./dom.js";
 import { startBackgroundShuffle } from "./effects.js";
-import { pressKey, pressPointer, startGame, updateStats } from "./game.js";
+import {
+	endGame,
+	pressKey,
+	pressPointer,
+	startGame,
+	updateStats,
+} from "./game.js";
 import { languages, loadLanguages, populateLanguageSelect, t } from "./i18n.js";
 import {
 	dismissIosInstallTip,
@@ -101,6 +107,10 @@ $("#profileForm").addEventListener("submit", (event) => {
 $("#playAgain").addEventListener("click", () => {
 	$("#endDialog").close();
 	startGame();
+});
+$("#endSessionButton").addEventListener("click", () => {
+	closePanel();
+	endGame();
 });
 $("#resetStats").addEventListener("click", () => {
 	if (!window.confirm(t("resetStatsConfirm"))) return;

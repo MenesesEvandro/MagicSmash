@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "magic-smash-";
-const CACHE_NAME = `${CACHE_PREFIX}aa4180ef33`;
+const CACHE_NAME = `${CACHE_PREFIX}1c2af0a07f`;
 const CORE_ASSETS = [
 	"./",
 	"./index.html",

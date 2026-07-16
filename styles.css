@@ -1005,6 +1005,10 @@ body[data-mode="dark"] .child-card .text-button {
 	font-weight: 800;
 	outline-color: var(--accent);
 }
+.end-session-button {
+	width: 100%;
+	margin-top: 10px;
+}
 .theme-grid {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);

@@ -2,7 +2,7 @@ import { $, $$ } from "./dom.js";
 import { createMagicBackground } from "./effects.js";
 import { updateStats, updateStreak } from "./game.js";
 import { languages, t } from "./i18n.js";
-import { data, saveData } from "./state.js";
+import { data, saveData, state } from "./state.js";
 import { themeIcons, themeNames } from "./themes.js";
 
 const KEY_BOUNCE_DURATION_MS = 340;
@@ -94,6 +94,10 @@ export function updateSound() {
 	$("#quickSoundState").textContent = t(data.sound ? "soundOn" : "soundOff");
 }
 
+export function updateEndSessionButton() {
+	$("#endSessionButton").classList.toggle("hidden", !state.playing);
+}
+
 export function openPanel(type) {
 	const isSettings = type === "settings";
 	$("#settingsPanel").classList.toggle("hidden", !isSettings);
@@ -101,6 +105,7 @@ export function openPanel(type) {
 	$("#panelTitle").textContent = t(isSettings ? "settings" : "stats");
 	$("#panelEyebrow").textContent = isSettings ? t("caregivers") : t("allTime");
 	updateStats();
+	updateEndSessionButton();
 	$("#sidePanel").classList.add("open");
 	$("#sidePanel").setAttribute("aria-hidden", "false");
 	$("#scrim").classList.add("show");
