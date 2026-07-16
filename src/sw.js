@@ -1,4 +1,4 @@
-const CACHE_NAME = "magic-smash-10df0d9a33";
+const CACHE_NAME = "magic-smash-__CACHE_VERSION__";
 const CORE_ASSETS = [
 	"./",
 	"./index.html",

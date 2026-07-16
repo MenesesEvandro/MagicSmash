@@ -118,7 +118,7 @@ export function showUpdateBanner(applyUpdate) {
 	$("#updateNowButton").addEventListener(
 		"click",
 		(event) => {
-			event.target.disabled = true;
+			event.currentTarget.disabled = true;
 			applyUpdate();
 		},
 		{ once: true },

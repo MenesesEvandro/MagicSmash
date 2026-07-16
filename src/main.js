@@ -4,6 +4,7 @@ import { pressKey, pressPointer, startGame, updateStats } from "./game.js";
 import { languages, loadLanguages, populateLanguageSelect, t } from "./i18n.js";
 import {
 	dismissIosInstallTip,
+	linkManifest,
 	registerServiceWorker,
 	shouldShowIosInstallTip,
 } from "./pwa.js";
@@ -136,6 +137,7 @@ function initializeApp() {
 	updateStats();
 }
 
+linkManifest();
 registerServiceWorker(showUpdateBanner);
 if (shouldShowIosInstallTip()) showIosInstallTip(dismissIosInstallTip);
 initializeApp();

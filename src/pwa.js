@@ -22,7 +22,14 @@ function isRunningStandalone() {
 export function shouldShowIosInstallTip() {
 	if (window.location.protocol === "file:") return false;
 	if (!isIosDevice() || isRunningStandalone()) return false;
-	return localStorage.getItem(IOS_TIP_DISMISSED_KEY) !== "true";
+	try {
+		return localStorage.getItem(IOS_TIP_DISMISSED_KEY) !== "true";
+	} catch {
+		// Some browsers (e.g. Safari private mode, storage fully disabled) can
+		// throw on any localStorage access. This runs during startup, so a
+		// thrown error here must not stop the rest of the app from booting.
+		return false;
+	}
 }
 
 export function dismissIosInstallTip() {
@@ -31,6 +38,18 @@ export function dismissIosInstallTip() {
 	} catch {
 		/* Dismissing is best-effort; a full storage quota shouldn't block it. */
 	}
+}
+
+// Chrome fetches a <link rel="manifest"> as soon as it's parsed, before any
+// JS runs — and that fetch is blocked under file:// the same way ES module
+// imports were. A static <link> in the HTML has no way to opt out, so the
+// manifest is linked here instead, only when it can actually be fetched.
+export function linkManifest() {
+	if (window.location.protocol === "file:") return;
+	const link = document.createElement("link");
+	link.rel = "manifest";
+	link.href = "manifest.webmanifest";
+	document.head.appendChild(link);
 }
 
 export function registerServiceWorker(onUpdateReady) {
