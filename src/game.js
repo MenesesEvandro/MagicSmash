@@ -126,6 +126,7 @@ export function endGame() {
 	updateStats();
 	$("#keyStage").classList.add("hidden");
 	$("#sessionChip").classList.add("hidden");
+	$("#welcomeCard").classList.remove("hidden");
 	$("#bottomPrompt").classList.remove("hidden");
 	$("#endPresses").textContent = state.sessionPresses;
 	$("#endUnique").textContent = state.sessionKeys.size;

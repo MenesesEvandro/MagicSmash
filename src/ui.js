@@ -141,3 +141,32 @@ export function showIosInstallTip(onDismiss) {
 		{ once: true },
 	);
 }
+
+export async function shareSessionResults() {
+	const text = t("shareText")
+		.replace("{presses}", state.sessionPresses)
+		.replace("{streak}", state.bestStreak);
+	const shareData = { title: "Magic Smash", text, url: window.location.href };
+
+	if (navigator.share) {
+		try {
+			await navigator.share(shareData);
+		} catch {
+			/* The user closing the share sheet isn't a failure to react to. */
+		}
+		return;
+	}
+
+	if (!navigator.clipboard) return;
+	try {
+		await navigator.clipboard.writeText(`${text} ${shareData.url}`);
+		const label = $("#shareButton").querySelector("[data-i18n]");
+		const original = label.textContent;
+		label.textContent = t("linkCopied");
+		setTimeout(() => {
+			label.textContent = original;
+		}, 2000);
+	} catch {
+		/* Clipboard access can be denied by the browser; nothing more to try. */
+	}
+}

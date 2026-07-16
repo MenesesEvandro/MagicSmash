@@ -1340,6 +1340,14 @@ dialog {
 	font-size: 32px;
 	line-height: 1;
 }
+.end-dialog-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 10px;
+}
+.end-dialog-actions .secondary-button {
+	flex: 1;
+}
 .end-stats span {
 	font-size: 10px;
 	line-height: 1.2;
