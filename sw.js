@@ -1,4 +1,5 @@
-const CACHE_NAME = "magic-smash-10df0d9a33";
+const CACHE_PREFIX = "magic-smash-";
+const CACHE_NAME = `${CACHE_PREFIX}9db49a43fb`;
 const CORE_ASSETS = [
 	"./",
 	"./index.html",
@@ -27,12 +28,17 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
 	event.waitUntil(
 		Promise.all([
+			// Only ever remove this app's own old versions. A bare "delete
+			// anything not CACHE_NAME" would also wipe out any unrelated cache
+			// this origin happens to have, which isn't ours to touch.
 			caches
 				.keys()
 				.then((keys) =>
 					Promise.all(
 						keys
-							.filter((key) => key !== CACHE_NAME)
+							.filter(
+								(key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME,
+							)
 							.map((key) => caches.delete(key)),
 					),
 				),
@@ -47,17 +53,25 @@ self.addEventListener("message", (event) => {
 	if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
 
-// Cache-first, and always scoped to this worker's own versioned cache (never
-// the shared, global CacheStorage) — so an older, still-active worker can
-// never end up serving files a newer, still-waiting worker already cached,
-// or vice versa. That's what keeps a version pinned for a whole session.
+// Cache-first, and always scoped to this worker's own versioned cache via
+// caches.open(CACHE_NAME) — never a bare caches.match(), which would search
+// every cache this origin has, old and new alike. Named caches still live in
+// the one shared, per-origin CacheStorage; the isolation comes from each
+// worker version only ever reading its own same-named cache within it, which
+// is what keeps a version pinned for a whole session: an older, still-active
+// worker can never end up serving files a newer, still-waiting worker
+// already cached, or vice versa.
 //
-// Anything not already cached is fetched from the network and cached for
-// next time (kept alive with waitUntil, since the service worker can be
-// killed the instant respondWith's promise settles). Offline navigations
-// with nothing cached fall back to the app shell; offline requests for
-// anything else (a script, an image) fail normally instead of getting HTML
-// back where a different resource was expected.
+// Anything not already cached is fetched from the network. Only successful,
+// same-origin responses get cached — a 404 would otherwise poison the cache
+// forever (cache-first never re-validates), and cross-origin/opaque
+// responses are skipped rather than risk a rejected put(). The cache write
+// is kept alive with waitUntil (the worker can be killed the instant
+// respondWith's promise settles) and its own failure is swallowed, since
+// caching is a nice-to-have, not something a response should ever hinge on.
+// Offline navigations with nothing cached fall back to the app shell;
+// offline requests for anything else (a script, an image) fail normally
+// instead of getting HTML back where a different resource was expected.
 self.addEventListener("fetch", (event) => {
 	if (event.request.method !== "GET") return;
 	event.respondWith(
@@ -66,7 +80,13 @@ self.addEventListener("fetch", (event) => {
 			if (cached) return cached;
 			try {
 				const response = await fetch(event.request);
-				event.waitUntil(cache.put(event.request, response.clone()));
+				if (response.ok && response.type === "basic") {
+					event.waitUntil(
+						cache.put(event.request, response.clone()).catch(() => {
+							/* A failed cache write shouldn't surface as an unhandled rejection. */
+						}),
+					);
+				}
 				return response;
 			} catch (error) {
 				if (event.request.mode === "navigate") {

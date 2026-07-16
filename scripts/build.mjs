@@ -69,20 +69,33 @@ async function bundleModules() {
 // "forgot to bump it" failure mode: any real change to the shipped app
 // content produces a new cache automatically, and an unrelated change (docs,
 // a comment) doesn't churn it for no reason.
+//
+// What gets hashed is read straight out of src/sw.js's own CORE_ASSETS list
+// rather than a second, hand-kept list here — so if an asset (an icon, say)
+// is ever added to what the service worker precaches, it's automatically
+// covered by the hash too, with nothing else to remember to update.
 async function buildServiceWorker(appJsContent) {
 	const template = await readFile(new URL("sw.js", srcDir), "utf8");
-	const [indexHtml, stylesCss, manifest] = await Promise.all([
-		readFile(new URL("index.html", root), "utf8"),
-		readFile(new URL("styles.css", root), "utf8"),
-		readFile(new URL("manifest.webmanifest", root), "utf8"),
-	]);
-	const hash = createHash("sha256")
-		.update(indexHtml + stylesCss + manifest + appJsContent)
-		.digest("hex")
-		.slice(0, 10);
+	const coreAssetsMatch = template.match(/const CORE_ASSETS = \[([\s\S]*?)\];/);
+	if (!coreAssetsMatch)
+		throw new Error("Could not find CORE_ASSETS in src/sw.js");
+	const paths = [...coreAssetsMatch[1].matchAll(/"([^"]+)"/g)].map(
+		(match) => match[1],
+	);
+
+	const hash = createHash("sha256");
+	for (const path of paths) {
+		if (path === "./app.js") {
+			hash.update(appJsContent);
+			continue;
+		}
+		const file = path === "./" ? "index.html" : path.replace(/^\.\//, "");
+		hash.update(await readFile(new URL(file, root)));
+	}
+
 	await writeFile(
 		new URL("sw.js", root),
-		template.replace("__CACHE_VERSION__", hash),
+		template.replace("__CACHE_VERSION__", hash.digest("hex").slice(0, 10)),
 	);
 }
 
