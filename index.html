@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#7048e8" />
+    <title>Magic Smash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-theme="vehicles">
+    <main class="app-shell">
+      <header class="topbar">
+        <button class="brand" id="homeButton" type="button" aria-label="Ir para o início">
+          <span class="brand-star">✦</span>
+          <span>magic<br /><b>smash</b></span>
+        </button>
+
+        <div class="topbar-actions">
+          <div class="language-picker">
+            <label class="sr-only" for="languageSelect" data-i18n="language">Idioma</label>
+            <select id="languageSelect" aria-label="Idioma">
+              <option selected disabled>Carregando…</option>
+            </select>
+          </div>
+          <button class="icon-button" id="statsButton" type="button" data-open-panel="stats" aria-label="Estatísticas">
+            <span aria-hidden="true">⌁</span>
+          </button>
+          <button class="icon-button" id="settingsButton" type="button" data-open-panel="settings" aria-label="Configurações">
+            <span aria-hidden="true">⚙</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="play-area" id="playArea" aria-live="polite">
+        <div class="ambient ambient-one"></div>
+        <div class="ambient ambient-two"></div>
+        <div class="ambient ambient-three"></div>
+        <div class="magic-layer" id="magicLayer" aria-hidden="true"></div>
+        <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+        <div class="theme-effects" id="themeEffects" aria-hidden="true"></div>
+
+        <div class="session-chip hidden" id="sessionChip">
+          <span class="pulse-dot"></span>
+          <span id="timer">05:00</span>
+        </div>
+
+        <div class="welcome-card" id="welcomeCard">
+          <p class="eyebrow" data-i18n="welcomeEyebrow">UM LUGAR SÓ SEU</p>
+          <h1 data-i18n="welcomeTitle">Aperte qualquer tecla<br />e faça acontecer.</h1>
+          <p class="welcome-copy" data-i18n="welcomeCopy">Cores, sons e surpresas para cada descoberta.</p>
+          <button class="primary-button" id="startButton" type="button">
+            <span class="play-icon" aria-hidden="true">▶</span>
+            <span data-i18n="start">Começar a brincar</span>
+          </button>
+          <p class="keyboard-tip"><span aria-hidden="true">⌨</span> <span data-i18n="keyboardTip">Use o teclado para brincar</span></p>
+          <section class="quick-options" aria-label="Opções rápidas para quem cuida">
+            <p class="quick-options-title" data-i18n="quickOptions">AJUSTES RÁPIDOS PARA QUEM CUIDA</p>
+            <div class="quick-controls">
+              <div class="quick-control theme-quick-control">
+                <span id="quickThemeName">Veículos</span>
+                <div class="quick-theme-buttons">
+                  <button class="quick-theme-button active" type="button" data-theme-choice="vehicles" aria-label="Tema Veículos">🚜</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="bubbles" aria-label="Tema Bolhas">🫧</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="music" aria-label="Tema Música">♫</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="colors" aria-label="Tema Cores">🌈</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="weather" aria-label="Tema Clima">🌦️</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="dinosaurs" aria-label="Tema Dinossauros">🦕</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="farm" aria-label="Tema Fazenda">🐄</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="party" aria-label="Tema Festa">🎈</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="space" aria-label="Tema Espaço fofo">👽</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="beach" aria-label="Tema Praia">🏖️</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="ocean" aria-label="Tema Oceano">🐠</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="lights" aria-label="Tema Luzes">💡</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="toys" aria-label="Tema Brinquedos">🧸</button>
+                  <button class="quick-theme-button" type="button" data-theme-choice="bedtime" aria-label="Tema Hora de dormir">🌙</button>
+                </div>
+              </div>
+              <label class="quick-control" for="quickDurationSelect"><span data-i18n="quickDuration">Tempo</span>
+                <select id="quickDurationSelect" data-duration-select aria-label="Tempo de brincadeira">
+                  <option value="0" data-i18n="unlimited">Sem limite</option>
+                  <option value="3">3 min</option>
+                  <option value="5" selected>5 min</option>
+                  <option value="10">10 min</option>
+                  <option value="15">15 min</option>
+                </select>
+              </label>
+              <label class="quick-control sound-quick-control" for="quickSoundToggle"><span data-i18n="quickSound">Som</span>
+                <span class="quick-sound-switch"><span id="quickSoundState" data-i18n="soundOn">Ligado</span><input id="quickSoundToggle" data-sound-toggle type="checkbox" checked /><i></i></span>
+              </label>
+              <div class="quick-control mode-quick-control">
+                <span data-i18n="appearance">Aparência</span>
+                <div class="quick-mode-buttons">
+                  <button class="quick-mode-button active" type="button" data-mode-choice="light" aria-label="Modo claro">☀</button>
+                  <button class="quick-mode-button" type="button" data-mode-choice="dark" aria-label="Modo escuro">☾</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="key-stage hidden" id="keyStage">
+          <p class="tiny-message" id="encouragement">Você conseguiu!</p>
+          <div class="key-orb" id="keyOrb" role="img" aria-label="Última tecla pressionada">?</div>
+          <p class="key-name" id="keyName">vamos lá!</p>
+          <div class="streak-pill" id="streakPill"><span>✦</span> <span id="streakText">1 sequência</span></div>
+        </div>
+
+        <div class="bottom-prompt" id="bottomPrompt"><span data-i18n="bottomPrompt">É só apertar uma tecla</span> <span aria-hidden="true">↓</span></div>
+        <p class="credit-footer">Made with <span aria-hidden="true">❤️</span> by MenesesEvandro</p>
+      </section>
+    </main>
+
+    <aside class="side-panel" id="sidePanel" aria-hidden="true" aria-labelledby="panelTitle">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow" id="panelEyebrow">PARA QUEM CUIDA</p>
+          <h2 id="panelTitle">Configurações</h2>
+        </div>
+        <button class="close-button" id="closePanel" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <section class="panel-content" id="settingsPanel">
+        <div class="child-card">
+          <span class="child-avatar" id="childAvatar">✦</span>
+          <div>
+            <p data-i18n="playingAs">Brincando como</p>
+            <strong id="profileName">Pequena estrela</strong>
+          </div>
+          <button class="text-button" id="editProfile" type="button" data-i18n="edit">Editar</button>
+        </div>
+
+        <div class="setting-group">
+          <label for="durationSelect" data-i18n="duration">Tempo de brincadeira</label>
+          <select id="durationSelect" data-duration-select>
+            <option value="0" data-i18n="unlimited">Sem limite</option>
+            <option value="3">3 min</option>
+            <option value="5" selected>5 min</option>
+            <option value="10">10 min</option>
+            <option value="15">15 min</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label-row">
+            <span class="setting-label" data-i18n="theme">Tema</span>
+            <span id="themeName">Cosmos</span>
+          </div>
+          <div class="theme-grid" id="themeGrid">
+            <button class="theme-option active" type="button" data-theme-choice="vehicles"><span class="theme-swatch vehicles">🚜</span><span data-i18n="themeVehicles">Veículos</span></button>
+            <button class="theme-option" type="button" data-theme-choice="bubbles"><span class="theme-swatch bubbles">🫧</span><span data-i18n="themeBubbles">Bolhas</span></button>
+            <button class="theme-option" type="button" data-theme-choice="music"><span class="theme-swatch music">♫</span><span data-i18n="themeMusic">Música</span></button>
+            <button class="theme-option" type="button" data-theme-choice="colors"><span class="theme-swatch colors">🌈</span><span data-i18n="themeColors">Cores</span></button>
+            <button class="theme-option" type="button" data-theme-choice="weather"><span class="theme-swatch weather">🌦️</span><span data-i18n="themeWeather">Clima</span></button>
+            <button class="theme-option" type="button" data-theme-choice="dinosaurs"><span class="theme-swatch dinosaurs">🦕</span><span data-i18n="themeDinosaurs">Dinossauros</span></button>
+            <button class="theme-option" type="button" data-theme-choice="farm"><span class="theme-swatch farm">🐄</span><span data-i18n="themeFarm">Fazenda</span></button>
+            <button class="theme-option" type="button" data-theme-choice="party"><span class="theme-swatch party">🎈</span><span data-i18n="themeParty">Festa</span></button>
+            <button class="theme-option" type="button" data-theme-choice="space"><span class="theme-swatch space">👽</span><span data-i18n="themeSpace">Espaço fofo</span></button>
+            <button class="theme-option" type="button" data-theme-choice="beach"><span class="theme-swatch beach">🏖️</span><span data-i18n="themeBeach">Praia</span></button>
+            <button class="theme-option" type="button" data-theme-choice="ocean"><span class="theme-swatch ocean">🐠</span><span data-i18n="themeOcean">Oceano</span></button>
+            <button class="theme-option" type="button" data-theme-choice="lights"><span class="theme-swatch lights">💡</span><span data-i18n="themeLights">Luzes</span></button>
+            <button class="theme-option" type="button" data-theme-choice="toys"><span class="theme-swatch toys">🧸</span><span data-i18n="themeToys">Brinquedos</span></button>
+            <button class="theme-option" type="button" data-theme-choice="bedtime"><span class="theme-swatch bedtime">🌙</span><span data-i18n="themeBedtime">Hora de dormir</span></button>
+          </div>
+        </div>
+
+        <div class="setting-group appearance-group">
+          <span class="setting-label" data-i18n="appearance">Aparência</span>
+          <div class="mode-options">
+            <button class="mode-option active" type="button" data-mode-choice="light"><span aria-hidden="true">☀</span><span data-i18n="lightMode">Claro</span></button>
+            <button class="mode-option" type="button" data-mode-choice="dark"><span aria-hidden="true">☾</span><span data-i18n="darkMode">Escuro</span></button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div><strong data-i18n="sound">Sons suaves</strong><p data-i18n="soundHelp">Um som a cada tecla</p></div>
+          <label class="toggle"><input id="soundToggle" data-sound-toggle type="checkbox" checked aria-label="Sons suaves" /><span></span></label>
+        </div>
+        <div class="setting-row range-row">
+          <div><strong data-i18n="letterSize">Tamanho das letras</strong><p data-i18n="letterSizeHelp">Mais conforto para enxergar</p></div>
+          <input id="letterSize" type="range" min="0" max="2" value="1" aria-label="Tamanho das letras" />
+        </div>
+        <button class="secondary-button" id="fullscreenButton" type="button"><span aria-hidden="true">⛶</span> <span data-i18n="fullscreen">Abrir em tela cheia</span></button>
+      </section>
+
+      <section class="panel-content hidden" id="statsPanel">
+        <div class="stats-hero">
+          <span>✦</span>
+          <p data-i18n="allTime">DESDE O COMEÇO</p>
+          <strong id="totalPresses">0</strong>
+          <small data-i18n="keysPressed">teclas apertadas</small>
+        </div>
+        <div class="stat-grid">
+          <article><span>⌁</span><strong id="totalMinutes">0 min</strong><small data-i18n="timePlaying">tempo brincando</small></article>
+          <article><span>♢</span><strong id="totalUnique">0</strong><small data-i18n="uniqueKeys">teclas diferentes</small></article>
+          <article><span>⚡</span><strong id="bestSpeed">0</strong><small data-i18n="bestSpeed">melhor ritmo / min</small></article>
+          <article><span>♥</span><strong id="favoriteKey">—</strong><small data-i18n="favoriteKey">tecla favorita</small></article>
+        </div>
+        <div class="session-summary" id="sessionSummary">
+          <p data-i18n="sessionStats">ESTA BRINCADEIRA</p>
+          <div><span id="sessionPresses">0</span><small data-i18n="keysPressed">teclas apertadas</small></div>
+          <div><span id="sessionStreak">0</span><small data-i18n="bestStreak">melhor sequência</small></div>
+        </div>
+        <button class="danger-link" id="resetStats" type="button" data-i18n="resetStats">Apagar estatísticas deste aparelho</button>
+      </section>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+
+    <dialog class="profile-dialog" id="profileDialog">
+      <form method="dialog" id="profileForm">
+        <button class="dialog-close" type="submit" value="cancel" aria-label="Fechar">×</button>
+        <span class="dialog-star">✦</span>
+        <h2 data-i18n="profileTitle">Quem está brincando?</h2>
+        <p data-i18n="profileHelp">Este nome fica salvo só neste aparelho.</p>
+        <label for="childName" data-i18n="nameLabel">Nome ou apelido</label>
+        <input id="childName" maxlength="18" autocomplete="off" placeholder="Pequena estrela" />
+        <button class="primary-button small" type="submit" value="save" data-i18n="save">Salvar</button>
+      </form>
+    </dialog>
+
+    <dialog class="end-dialog" id="endDialog">
+      <div>
+        <span class="celebration">★</span>
+        <p class="eyebrow" data-i18n="greatSession">QUE BRINCADEIRA LINDA!</p>
+        <h2 data-i18n="sessionComplete">Sessão concluída</h2>
+        <div class="end-stats"><div><strong id="endPresses">0</strong><span data-i18n="keysPressed">teclas apertadas</span></div><div><strong id="endUnique">0</strong><span data-i18n="uniqueKeys">teclas diferentes</span></div><div><strong id="endStreak">0</strong><span data-i18n="bestStreak">melhor sequência</span></div></div>
+        <button class="primary-button" id="playAgain" type="button"><span aria-hidden="true">↻</span> <span data-i18n="playAgain">Brincar mais</span></button>
+      </div>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>

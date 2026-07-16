@@ -1,0 +1,92 @@
+# Magic Smash
+
+Press any key. Something delightful happens. That's the whole game.
+
+Magic Smash is a keyboard playground for toddlers: no rules, no losing, no reading required. Every keypress (or tap, or click) triggers a big animated letter, a friendly sound, and a burst of themed characters flying across the screen.
+
+## Why this exists
+
+I work from home, and my son, almost 2 years old, always wants to "work" with me. He'd climb onto my lap and start smashing the keyboard, which is exactly what a toddler should do, just not always great for whatever I was typing.
+
+I went looking for one of those keyboard-mashing toy websites to point him at instead, but the VPN I connect to for work blocks pretty much everything. So I built my own... Something that needed zero internet connection, would hold his attention.
+
+## Features
+
+- **Press anything** — letters, numbers, spacebar, arrow keys, all of it. There's no wrong key.
+- **14 themes** — Vehicles, Bubbles, Music, Colors, Weather, Dinosaurs, Farm, Party, Space, Beach, Ocean, Lights, Toys, and Bedtime. Each one has its own icon set, color palette, sound, and animation.
+- **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation.
+- **A living background** — icons drift lazily across the screen and pop when a key is pressed.
+- **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen.
+- **Light and dark mode**, adjustable letter size, and sound on/off.
+- **Local stats only** — total presses, unique keys, playtime, best streak, favourite key. Stored on the device, never sent anywhere.
+- **An optional first name** for whoever's playing, saved locally.
+- **6 languages** — Portuguese (Brazil), English, Spanish, French, German, and Italian, so parents and kids anywhere in the world can play in the words they use at home, not just mine. If this turns out to be useful beyond my own living room, more languages will probably show up over time (thank you, Google Translate, for the first draft of every one after Portuguese — contributions from actual speakers very welcome).
+- **Works fully offline** — open `index.html` and play, no server, account, or install required.
+
+## Getting started
+
+Just open `index.html` in a browser. That's it — no server, no build step, no dependencies to install. It works the same way whether you double-click the file or serve it over `http://`.
+
+## Developing
+
+The shipped `app.js` is a generated file — don't edit it directly. The real source lives in `src/`.
+
+```bash
+npm install     # installs Biome (lint + format)
+npm run build   # lints, then rebuilds app.js from src/
+npm run lint    # check for problems without fixing
+npm run format  # format the project
+npm run check   # lint + format together, with fixes
+```
+
+`npm run build` fails if the linter finds anything, so `app.js` is never regenerated from code that doesn't pass the checks.
+
+## How it's built
+
+- **Vanilla JavaScript, no framework.** `src/` is a set of small ES modules (state, i18n, themes, audio, effects, game logic, UI, and wiring in `main.js`).
+- **No bundler.** [`scripts/build.mjs`](scripts/build.mjs) is a small Node script (no dependencies) that resolves the module import graph, strips `import`/`export`, embeds every language from `src/languages/*.json`, and concatenates everything into a single classic `<script>` — the `app.js` at the project root. That's what makes opening `index.html` directly work: no CORS restrictions from ES modules, no `fetch` calls for translations, nothing that requires a server.
+- **[Biome](https://biomejs.dev/)** handles linting and formatting for JS, JSON, and CSS.
+
+## Project structure
+
+- `index.html` — the app shell
+- `styles.css` — all styling
+- `app.js` — generated bundle (don't edit directly — run `npm run build`)
+- `src/` — the source, as ES modules: `dom.js`, `state.js`, `themes.js`, `i18n.js`, `audio.js`, `effects.js`, `game.js`, `ui.js`, `main.js`
+- `src/languages/` — translation files and the language manifest
+- `scripts/build.mjs` — the build script
+- `biome.json` — lint/format config
+
+## Contributing
+
+Most of the internet built for small children wants something back from them: an ad impression, a subscription, an email address, a behavioral profile. A two-year-old can't consent to any of that — and shouldn't have to. Magic Smash is a bet that we can do better: software for kids with **no ads, no tracking, no accounts, no data leaving the device, and no internet required at all**. A parent should be able to read every line of code their child touches. Here, they actually can.
+
+That's what you'd be contributing to. Not just a repo — a small, safe corner of the digital world where the only thing a child's keystroke triggers is joy.
+
+And you don't need to be a security expert to help:
+
+- **Translate it.** Every new language in `src/languages/` means another family can use this in the words their child hears at home.
+- **Add a theme.** Somewhere there's a toddler who would lose their mind over trains, or cats, or robots. Icon set in `src/themes.js`, colors in `styles.css`, a spot in both theme pickers in `index.html`.
+- **Improve accessibility.** Kids with low vision, motor differences, or sensory sensitivities deserve this to work beautifully for them too.
+- **Fix a bug, harden an edge case, simplify the code.** Simpler code is easier to audit — and auditable code is what keeps the "a parent can read all of it" promise true.
+
+The workflow:
+
+1. Fork the repo and clone it.
+2. `npm install`
+3. Edit files in `src/` (never `app.js` directly — it's generated).
+4. `npm run build` to regenerate `app.js` and confirm lint/format pass.
+5. Open the app (`index.html`) and try the golden path plus whatever you changed.
+6. Open a pull request describing what changed.
+
+One firm rule: nothing that phones home. No analytics, no CDNs at runtime, no "just one little fetch". If a change would make the app need the internet or share anything about the child using it, it doesn't belong here — that constraint is the product.
+
+Small PRs are easier to review than big ones, so feel free to open an issue first if you want to talk through an idea.
+
+## License
+
+[MIT](LICENSE) — do whatever you'd like with it.
+
+---
+
+Made with ❤️ by MenesesEvandro, for a toddler who just wants to help his dad at work.

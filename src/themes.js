@@ -1,0 +1,33 @@
+export const themeIcons = {
+	vehicles: ["🚗", "🚚", "🚂", "✈️", "🚁", "🚜", "🚤", "🚑", "🚒"],
+	bubbles: ["🫧", "🔵", "🟣", "🩷"],
+	music: ["♫", "♪", "🎹", "🥁", "🎸", "🎵"],
+	colors: ["🌈", "🎨", "🖍️", "✨", "🟥", "🟡"],
+	weather: ["☀️", "🌧️", "⚡", "🌈", "❄️", "☁️"],
+	dinosaurs: ["🦕", "🦖", "🌋", "👣", "🌿"],
+	farm: ["🐄", "🐴", "🐖", "🐔", "🚜", "🌽"],
+	party: ["🎈", "🎉", "🎂", "🎁", "✨"],
+	space: ["👽", "🚀", "🪐", "⭐", "🛰️"],
+	beach: ["🏖️", "🐚", "🏰", "🥥", "🌊"],
+	ocean: ["🐠", "🐳", "🐙", "🐬", "🦈"],
+	lights: ["💡", "✨", "🌟", "🟣", "🟡"],
+	toys: ["🧸", "⚽", "🧱", "🪀", "🛩️"],
+	bedtime: ["🌙", "⭐", "🐑", "☁️", "💤"],
+};
+
+export const themeNames = {
+	vehicles: "themeVehicles",
+	bubbles: "themeBubbles",
+	music: "themeMusic",
+	colors: "themeColors",
+	weather: "themeWeather",
+	dinosaurs: "themeDinosaurs",
+	farm: "themeFarm",
+	party: "themeParty",
+	space: "themeSpace",
+	beach: "themeBeach",
+	ocean: "themeOcean",
+	lights: "themeLights",
+	toys: "themeToys",
+	bedtime: "themeBedtime",
+};
