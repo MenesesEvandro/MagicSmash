@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "magic-smash-";
-const CACHE_NAME = `${CACHE_PREFIX}9db49a43fb`;
+const CACHE_NAME = `${CACHE_PREFIX}aa4180ef33`;
 const CORE_ASSETS = [
 	"./",
 	"./index.html",
@@ -75,26 +75,29 @@ self.addEventListener("message", (event) => {
 self.addEventListener("fetch", (event) => {
 	if (event.request.method !== "GET") return;
 	event.respondWith(
-		caches.open(CACHE_NAME).then(async (cache) => {
-			const cached = await cache.match(event.request);
-			if (cached) return cached;
-			try {
-				const response = await fetch(event.request);
-				if (response.ok && response.type === "basic") {
-					event.waitUntil(
-						cache.put(event.request, response.clone()).catch(() => {
-							/* A failed cache write shouldn't surface as an unhandled rejection. */
-						}),
-					);
+		caches
+			.open(CACHE_NAME)
+			.then(async (cache) => {
+				const cached = await cache.match(event.request);
+				if (cached) return cached;
+				try {
+					const response = await fetch(event.request);
+					if (response.ok && response.type === "basic") {
+						event.waitUntil(
+							cache.put(event.request, response.clone()).catch(() => {
+								/* A failed cache write shouldn't surface as an unhandled rejection. */
+							}),
+						);
+					}
+					return response;
+				} catch (error) {
+					if (event.request.mode === "navigate") {
+						const shell = await cache.match("./index.html");
+						if (shell) return shell;
+					}
+					throw error;
 				}
-				return response;
-			} catch (error) {
-				if (event.request.mode === "navigate") {
-					const shell = await cache.match("./index.html");
-					if (shell) return shell;
-				}
-				throw error;
-			}
-		}),
+			})
+			.catch(() => fetch(event.request)),
 	);
 });
