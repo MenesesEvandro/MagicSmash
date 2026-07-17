@@ -118,25 +118,10 @@ export function makePointerTrail(event) {
 }
 
 export function makeThemeMechanic(event) {
-	if (
-		![
-			"vehicles",
-			"bubbles",
-			"music",
-			"colors",
-			"weather",
-			"dinosaurs",
-			"farm",
-			"party",
-			"space",
-			"beach",
-			"ocean",
-			"lights",
-			"toys",
-			"bedtime",
-		].includes(data.theme)
-	)
-		return;
+	// Every theme has a mechanic below, so this only guards against a theme
+	// that doesn't exist in themeIcons at all — no separate list to keep in
+	// sync with themes.js when a theme is added, renamed, or removed.
+	if (!themeIcons[data.theme]) return;
 	const effects = $("#themeEffects");
 	const rect = $("#keyOrb").getBoundingClientRect();
 	const x = Number.isFinite(event.clientX)
