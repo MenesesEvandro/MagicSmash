@@ -1,3 +1,8 @@
+/**
+ * Icon set for each theme, keyed by theme id. Also the source of truth for
+ * which themes exist: code elsewhere treats "is a key of themeIcons" as
+ * "is a valid theme".
+ */
 export const themeIcons = {
 	vehicles: ["🚗", "🚚", "🚂", "✈️", "🚁", "🚜", "🚤", "🚑", "🚒"],
 	bubbles: ["🫧", "🔵", "🟣", "🩷"],
@@ -15,6 +20,7 @@ export const themeIcons = {
 	bedtime: ["🌙", "⭐", "🐑", "☁️", "💤"],
 };
 
+/** Translation key for each theme's display name, keyed by theme id. */
 export const themeNames = {
 	vehicles: "themeVehicles",
 	bubbles: "themeBubbles",

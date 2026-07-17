@@ -2,6 +2,12 @@ import { data } from "./state.js";
 
 let audioContext;
 
+/**
+ * Plays a short synthesized tone through the Web Audio API. Waveform, pitch
+ * range, pitch sweep, and length all derive from the current theme, giving
+ * each theme its own sound character. Creates the shared AudioContext on
+ * first call; failures are swallowed since sound is optional.
+ */
 export function playTone() {
 	try {
 		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();

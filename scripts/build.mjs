@@ -5,10 +5,16 @@ const root = new URL("../", import.meta.url);
 const srcDir = new URL("src/", root);
 const languagesDir = new URL("languages/", srcDir);
 
+/** Matches `import { … } from "./file.js"` statements between src modules. */
 const IMPORT_RE =
 	/^import\s*\{([\s\S]*?)\}\s*from\s*['"]\.\/([\w.-]+)['"];?\s*$/gm;
+/** Matches exported declarations, so bundling can drop the `export` keyword. */
 const EXPORT_RE = /^export (function|async function|const|let)/gm;
 
+/**
+ * Reads src/languages/index.json and every language file it lists.
+ * @returns {Promise<Record<string, object>>} Languages keyed by their `code`.
+ */
 async function buildLanguageRegistry() {
 	const manifest = JSON.parse(
 		await readFile(new URL("index.json", languagesDir), "utf8"),
@@ -24,6 +30,13 @@ async function buildLanguageRegistry() {
 	return Object.fromEntries(entries);
 }
 
+/**
+ * Concatenates every src/*.js module except sw.js into one classic script:
+ * orders files by a depth-first walk of their import graph (throwing on
+ * cycles or imports of unknown modules), drops the import statements, and
+ * strips the `export` keywords.
+ * @returns {Promise<string>} The bundle, one labelled section per file.
+ */
 async function bundleModules() {
 	const files = (await readdir(srcDir)).filter(
 		(file) => file.endsWith(".js") && file !== "sw.js",
@@ -64,16 +77,22 @@ async function bundleModules() {
 		.join("\n");
 }
 
-// The service worker's cache name is derived from a hash of everything it
-// caches, instead of a hand-maintained version number. That way there is no
-// "forgot to bump it" failure mode: any real change to the shipped app
-// content produces a new cache automatically, and an unrelated change (docs,
-// a comment) doesn't churn it for no reason.
-//
-// What gets hashed is read straight out of src/sw.js's own CORE_ASSETS list
-// rather than a second, hand-kept list here — so if an asset (an icon, say)
-// is ever added to what the service worker precaches, it's automatically
-// covered by the hash too, with nothing else to remember to update.
+/**
+ * Writes ./sw.js from the src/sw.js template, filling in the cache version.
+ *
+ * The service worker's cache name is derived from a hash of everything it
+ * caches, instead of a hand-maintained version number. That way there is no
+ * "forgot to bump it" failure mode: any real change to the shipped app
+ * content produces a new cache automatically, and an unrelated change (docs,
+ * a comment) doesn't churn it for no reason.
+ *
+ * What gets hashed is read straight out of src/sw.js's own CORE_ASSETS list
+ * rather than a second, hand-kept list here — so if an asset (an icon, say)
+ * is ever added to what the service worker precaches, it's automatically
+ * covered by the hash too, with nothing else to remember to update.
+ * @param {string} appJsContent The freshly built app.js bundle, hashed
+ * directly instead of being read back from disk.
+ */
 async function buildServiceWorker(appJsContent) {
 	const template = await readFile(new URL("sw.js", srcDir), "utf8");
 	const coreAssetsMatch = template.match(/const CORE_ASSETS = \[([\s\S]*?)\];/);
@@ -99,6 +118,7 @@ async function buildServiceWorker(appJsContent) {
 	);
 }
 
+/** Placeholder in src/i18n.js replaced with the embedded language registry. */
 const LANGUAGE_REGISTRY_TOKEN = "__LANGUAGE_REGISTRY__";
 
 const languageRegistry = await buildLanguageRegistry();

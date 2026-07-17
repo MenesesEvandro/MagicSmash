@@ -1,4 +1,10 @@
+/** localStorage key under which {@link data} is persisted. */
 export const storageKey = "magic-smash-data-v1";
+
+/**
+ * Default settings and lifetime stats. Serves as the base for {@link data}
+ * and as the reset baseline for {@link resetStats}.
+ */
 export const initialData = {
 	profile: "",
 	language: "en",
@@ -14,6 +20,11 @@ export const initialData = {
 	bestSpeed: 0,
 };
 
+/**
+ * @returns {object} The persisted object from localStorage, or an empty
+ * object when nothing is stored, the JSON is unparsable, or storage access
+ * itself throws.
+ */
 function loadData() {
 	try {
 		return JSON.parse(localStorage.getItem(storageKey)) || {};
@@ -22,7 +33,14 @@ function loadData() {
 	}
 }
 
+/**
+ * Persisted settings and lifetime stats: {@link initialData} overlaid with
+ * whatever was last saved on this device. Mutated in place throughout the
+ * app; only written back to storage when {@link saveData} runs.
+ */
 export let data = { ...initialData, ...loadData() };
+
+/** In-memory state for the current session and its timers; never persisted. */
 export const state = {
 	playing: false,
 	sessionPresses: 0,
@@ -37,16 +55,24 @@ export const state = {
 	backgroundShuffleId: null,
 };
 
+/**
+ * Persists {@link data} to localStorage. Write failures (full quota,
+ * private browsing, blocked storage) are swallowed: this runs on every
+ * keypress, and losing persistence beats throwing out of a hot path.
+ */
 export function saveData() {
 	try {
 		localStorage.setItem(storageKey, JSON.stringify(data));
 	} catch {
-		// Storage can be full or blocked (private browsing, quota, an
-		// extension). Losing persistence for this session beats throwing out
-		// of a hot path like every keypress.
+		/* See above — losing persistence beats breaking play. */
 	}
 }
 
+/**
+ * Replaces {@link data} with a fresh copy of {@link initialData}, keeping
+ * only the given fields.
+ * @param {Partial<typeof initialData>} keep Fields to carry over.
+ */
 export function resetStats(keep) {
 	data = { ...initialData, ...keep };
 }

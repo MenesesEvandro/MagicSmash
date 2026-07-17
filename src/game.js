@@ -11,11 +11,23 @@ import { languages, t } from "./i18n.js";
 import { data, saveData, state } from "./state.js";
 import { themeIcons } from "./themes.js";
 
+/**
+ * @param {number} seconds Seconds to format; negatives clamp to zero.
+ * @returns {string} MM:SS with zero-padded minutes and seconds.
+ */
 export function formatTimer(seconds) {
 	const safe = Math.max(0, Math.floor(seconds));
 	return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
 }
 
+/**
+ * Picks the big character shown on the key orb: "●" for space, the
+ * uppercased character for printable keys, a symbol for known special keys,
+ * the key's own name when it starts with "F" (function keys), and "✦" for
+ * anything unrecognized.
+ * @param {KeyboardEvent} event
+ * @returns {string}
+ */
 export function displayKey(event) {
 	if (event.key === " ") return "●";
 	if (event.key.length === 1) return event.key.toUpperCase();
@@ -48,11 +60,21 @@ export function displayKey(event) {
 	return labels[event.key] || (event.key.startsWith("F") ? event.key : "✦");
 }
 
+/**
+ * Label shown under the orb: the translated word for space, otherwise the
+ * same symbol as {@link displayKey}.
+ * @param {KeyboardEvent} event
+ * @returns {string}
+ */
 export function keyName(event) {
 	if (event.key === " ") return t("space");
 	return displayKey(event);
 }
 
+/**
+ * Refreshes all lifetime and session stat elements from {@link data} and
+ * {@link state}, including the most-pressed key ("—" before any press).
+ */
 export function updateStats() {
 	const keyEntries = Object.entries(data.keyCounts || {});
 	const favourite = keyEntries.sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
@@ -65,11 +87,16 @@ export function updateStats() {
 	$("#sessionStreak").textContent = state.bestStreak;
 }
 
+/** Renders the current streak count with its singular/plural label. */
 export function updateStreak() {
 	const word = state.streak === 1 ? t("sequence") : t("sequences");
 	$("#streakText").textContent = `${state.streak} ${word}`;
 }
 
+/**
+ * Zeroes all session counters, stamps the session start time, and returns
+ * the orb, key label, and encouragement line to their idle text.
+ */
 export function resetSession() {
 	state.sessionPresses = 0;
 	state.sessionKeys = new Set();
@@ -85,6 +112,11 @@ export function resetSession() {
 	updateStats();
 }
 
+/**
+ * Starts a play session (no-op if one is already running): resets session
+ * state, swaps the welcome card for the key stage, and begins the 500 ms
+ * timer tick.
+ */
 export function startGame() {
 	if (state.playing) return;
 	resetSession();
@@ -97,6 +129,10 @@ export function startGame() {
 	state.timerId = window.setInterval(tick, 500);
 }
 
+/**
+ * Timer update: counts up ("+MM:SS") in free-play mode (duration 0),
+ * otherwise counts down and ends the game when time runs out.
+ */
 export function tick() {
 	if (!state.playing) return;
 	const elapsed = (Date.now() - state.startedAt) / 1000;
@@ -109,6 +145,11 @@ export function tick() {
 	if (remaining <= 0) endGame();
 }
 
+/**
+ * Ends the session (no-op when idle): folds elapsed time (minimum one
+ * second) and best presses-per-minute into the lifetime stats, persists
+ * them, restores the welcome screen, and opens the end-of-session dialog.
+ */
 export function endGame() {
 	if (!state.playing) return;
 	const elapsed = Math.max(
@@ -134,6 +175,13 @@ export function endGame() {
 	$("#endDialog").showModal();
 }
 
+/**
+ * Global keydown handler; inert until languages are loaded. Suppresses the
+ * browser default for keys that would scroll or move focus (Tab, space,
+ * arrows, Alt, Escape), then feeds the press to {@link triggerInteraction}
+ * with sound.
+ * @param {KeyboardEvent} event
+ */
 export function pressKey(event) {
 	if (Object.keys(languages).length === 0) return;
 	if (
@@ -146,6 +194,22 @@ export function pressKey(event) {
 	triggerInteraction(displayKey(event), keyName(event), event, { sound: true });
 }
 
+/**
+ * Registers one interaction and plays all of its feedback: starts a session
+ * if needed, updates streaks (presses under 1.6 s apart chain) and per-key
+ * counters, shows the key with a random encouragement phrase, fires the
+ * visual effects, optionally plays a tone, and persists.
+ * @param {string} displayed Character shown on the orb and tracked in stats.
+ * @param {string} label Text for the key-name line.
+ * @param {{clientX?: number, clientY?: number}} point Effect origin for
+ * pointer interactions; keyboard interactions use a random point instead.
+ * @param {object} [options]
+ * @param {boolean} [options.sound=false] Play a tone (still gated by the sound setting).
+ * @param {boolean} [options.pointer=false] Pointer interaction: draw a trail
+ * at `point` and skip the sparkle/letter burst unless `burst` is set.
+ * @param {boolean} [options.burst=false] Fire the sparkle/letter burst even
+ * for a pointer interaction.
+ */
 export function triggerInteraction(
 	displayed,
 	label,
@@ -184,6 +248,10 @@ export function triggerInteraction(
 	saveData();
 }
 
+/**
+ * @returns {{clientX: number, clientY: number}} Random viewport point,
+ * padded away from the edges and top so effects spawn in comfortable view.
+ */
 export function randomEffectPoint() {
 	const horizontalPadding = Math.min(80, window.innerWidth * 0.12);
 	const topPadding = Math.min(150, window.innerHeight * 0.2);
@@ -197,6 +265,14 @@ export function randomEffectPoint() {
 	};
 }
 
+/**
+ * Pointer handler for the play area; inert until languages are loaded, a
+ * session is running, and the target is not a control. Interactions display
+ * a random icon from the current theme: taps and clicks (pointerdown) act
+ * like a full keypress with sound, while mouse movement only leaves a
+ * trail, throttled to one icon per 160 ms.
+ * @param {PointerEvent} event
+ */
 export function pressPointer(event) {
 	if (
 		Object.keys(languages).length === 0 ||

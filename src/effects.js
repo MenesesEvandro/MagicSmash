@@ -3,7 +3,9 @@ import { data, state } from "./state.js";
 import { themeIcons } from "./themes.js";
 
 const BACKGROUND_SHUFFLE_INTERVAL_MS = 30000;
+/** Chance in [0, 1] of a theme effect getting a contrast backdrop; 0 disables backdrops. */
 const THEME_EFFECT_BACKDROP_PROBABILITY = 0;
+/** Feature flag for the background icon growth reaction in {@link animateBackground}. */
 const BACKGROUND_ICON_GROWTH_ON_KEYPRESS = true;
 
 function shouldUseThemeEffectBackdrop() {
@@ -13,6 +15,11 @@ function shouldUseThemeEffectBackdrop() {
 	);
 }
 
+/**
+ * Rebuilds the floating background icons in #magicLayer for the current
+ * theme: 15 icons for themes with visually large symbols, 20 smaller ones
+ * otherwise, each with randomized position, size, tint, and float timing.
+ */
 export function createMagicBackground() {
 	const layer = $("#magicLayer");
 	const icons = themeIcons[data.theme];
@@ -50,6 +57,10 @@ export function createMagicBackground() {
 	}
 }
 
+/**
+ * Restarts the interval that rebuilds the background every 30 seconds,
+ * clearing any previous one so only a single shuffle timer ever runs.
+ */
 export function startBackgroundShuffle() {
 	clearInterval(state.backgroundShuffleId);
 	state.backgroundShuffleId = window.setInterval(
@@ -58,6 +69,10 @@ export function startBackgroundShuffle() {
 	);
 }
 
+/**
+ * Replays a grow animation on up to five random background icons. Gated by
+ * {@link BACKGROUND_ICON_GROWTH_ON_KEYPRESS}.
+ */
 export function animateBackground() {
 	if (!BACKGROUND_ICON_GROWTH_ON_KEYPRESS) return;
 	const objects = $$(".magic-object");
@@ -73,6 +88,12 @@ export function animateBackground() {
 	}
 }
 
+/**
+ * Bursts five theme icons outward from the given point, or from the key
+ * orb's center when the point has no finite coordinates. Each spark removes
+ * itself when its animation ends.
+ * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ */
 export function makeSparkles(event) {
 	const rect = $("#keyOrb").getBoundingClientRect();
 	const x = Number.isFinite(event.clientX)
@@ -95,6 +116,11 @@ export function makeSparkles(event) {
 	}
 }
 
+/**
+ * Leaves a single theme icon drifting upward from the given point (key orb
+ * center when coordinates are missing); it removes itself after animating.
+ * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ */
 export function makePointerTrail(event) {
 	const trail = document.createElement("span");
 	const rect = $("#keyOrb").getBoundingClientRect();
@@ -117,6 +143,13 @@ export function makePointerTrail(event) {
 	trail.addEventListener("animationend", () => trail.remove());
 }
 
+/**
+ * Fires the current theme's signature effect: a vehicle driving across the
+ * screen for `vehicles`, otherwise a handful of theme symbols rising from
+ * around the given point (key orb center when coordinates are missing).
+ * No-op for a theme id missing from {@link themeIcons}.
+ * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ */
 export function makeThemeMechanic(event) {
 	// Every theme has a mechanic below, so this only guards against a theme
 	// that doesn't exist in themeIcons at all — no separate list to keep in
@@ -222,6 +255,11 @@ export function makeThemeMechanic(event) {
 	}
 }
 
+/**
+ * Scatters nine copies of the pressed character across the play area, each
+ * popping away and removing itself when its animation ends.
+ * @param {string} letter Character to display.
+ */
 export function makeLetterTrail(letter) {
 	const layer = $("#magicLayer");
 	for (let index = 0; index < 9; index++) {

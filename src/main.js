@@ -137,6 +137,11 @@ document.addEventListener("fullscreenchange", () => {
 	if (!document.fullscreenElement) closePanel();
 });
 
+/**
+ * Boots the UI from persisted settings: loads the language registry, falls
+ * back to defaults for language/theme values that no longer exist, applies
+ * every setting to the DOM, and starts the background shuffle.
+ */
 function initializeApp() {
 	loadLanguages();
 	applyAnimationSettings();

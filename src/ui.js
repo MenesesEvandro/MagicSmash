@@ -7,6 +7,7 @@ import { themeIcons, themeNames } from "./themes.js";
 
 const KEY_BOUNCE_DURATION_MS = 340;
 
+/** Exposes JS-owned animation timing to CSS via a custom property on the root element. */
 export function applyAnimationSettings() {
 	document.documentElement.style.setProperty(
 		"--key-bounce-duration-ms",
@@ -14,6 +15,14 @@ export function applyAnimationSettings() {
 	);
 }
 
+/**
+ * Switches the UI language (no-op for unknown codes): sets the document
+ * language (mapping the registry's "pt-br" to the standard "pt-BR" tag),
+ * retranslates every `[data-i18n]` element (`welcomeTitle` as HTML, the
+ * rest as text), refreshes labels that embed translated words, and
+ * persists.
+ * @param {string} language Language code from the loaded registry.
+ */
 export function setLanguage(language) {
 	if (!languages[language]) return;
 	data.language = language;
@@ -35,6 +44,12 @@ export function setLanguage(language) {
 	saveData();
 }
 
+/**
+ * Applies a theme (no-op for unknown ids): sets it on the body's `data-theme`,
+ * highlights its picker button, updates the theme-name labels, rebuilds the
+ * magic background, and persists.
+ * @param {string} theme Theme id from {@link themeIcons}.
+ */
 export function setTheme(theme) {
 	if (!themeIcons[theme]) return;
 	data.theme = theme;
@@ -47,12 +62,17 @@ export function setTheme(theme) {
 	saveData();
 }
 
+/** Shows the active theme's translated name in the settings panel and quick chip. */
 export function updateThemeName() {
 	const selectedThemeName = t(themeNames[data.theme]);
 	$("#themeName").textContent = selectedThemeName;
 	$("#quickThemeName").textContent = selectedThemeName;
 }
 
+/**
+ * Sets the color mode and persists it; anything other than "dark" means light.
+ * @param {string} mode
+ */
 export function setColorMode(mode) {
 	data.colorMode = mode === "dark" ? "dark" : "light";
 	document.body.dataset.mode = data.colorMode;
@@ -60,6 +80,7 @@ export function setColorMode(mode) {
 	saveData();
 }
 
+/** Highlights the picker button matching the current color mode. */
 export function updateColorMode() {
 	$$("[data-mode-choice]").forEach((button) => {
 		button.classList.toggle(
@@ -69,6 +90,10 @@ export function updateColorMode() {
 	});
 }
 
+/**
+ * Maps the letter-size setting (0 small, 2 large, otherwise default) onto
+ * body classes and syncs the slider position.
+ */
 export function updateLetterSize() {
 	document.body.classList.toggle(
 		"small-letters",
@@ -81,12 +106,14 @@ export function updateLetterSize() {
 	$("#letterSize").value = data.letterSize;
 }
 
+/** Syncs every duration select with the stored session duration. */
 export function updateDuration() {
 	$$("[data-duration-select]").forEach((select) => {
 		select.value = data.duration;
 	});
 }
 
+/** Syncs the sound toggles and the quick chip's on/off text. */
 export function updateSound() {
 	$$("[data-sound-toggle]").forEach((toggle) => {
 		toggle.checked = data.sound;
@@ -94,10 +121,17 @@ export function updateSound() {
 	$("#quickSoundState").textContent = t(data.sound ? "soundOn" : "soundOff");
 }
 
+/** Shows the end-session button only while a session is running. */
 export function updateEndSessionButton() {
 	$("#endSessionButton").classList.toggle("hidden", !state.playing);
 }
 
+/**
+ * Opens the side panel on either the settings or the stats view, with
+ * matching title and eyebrow text, freshly rendered stats, and focus moved
+ * to the close button.
+ * @param {string} type `"settings"` for settings; anything else shows stats.
+ */
 export function openPanel(type) {
 	const isSettings = type === "settings";
 	$("#settingsPanel").classList.toggle("hidden", !isSettings);
@@ -112,12 +146,18 @@ export function openPanel(type) {
 	$("#closePanel").focus();
 }
 
+/** Hides the side panel and its scrim. */
 export function closePanel() {
 	$("#sidePanel").classList.remove("open");
 	$("#sidePanel").setAttribute("aria-hidden", "true");
 	$("#scrim").classList.remove("show");
 }
 
+/**
+ * Reveals the update banner. The first click on "Update now" disables the
+ * button and invokes `applyUpdate`.
+ * @param {() => void} applyUpdate Called when the user confirms the update.
+ */
 export function showUpdateBanner(applyUpdate) {
 	$("#updateBanner").classList.remove("hidden");
 	$("#updateNowButton").addEventListener(
@@ -130,6 +170,11 @@ export function showUpdateBanner(applyUpdate) {
 	);
 }
 
+/**
+ * Shows the iOS install tip; its dismiss button hides the tip and invokes
+ * `onDismiss` once.
+ * @param {() => void} onDismiss Called when the user dismisses the tip.
+ */
 export function showIosInstallTip(onDismiss) {
 	$("#iosInstallTip").classList.remove("hidden");
 	$("#dismissIosTip").addEventListener(
@@ -142,6 +187,12 @@ export function showIosInstallTip(onDismiss) {
 	);
 }
 
+/**
+ * Shares the session results (presses and best streak): via the Web Share
+ * API when present (a dismissed share sheet is ignored), otherwise by
+ * copying text and URL to the clipboard and briefly swapping the share
+ * button label to a confirmation. Does nothing when neither is available.
+ */
 export async function shareSessionResults() {
 	const text = t("shareText")
 		.replace("{presses}", state.sessionPresses)
