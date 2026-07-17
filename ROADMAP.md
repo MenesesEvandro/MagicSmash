@@ -30,7 +30,6 @@ Ideas for where Magic Smash could go next. None of this is promised or scheduled
 ## Parent comfort
 
 - **A pentatonic scale for the synthesizer.** `playTone()`'s Music theme already picks from a fixed note list (`261.63, 293.66, 329.63, 392, 440, 523.25` — C, D, E, G, A, C: a pentatonic scale) instead of a continuous pitch. Every other theme doesn't — Bubbles, Ocean, Farm, and the rest each just pick `base + Math.random() * range`, a continuous, unquantized frequency. Fine for one key at a time, but a real ten-fingers-and-a-palm smash across a dozen keys in quick succession produces a wall of essentially random pitches — tiring on a parent's ears fast. Snapping every theme's frequency to the nearest note in a pentatonic scale within its existing range (keeping each theme's character — the vehicle's downward ramp, the bubble's upward one — just quantized) would mean any smash, however chaotic, comes out sounding like a tune instead of noise.
-- **Screen Wake Lock**, so the screen doesn't dim and lock while a toddler is just watching the effects (or listening to a wind-down lullaby, see below) without touching anything for a while. The [Wake Lock API](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API) is built for exactly this — request a lock in `startGame()`, release it in `endGame()`. One wrinkle: the browser releases the lock automatically whenever the tab loses visibility, so it needs re-requesting on `visibilitychange` too, not just once at the start.
 
 ## Behavioural themes (variable physics)
 

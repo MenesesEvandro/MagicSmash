@@ -2,7 +2,7 @@ const CACHE_PREFIX = "magic-smash-";
 // The version placeholder below is filled in at build time (scripts/build.mjs)
 // with a content hash of everything in CORE_ASSETS, so any real change to the
 // app produces a new cache name automatically.
-const CACHE_NAME = `${CACHE_PREFIX}2d7d676d9b`;
+const CACHE_NAME = `${CACHE_PREFIX}24f84c3340`;
 const CORE_ASSETS = [
 	"./",
 	"./index.html",

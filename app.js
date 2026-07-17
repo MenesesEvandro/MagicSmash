@@ -54,6 +54,7 @@ const state = {
 	lastPointerTime: 0,
 	startedAt: null,
 	elapsedBeforePause: 0,
+	paused: false,
 	timerId: null,
 	backgroundShuffleId: null,
 };
@@ -518,6 +519,86 @@ function populateLanguageSelect() {
 	);
 }
 
+// ---- src/wakelock.js ----
+/** Currently held WakeLockSentinel, when a screen lock is active. */
+let sentinel = null;
+/**
+ * Whether a lock *should* be held right now, independently of the async
+ * request in flight — so a session that ends while the request is still
+ * pending doesn't strand an active lock afterwards.
+ */
+let wanted = false;
+let watchingVisibility = false;
+
+/**
+ * Requests a screen wake lock and stores it as the active sentinel,
+ * replacing any previous one. Rechecks {@link wanted} after the await so a
+ * lock granted after the session already ended is released immediately
+ * rather than stranded. The granted lock clears itself from
+ * {@link sentinel} when released, and re-requests right away if the
+ * browser dropped it while the page was still visible (battery saver, OS
+ * policy); a release while hidden is left to the visibility watcher.
+ */
+async function acquire() {
+	try {
+		const lock = await navigator.wakeLock.request("screen");
+		if (!wanted) {
+			lock.release().catch(() => {});
+			return;
+		}
+		sentinel?.release().catch(() => {});
+		sentinel = lock;
+		lock.addEventListener("release", () => {
+			// Only react when the browser dropped the lock we still consider
+			// current: our own release and replacement paths manage sentinel
+			// themselves, and re-requesting for a replaced lock would loop.
+			if (sentinel !== lock) return;
+			sentinel = null;
+			if (wanted && document.visibilityState === "visible") acquire();
+		});
+	} catch {
+		/* Dimming stays the browser's call; play continues fine without it. */
+	}
+}
+
+/**
+ * The browser releases the lock on its own whenever the page stops being
+ * visible (switching apps, locking the device). This installs, at most
+ * once, the listener that re-requests it when the page becomes visible
+ * again while a lock is still wanted.
+ */
+function watchVisibility() {
+	if (watchingVisibility) return;
+	watchingVisibility = true;
+	document.addEventListener("visibilitychange", () => {
+		if (document.visibilityState === "visible" && wanted) acquire();
+	});
+}
+
+/**
+ * Keeps the screen awake from now on, so the tablet doesn't dim and lock on
+ * a toddler who is just watching the effects without touching anything.
+ * Entirely optional: no-op on browsers without the Wake Lock API, and when
+ * the request is denied (battery saver, permissions policy) everything
+ * silently behaves exactly as before.
+ */
+function keepScreenAwake() {
+	if (!("wakeLock" in navigator)) return;
+	wanted = true;
+	watchVisibility();
+	acquire();
+}
+
+/**
+ * Stops keeping the screen awake: releases the held lock and flags any
+ * still-pending request to discard its result.
+ */
+function releaseWakeLock() {
+	wanted = false;
+	sentinel?.release().catch(() => {});
+	sentinel = null;
+}
+
 // ---- src/game.js ----
 /**
  * @param {number} seconds Seconds to format; negatives clamp to zero.
@@ -613,6 +694,7 @@ function resetSession() {
 	state.lastKeyTime = 0;
 	state.startedAt = Date.now();
 	state.elapsedBeforePause = 0;
+	state.paused = false;
 	$("#keyOrb").textContent = "?";
 	$("#keyName").textContent = t("letsPlay");
 	$("#encouragement").textContent = "";
@@ -621,14 +703,30 @@ function resetSession() {
 }
 
 /**
+ * Total seconds elapsed in the current session: time banked from earlier,
+ * non-paused segments ({@link state.elapsedBeforePause}) plus the current
+ * segment, if one is running. Reading this instead of `state.startedAt`
+ * directly is what lets a pause stop the clock without losing track of how
+ * much play already happened.
+ * @returns {number}
+ */
+function currentElapsedSeconds() {
+	const activeSegment = state.paused
+		? 0
+		: (Date.now() - state.startedAt) / 1000;
+	return state.elapsedBeforePause + activeSegment;
+}
+
+/**
  * Starts a play session (no-op if one is already running): resets session
- * state, swaps the welcome card for the key stage, and begins the 500 ms
- * timer tick.
+ * state, keeps the screen awake, swaps the welcome card for the key stage,
+ * and begins the 500 ms timer tick.
  */
 function startGame() {
 	if (state.playing) return;
 	resetSession();
 	state.playing = true;
+	keepScreenAwake();
 	$("#welcomeCard").classList.add("hidden");
 	$("#keyStage").classList.remove("hidden");
 	$("#sessionChip").classList.remove("hidden");
@@ -639,11 +737,13 @@ function startGame() {
 
 /**
  * Timer update: counts up ("+MM:SS") in free-play mode (duration 0),
- * otherwise counts down and ends the game when time runs out.
+ * otherwise counts down and ends the game when time runs out. A no-op while
+ * paused, though in practice {@link pauseSession} already stops the interval
+ * that would call this.
  */
 function tick() {
-	if (!state.playing) return;
-	const elapsed = (Date.now() - state.startedAt) / 1000;
+	if (!state.playing || state.paused) return;
+	const elapsed = currentElapsedSeconds();
 	if (Number(data.duration) === 0) {
 		$("#timer").textContent = `+${formatTimer(elapsed)}`;
 		return;
@@ -654,18 +754,45 @@ function tick() {
 }
 
 /**
- * Ends the session (no-op when idle): folds elapsed time (minimum one
- * second) and best presses-per-minute into the lifetime stats, persists
- * them, restores the welcome screen, and opens the end-of-session dialog.
+ * Pauses the running clock (no-op if idle or already paused): banks the
+ * elapsed time so far into {@link state.elapsedBeforePause} and stops the
+ * tick interval, freezing the displayed timer. Meant for whenever the
+ * parent's attention — and the settings/stats panel — is open instead of the
+ * play area, so a timed session doesn't silently drain in the background.
+ */
+function pauseSession() {
+	if (!state.playing || state.paused) return;
+	state.elapsedBeforePause = currentElapsedSeconds();
+	state.paused = true;
+	clearInterval(state.timerId);
+}
+
+/**
+ * Resumes a paused clock (no-op if idle or not paused): restarts the active
+ * segment from now, re-renders the timer immediately, and restarts the tick
+ * interval.
+ */
+function resumeSession() {
+	if (!state.playing || !state.paused) return;
+	state.paused = false;
+	state.startedAt = Date.now();
+	tick();
+	state.timerId = window.setInterval(tick, 500);
+}
+
+/**
+ * Ends the session (no-op when idle): releases the screen wake lock, folds
+ * elapsed time (minimum one second) and best presses-per-minute into the
+ * lifetime stats, persists them, restores the welcome screen, and opens the
+ * end-of-session dialog.
  */
 function endGame() {
 	if (!state.playing) return;
-	const elapsed = Math.max(
-		1,
-		Math.round((Date.now() - state.startedAt) / 1000),
-	);
+	const elapsed = Math.max(1, Math.round(currentElapsedSeconds()));
 	state.playing = false;
+	state.paused = false;
 	clearInterval(state.timerId);
+	releaseWakeLock();
 	data.totalSeconds += elapsed;
 	data.bestSpeed = Math.max(
 		data.bestSpeed,
@@ -1044,7 +1171,9 @@ function updateEndSessionButton() {
 /**
  * Opens the side panel on either the settings or the stats view, with
  * matching title and eyebrow text, freshly rendered stats, and focus moved
- * to the close button.
+ * to the close button. Pauses a running session's clock — the parent's
+ * attention is here now, not on the play area, so a timed session shouldn't
+ * silently drain in the background while they look around.
  * @param {string} type `"settings"` for settings; anything else shows stats.
  */
 function openPanel(type) {
@@ -1053,6 +1182,7 @@ function openPanel(type) {
 	$("#statsPanel").classList.toggle("hidden", isSettings);
 	$("#panelTitle").textContent = t(isSettings ? "settings" : "stats");
 	$("#panelEyebrow").textContent = isSettings ? t("caregivers") : t("allTime");
+	pauseSession();
 	updateStats();
 	updateEndSessionButton();
 	$("#sidePanel").classList.add("open");
@@ -1061,11 +1191,12 @@ function openPanel(type) {
 	$("#closePanel").focus();
 }
 
-/** Hides the side panel and its scrim. */
+/** Hides the side panel and its scrim, and resumes a paused session's clock. */
 function closePanel() {
 	$("#sidePanel").classList.remove("open");
 	$("#sidePanel").setAttribute("aria-hidden", "true");
 	$("#scrim").classList.remove("show");
+	resumeSession();
 }
 
 /**
