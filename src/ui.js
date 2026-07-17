@@ -1,6 +1,11 @@
 import { $, $$ } from "./dom.js";
 import { createMagicBackground } from "./effects.js";
-import { updateStats, updateStreak } from "./game.js";
+import {
+	pauseSession,
+	resumeSession,
+	updateStats,
+	updateStreak,
+} from "./game.js";
 import { languages, t } from "./i18n.js";
 import { data, saveData, state } from "./state.js";
 import { themeIcons, themeNames } from "./themes.js";
@@ -129,7 +134,9 @@ export function updateEndSessionButton() {
 /**
  * Opens the side panel on either the settings or the stats view, with
  * matching title and eyebrow text, freshly rendered stats, and focus moved
- * to the close button.
+ * to the close button. Pauses a running session's clock — the parent's
+ * attention is here now, not on the play area, so a timed session shouldn't
+ * silently drain in the background while they look around.
  * @param {string} type `"settings"` for settings; anything else shows stats.
  */
 export function openPanel(type) {
@@ -138,6 +145,7 @@ export function openPanel(type) {
 	$("#statsPanel").classList.toggle("hidden", isSettings);
 	$("#panelTitle").textContent = t(isSettings ? "settings" : "stats");
 	$("#panelEyebrow").textContent = isSettings ? t("caregivers") : t("allTime");
+	pauseSession();
 	updateStats();
 	updateEndSessionButton();
 	$("#sidePanel").classList.add("open");
@@ -146,11 +154,12 @@ export function openPanel(type) {
 	$("#closePanel").focus();
 }
 
-/** Hides the side panel and its scrim. */
+/** Hides the side panel and its scrim, and resumes a paused session's clock. */
 export function closePanel() {
 	$("#sidePanel").classList.remove("open");
 	$("#sidePanel").setAttribute("aria-hidden", "true");
 	$("#scrim").classList.remove("show");
+	resumeSession();
 }
 
 /**

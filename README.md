@@ -17,6 +17,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 - **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation.
 - **A living background** — icons drift lazily across the screen and pop when a key is pressed.
 - **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen.
+- **The screen stays awake during play** — a toddler staring in fascination without touching anything won't get the screen dimming and locking on them mid-session (on browsers that support the Wake Lock API; the lock is released the moment the session ends).
 - **Light and dark mode**, adjustable letter size, and sound on/off.
 - **Local stats only** — total presses, unique keys, playtime, best streak, favourite key. Stored on the device, never sent anywhere.
 - **An optional first name** for whoever's playing, saved locally.

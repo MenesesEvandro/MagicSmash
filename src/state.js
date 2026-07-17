@@ -51,6 +51,7 @@ export const state = {
 	lastPointerTime: 0,
 	startedAt: null,
 	elapsedBeforePause: 0,
+	paused: false,
 	timerId: null,
 	backgroundShuffleId: null,
 };

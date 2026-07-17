@@ -10,6 +10,7 @@ import {
 import { languages, t } from "./i18n.js";
 import { data, saveData, state } from "./state.js";
 import { themeIcons } from "./themes.js";
+import { keepScreenAwake, releaseWakeLock } from "./wakelock.js";
 
 /**
  * @param {number} seconds Seconds to format; negatives clamp to zero.
@@ -105,6 +106,7 @@ export function resetSession() {
 	state.lastKeyTime = 0;
 	state.startedAt = Date.now();
 	state.elapsedBeforePause = 0;
+	state.paused = false;
 	$("#keyOrb").textContent = "?";
 	$("#keyName").textContent = t("letsPlay");
 	$("#encouragement").textContent = "";
@@ -113,14 +115,30 @@ export function resetSession() {
 }
 
 /**
+ * Total seconds elapsed in the current session: time banked from earlier,
+ * non-paused segments ({@link state.elapsedBeforePause}) plus the current
+ * segment, if one is running. Reading this instead of `state.startedAt`
+ * directly is what lets a pause stop the clock without losing track of how
+ * much play already happened.
+ * @returns {number}
+ */
+function currentElapsedSeconds() {
+	const activeSegment = state.paused
+		? 0
+		: (Date.now() - state.startedAt) / 1000;
+	return state.elapsedBeforePause + activeSegment;
+}
+
+/**
  * Starts a play session (no-op if one is already running): resets session
- * state, swaps the welcome card for the key stage, and begins the 500 ms
- * timer tick.
+ * state, keeps the screen awake, swaps the welcome card for the key stage,
+ * and begins the 500 ms timer tick.
  */
 export function startGame() {
 	if (state.playing) return;
 	resetSession();
 	state.playing = true;
+	keepScreenAwake();
 	$("#welcomeCard").classList.add("hidden");
 	$("#keyStage").classList.remove("hidden");
 	$("#sessionChip").classList.remove("hidden");
@@ -131,11 +149,13 @@ export function startGame() {
 
 /**
  * Timer update: counts up ("+MM:SS") in free-play mode (duration 0),
- * otherwise counts down and ends the game when time runs out.
+ * otherwise counts down and ends the game when time runs out. A no-op while
+ * paused, though in practice {@link pauseSession} already stops the interval
+ * that would call this.
  */
 export function tick() {
-	if (!state.playing) return;
-	const elapsed = (Date.now() - state.startedAt) / 1000;
+	if (!state.playing || state.paused) return;
+	const elapsed = currentElapsedSeconds();
 	if (Number(data.duration) === 0) {
 		$("#timer").textContent = `+${formatTimer(elapsed)}`;
 		return;
@@ -146,18 +166,45 @@ export function tick() {
 }
 
 /**
- * Ends the session (no-op when idle): folds elapsed time (minimum one
- * second) and best presses-per-minute into the lifetime stats, persists
- * them, restores the welcome screen, and opens the end-of-session dialog.
+ * Pauses the running clock (no-op if idle or already paused): banks the
+ * elapsed time so far into {@link state.elapsedBeforePause} and stops the
+ * tick interval, freezing the displayed timer. Meant for whenever the
+ * parent's attention — and the settings/stats panel — is open instead of the
+ * play area, so a timed session doesn't silently drain in the background.
+ */
+export function pauseSession() {
+	if (!state.playing || state.paused) return;
+	state.elapsedBeforePause = currentElapsedSeconds();
+	state.paused = true;
+	clearInterval(state.timerId);
+}
+
+/**
+ * Resumes a paused clock (no-op if idle or not paused): restarts the active
+ * segment from now, re-renders the timer immediately, and restarts the tick
+ * interval.
+ */
+export function resumeSession() {
+	if (!state.playing || !state.paused) return;
+	state.paused = false;
+	state.startedAt = Date.now();
+	tick();
+	state.timerId = window.setInterval(tick, 500);
+}
+
+/**
+ * Ends the session (no-op when idle): releases the screen wake lock, folds
+ * elapsed time (minimum one second) and best presses-per-minute into the
+ * lifetime stats, persists them, restores the welcome screen, and opens the
+ * end-of-session dialog.
  */
 export function endGame() {
 	if (!state.playing) return;
-	const elapsed = Math.max(
-		1,
-		Math.round((Date.now() - state.startedAt) / 1000),
-	);
+	const elapsed = Math.max(1, Math.round(currentElapsedSeconds()));
 	state.playing = false;
+	state.paused = false;
 	clearInterval(state.timerId);
+	releaseWakeLock();
 	data.totalSeconds += elapsed;
 	data.bestSpeed = Math.max(
 		data.bestSpeed,
