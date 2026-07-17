@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"build": "biome check . && node scripts/build.mjs",
+		"build": "npm run check && node scripts/build.mjs",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check --write ."
