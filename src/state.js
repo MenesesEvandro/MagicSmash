@@ -38,7 +38,13 @@ export const state = {
 };
 
 export function saveData() {
-	localStorage.setItem(storageKey, JSON.stringify(data));
+	try {
+		localStorage.setItem(storageKey, JSON.stringify(data));
+	} catch {
+		// Storage can be full or blocked (private browsing, quota, an
+		// extension). Losing persistence for this session beats throwing out
+		// of a hot path like every keypress.
+	}
 }
 
 export function resetStats(keep) {
