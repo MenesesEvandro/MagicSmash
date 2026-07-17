@@ -12,7 +12,10 @@ let watchingVisibility = false;
  * Requests a screen wake lock and stores it as the active sentinel,
  * replacing any previous one. Rechecks {@link wanted} after the await so a
  * lock granted after the session already ended is released immediately
- * rather than stranded.
+ * rather than stranded. The granted lock clears itself from
+ * {@link sentinel} when released, and re-requests right away if the
+ * browser dropped it while the page was still visible (battery saver, OS
+ * policy); a release while hidden is left to the visibility watcher.
  */
 async function acquire() {
 	try {
@@ -23,6 +26,14 @@ async function acquire() {
 		}
 		sentinel?.release().catch(() => {});
 		sentinel = lock;
+		lock.addEventListener("release", () => {
+			// Only react when the browser dropped the lock we still consider
+			// current: our own release and replacement paths manage sentinel
+			// themselves, and re-requesting for a replaced lock would loop.
+			if (sentinel !== lock) return;
+			sentinel = null;
+			if (wanted && document.visibilityState === "visible") acquire();
+		});
 	} catch {
 		/* Dimming stays the browser's call; play continues fine without it. */
 	}
