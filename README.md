@@ -1,5 +1,7 @@
 # Magic Smash
 
+**[🕹️ Play Magic Smash online](https://menesesevandro.github.io/MagicSmash/)**
+
 Press any key. Something delightful happens. That's the whole game.
 
 Magic Smash is a keyboard playground for toddlers: no rules, no losing, no reading required. Every keypress (or tap, or click) triggers a big animated letter, a friendly sound, and a burst of themed characters flying across the screen.
