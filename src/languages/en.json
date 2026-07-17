@@ -69,6 +69,10 @@
 		"greatSession": "WHAT A LOVELY PLAYTIME!",
 		"sessionComplete": "Playtime complete",
 		"playAgain": "Play again",
+		"backToHome": "Back to home",
+		"share": "Share",
+		"shareText": "We just played Magic Smash and pressed {presses} keys with a streak of {streak}! 🎉 Come play too:",
+		"linkCopied": "Link copied!",
 		"encouragement": [
 			"Amazing!",
 			"You did it!",

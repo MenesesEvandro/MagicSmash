@@ -1,5 +1,6 @@
 {
 	"name": "magic-smash",
+	"description": "Offline keyboard playground for toddlers — press any key, something delightful happens. No ads, no tracking, no internet needed.",
 	"private": true,
 	"license": "MIT",
 	"type": "module",
