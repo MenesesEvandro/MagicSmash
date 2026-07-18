@@ -621,6 +621,10 @@ h1 {
 	color: var(--muted);
 	opacity: 0.65;
 }
+.credit-footer a,
+.credit-footer a:visited {
+	color: inherit;
+}
 .session-chip {
 	position: absolute;
 	top: 100px;
