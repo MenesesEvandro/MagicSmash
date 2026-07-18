@@ -20,7 +20,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 - **A living background** — icons drift lazily across the screen and pop when a key is pressed.
 - **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen. Opening Settings or Stats mid-session pauses the clock, so checking on something doesn't eat into playtime.
 - **The screen stays awake during play** — a toddler staring in fascination without touching anything won't get the screen dimming and locking on them mid-session (on browsers that support the Wake Lock API; the lock is released the moment the session ends).
-- **Light and dark mode**, adjustable letter size, and sound on/off.
+- **Light and dark mode**, adjustable letter size, sound on/off, and optional vibration on each key on devices and browsers that support it (mostly Android).
 - **Local stats only** — total presses, unique keys, playtime, best streak, favourite key. Stored on the device, never sent anywhere.
 - **An optional first name** for whoever's playing, saved locally.
 - **6 languages** — Portuguese (Brazil), English, Spanish, French, German, and Italian, so parents and kids anywhere in the world can play in the words they use at home, not just mine. If this turns out to be useful beyond my own living room, more languages will probably show up over time (thank you, Google Translate, for the first draft of every one after Portuguese — contributions from actual speakers very welcome).
