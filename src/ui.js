@@ -118,12 +118,18 @@ export function updateDuration() {
 	});
 }
 
-/** Syncs the sound toggles and the quick chip's on/off text. */
+/** Syncs the sound toggles. */
 export function updateSound() {
 	$$("[data-sound-toggle]").forEach((toggle) => {
 		toggle.checked = data.sound;
 	});
-	$("#quickSoundState").textContent = t(data.sound ? "soundOn" : "soundOff");
+}
+
+/** Syncs the vibration toggles. */
+export function updateVibration() {
+	$$("[data-vibration-toggle]").forEach((toggle) => {
+		toggle.checked = data.vibration;
+	});
 }
 
 /** Shows the end-session button only while a session is running. */

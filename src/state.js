@@ -12,6 +12,7 @@ export const initialData = {
 	colorMode: "light",
 	duration: 5,
 	sound: true,
+	vibration: false,
 	letterSize: 1,
 	totalPresses: 0,
 	totalSeconds: 0,

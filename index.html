@@ -93,7 +93,10 @@
                 </select>
               </label>
               <label class="quick-control sound-quick-control" for="quickSoundToggle"><span data-i18n="quickSound">Som</span>
-                <span class="quick-sound-switch"><span id="quickSoundState" data-i18n="soundOn">Ligado</span><input id="quickSoundToggle" data-sound-toggle type="checkbox" checked /><i></i></span>
+                <span class="quick-sound-switch"><input id="quickSoundToggle" data-sound-toggle type="checkbox" checked /><i></i></span>
+              </label>
+              <label class="quick-control vibration-quick-control" for="quickVibrationToggle"><span data-i18n="vibration">Vibração</span>
+                <span class="quick-sound-switch"><input id="quickVibrationToggle" data-vibration-toggle type="checkbox" /><i></i></span>
               </label>
               <div class="quick-control mode-quick-control">
                 <span data-i18n="appearance">Aparência</span>
@@ -189,6 +192,10 @@
         <div class="setting-row">
           <div><strong data-i18n="sound">Sons suaves</strong><p data-i18n="soundHelp">Um som a cada tecla</p></div>
           <label class="toggle"><input id="soundToggle" data-sound-toggle type="checkbox" checked aria-label="Sons suaves" /><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div><strong data-i18n="vibration">Vibração</strong><p data-i18n="vibrationHelp">Uma vibração a cada tecla, se o aparelho permitir</p></div>
+          <label class="toggle"><input id="vibrationToggle" data-vibration-toggle type="checkbox" aria-label="Vibração" /><span></span></label>
         </div>
         <div class="setting-row range-row">
           <div><strong data-i18n="letterSize">Tamanho das letras</strong><p data-i18n="letterSizeHelp">Mais conforto para enxergar</p></div>

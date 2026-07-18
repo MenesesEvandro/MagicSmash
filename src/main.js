@@ -29,6 +29,7 @@ import {
 	updateDuration,
 	updateLetterSize,
 	updateSound,
+	updateVibration,
 } from "./ui.js";
 
 $("#startButton").addEventListener("click", async () => {
@@ -81,6 +82,13 @@ $$("[data-sound-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-vibration-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.vibration = event.target.checked;
+		updateVibration();
+		saveData();
+	});
+});
 $("#letterSize").addEventListener("input", (event) => {
 	data.letterSize = Number(event.target.value);
 	updateLetterSize();
@@ -127,6 +135,7 @@ $("#resetStats").addEventListener("click", () => {
 		colorMode: data.colorMode,
 		duration: data.duration,
 		sound: data.sound,
+		vibration: data.vibration,
 		letterSize: data.letterSize,
 	};
 	resetStats(keep);
@@ -154,6 +163,7 @@ function initializeApp() {
 	startBackgroundShuffle();
 	updateDuration();
 	updateSound();
+	updateVibration();
 	updateLetterSize();
 	updateStats();
 }

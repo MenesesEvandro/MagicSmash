@@ -238,7 +238,9 @@ export function pressKey(event) {
 		["Alt", "Escape"].includes(event.key)
 	)
 		event.preventDefault();
-	triggerInteraction(displayKey(event), keyName(event), event, { sound: true });
+	triggerInteraction(displayKey(event), keyName(event), event, {
+		feedback: true,
+	});
 }
 
 /**
@@ -251,7 +253,9 @@ export function pressKey(event) {
  * @param {{clientX?: number, clientY?: number}} point Effect origin for
  * pointer interactions; keyboard interactions use a random point instead.
  * @param {object} [options]
- * @param {boolean} [options.sound=false] Play a tone (still gated by the sound setting).
+ * @param {boolean} [options.feedback=false] Discrete interaction (a keypress
+ * or tap, not a mouse-trail move): plays a tone and/or vibrates, each still
+ * independently gated by its own setting (`data.sound`, `data.vibration`).
  * @param {boolean} [options.pointer=false] Pointer interaction: draw a trail
  * at `point` and skip the sparkle/letter burst unless `burst` is set.
  * @param {boolean} [options.burst=false] Fire the sparkle/letter burst even
@@ -261,7 +265,7 @@ export function triggerInteraction(
 	displayed,
 	label,
 	point,
-	{ sound = false, pointer = false, burst = false } = {},
+	{ feedback = false, pointer = false, burst = false } = {},
 ) {
 	if (!state.playing) startGame();
 	const effectPoint = pointer ? point : randomEffectPoint();
@@ -291,8 +295,17 @@ export function triggerInteraction(
 	animateBackground();
 	updateStreak();
 	updateStats();
-	if (sound && data.sound) playTone();
+	if (feedback && data.sound) playTone();
+	if (feedback && data.vibration) vibrate();
 	saveData();
+}
+
+/**
+ * Fires a short haptic pulse. A no-op wherever the Vibration API doesn't
+ * exist (iOS Safari, most desktop browsers) or has no hardware to act on.
+ */
+function vibrate() {
+	navigator.vibrate?.(15);
 }
 
 /**
@@ -339,6 +352,6 @@ export function pressPointer(event) {
 	triggerInteraction(displayed, displayed, event, {
 		pointer: true,
 		burst: event.type === "pointerdown",
-		sound: event.type === "pointerdown",
+		feedback: event.type === "pointerdown",
 	});
 }

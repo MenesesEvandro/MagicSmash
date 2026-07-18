@@ -449,7 +449,7 @@ h1 {
 }
 .quick-controls {
 	display: grid;
-	grid-template-columns: 1.1fr 1fr 1fr;
+	grid-template-columns: 1.1fr 1fr 1fr 1fr;
 	gap: 8px;
 }
 .quick-control {
@@ -1751,7 +1751,7 @@ body.small-letters .key-orb {
 		font-size: 27px;
 	}
 	.quick-controls {
-		grid-template-columns: 1.1fr 1fr 1fr;
+		grid-template-columns: 1.1fr 1fr 1fr 1fr;
 		gap: 5px;
 	}
 	.quick-options {
