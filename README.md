@@ -18,7 +18,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 - **14 themes** — Vehicles, Bubbles, Music, Colors, Weather, Dinosaurs, Farm, Party, Space, Beach, Ocean, Lights, Toys, and Bedtime. Each one has its own icon set, color palette, sound, and animation.
 - **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation.
 - **A living background** — icons drift lazily across the screen and pop when a key is pressed.
-- **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen.
+- **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen. Opening Settings or Stats mid-session pauses the clock, so checking on something doesn't eat into playtime.
 - **The screen stays awake during play** — a toddler staring in fascination without touching anything won't get the screen dimming and locking on them mid-session (on browsers that support the Wake Lock API; the lock is released the moment the session ends).
 - **Light and dark mode**, adjustable letter size, and sound on/off.
 - **Local stats only** — total presses, unique keys, playtime, best streak, favourite key. Stored on the device, never sent anywhere.
@@ -51,6 +51,7 @@ npm run check   # lint + format together, with fixes
 - **No bundler.** [`scripts/build.mjs`](scripts/build.mjs) is a small Node script (no dependencies) that resolves the module import graph, strips `import`/`export`, embeds every language from `src/languages/*.json`, and concatenates everything into a single classic `<script>` — the `app.js` at the project root. That's what makes opening `index.html` directly work: no CORS restrictions from ES modules, no `fetch` calls for translations, nothing that requires a server.
 - **The service worker is generated too.** Its source is `src/sw.js`; the build fills in a cache name derived from a hash of everything it caches (`index.html`, `styles.css`, `manifest.webmanifest`, `app.js`) and writes the result to `sw.js` at the project root. That removes any "forgot to bump the version" failure mode — a real code or content change always gets a new cache automatically, and nothing else does.
 - **[Biome](https://biomejs.dev/)** handles linting and formatting for JS, JSON, and CSS.
+- **A GitHub Actions workflow** ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)) rebuilds `app.js`/`sw.js` from `src/` and deploys straight to GitHub Pages on every push to `main` that touches the app itself — so the [online version](https://menesesevandro.github.io/MagicSmash/) never depends on remembering to run `npm run build` before pushing. Docs-only changes (README, ROADMAP, LICENSE) don't trigger it.
 
 ## Project structure
 
@@ -65,6 +66,7 @@ npm run check   # lint + format together, with fixes
 - `icons/` — app icons (192, 512, a maskable 512, and an iOS `apple-touch-icon`)
 - `scripts/build.mjs` — the build script
 - `biome.json` — lint/format config
+- `.github/workflows/deploy.yml` — builds and deploys to GitHub Pages on push to `main`
 
 ## Contributing
 
