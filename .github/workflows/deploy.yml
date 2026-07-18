@@ -1,0 +1,78 @@
+name: Build and deploy to GitHub Pages
+
+# Only runs when something that actually affects the deployed site changes.
+# Docs-only pushes (README, LICENSE, ROADMAP, etc.) don't match any of these
+# paths, so no build and no deploy happen for them. app.js and sw.js aren't
+# listed on purpose: they're rebuilt fresh from src/ on every run below, so a
+# push that only updates them (or doesn't update them at all) is never what
+# decides whether a new page goes out — the actual sources are.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "index.html"
+      - "styles.css"
+      - "manifest.webmanifest"
+      - "icons/**"
+      - "package.json"
+      - "biome.json"
+  # Lets a deploy be triggered by hand from the Actions tab, with no commit
+  # needed — a manual safety valve alongside the automatic path above.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy in flight at a time; a new one waits for the current one
+# to finish rather than racing it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No package-lock.json (it's gitignored on purpose), so this can't use
+      # `npm ci`, which requires one.
+      - run: npm install
+
+      # Rebuilds app.js and sw.js from src/ regardless of what's committed —
+      # this is what makes it not matter whether app.js/sw.js were built
+      # locally before pushing. Also formats/lints (biome --write), so a
+      # style slip never blocks a deploy either.
+      - run: npm run build
+
+      # Only the files the live site actually needs — not README, LICENSE,
+      # ROADMAP, src/, scripts/, or anything else the repo carries for
+      # development. GitHub Pages doesn't run Jekyll in this deployment mode
+      # at all, so .nojekyll has nothing left to do and isn't copied either.
+      - name: Stage the site
+        run: |
+          mkdir -p _site
+          cp index.html styles.css app.js sw.js manifest.webmanifest _site/
+          cp -r icons _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
