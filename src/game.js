@@ -226,7 +226,7 @@ export function endGame() {
  * Global keydown handler; inert until languages are loaded. Suppresses the
  * browser default for keys that would scroll or move focus (Tab, space,
  * arrows, Alt, Escape), then feeds the press to {@link triggerInteraction}
- * with sound.
+ * with feedback (sound and/or vibration, each per its own setting).
  * @param {KeyboardEvent} event
  */
 export function pressKey(event) {
