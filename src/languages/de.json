@@ -46,6 +46,8 @@
 		"soundHelp": "Ein Ton pro Taste",
 		"vibration": "Vibration",
 		"vibrationHelp": "Ein kurzes Vibrieren pro Taste, wenn das Gerät es unterstützt",
+		"kaleidoscope": "Kaleidoskop",
+		"kaleidoscopeHelp": "Spiegelt jeden Effekt rund um den Bildschirm",
 		"letterSize": "Buchstabengröße",
 		"letterSizeHelp": "Besser zu sehen",
 		"fullscreen": "Vollbild öffnen",

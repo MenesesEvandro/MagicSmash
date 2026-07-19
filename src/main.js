@@ -27,6 +27,7 @@ import {
 	showIosInstallTip,
 	showUpdateBanner,
 	updateDuration,
+	updateKaleidoscope,
 	updateLetterSize,
 	updateSound,
 	updateVibration,
@@ -89,6 +90,13 @@ $$("[data-vibration-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-kaleidoscope-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.kaleidoscope = event.target.checked;
+		updateKaleidoscope();
+		saveData();
+	});
+});
 $("#letterSize").addEventListener("input", (event) => {
 	data.letterSize = Number(event.target.value);
 	updateLetterSize();
@@ -136,6 +144,7 @@ $("#resetStats").addEventListener("click", () => {
 		duration: data.duration,
 		sound: data.sound,
 		vibration: data.vibration,
+		kaleidoscope: data.kaleidoscope,
 		letterSize: data.letterSize,
 	};
 	resetStats(keep);
@@ -164,6 +173,7 @@ function initializeApp() {
 	updateDuration();
 	updateSound();
 	updateVibration();
+	updateKaleidoscope();
 	updateLetterSize();
 	updateStats();
 }

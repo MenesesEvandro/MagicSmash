@@ -132,6 +132,13 @@ export function updateVibration() {
 	});
 }
 
+/** Syncs the kaleidoscope toggle. */
+export function updateKaleidoscope() {
+	$$("[data-kaleidoscope-toggle]").forEach((toggle) => {
+		toggle.checked = data.kaleidoscope;
+	});
+}
+
 /** Shows the end-session button only while a session is running. */
 export function updateEndSessionButton() {
 	$("#endSessionButton").classList.toggle("hidden", !state.playing);

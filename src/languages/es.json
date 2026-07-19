@@ -46,6 +46,8 @@
 		"soundHelp": "Un sonido por tecla",
 		"vibration": "Vibración",
 		"vibrationHelp": "Una vibración por cada tecla, si el aparato lo permite",
+		"kaleidoscope": "Caleidoscopio",
+		"kaleidoscopeHelp": "Refleja los efectos alrededor de la pantalla",
 		"letterSize": "Tamaño de letras",
 		"letterSizeHelp": "Más fácil de ver",
 		"fullscreen": "Abrir en pantalla completa",
