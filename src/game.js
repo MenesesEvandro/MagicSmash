@@ -333,6 +333,9 @@ function kaleidoscopePoints(point) {
 		return [point];
 	const reflections = state.streak >= 8 ? 2 : state.streak >= 4 ? 4 : 8;
 	const rect = $("#playArea").getBoundingClientRect();
+	// A zero-sized rect (mid-layout, hidden) would turn the normalized
+	// offsets below into Infinity/NaN coordinates.
+	if (rect.width <= 0 || rect.height <= 0) return [point];
 	const cx = rect.left + rect.width / 2;
 	const cy = rect.top + rect.height / 2;
 	const nx = (point.clientX - cx) / (rect.width / 2);

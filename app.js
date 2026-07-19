@@ -404,8 +404,15 @@ function makeThemeMechanic(event) {
 		// Drive across at the height of the press (clamped to the original
 		// 12–84% band) rather than a random lane, so the effect answers the
 		// touch's position — and so kaleidoscope mode's mirrored points show
-		// up as a symmetric fleet instead of being ignored.
-		const lane = Math.min(84, Math.max(12, (y / window.innerHeight) * 100));
+		// up as a symmetric fleet instead of being ignored. --y resolves
+		// against .theme-effects, which fills #playArea — taller than the
+		// viewport and possibly scrolled — so the percentage has to come from
+		// the play area's own rect, not window.innerHeight.
+		const areaRect = $("#playArea").getBoundingClientRect();
+		const lane = Math.min(
+			84,
+			Math.max(12, ((y - areaRect.top) / Math.max(1, areaRect.height)) * 100),
+		);
 		vehicle.style.setProperty("--y", `${lane}%`);
 		effects.append(vehicle);
 		vehicle.addEventListener("animationend", () => vehicle.remove());
@@ -963,6 +970,9 @@ function kaleidoscopePoints(point) {
 		return [point];
 	const reflections = state.streak >= 8 ? 2 : state.streak >= 4 ? 4 : 8;
 	const rect = $("#playArea").getBoundingClientRect();
+	// A zero-sized rect (mid-layout, hidden) would turn the normalized
+	// offsets below into Infinity/NaN coordinates.
+	if (rect.width <= 0 || rect.height <= 0) return [point];
 	const cx = rect.left + rect.width / 2;
 	const cy = rect.top + rect.height / 2;
 	const nx = (point.clientX - cx) / (rect.width / 2);
