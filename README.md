@@ -18,6 +18,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 - **14 themes** — Vehicles, Bubbles, Music, Colors, Weather, Dinosaurs, Farm, Party, Space, Beach, Ocean, Lights, Toys, and Bedtime. Each one has its own icon set, color palette, sound, and animation.
 - **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation.
 - **A living background** — icons drift lazily across the screen and pop when a key is pressed.
+- **Optional kaleidoscope mode** — mirrors every effect around the centre of the screen for a radial, symmetric pattern, easing off automatically during a fast smash so it never overwhelms.
 - **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen. Opening Settings or Stats mid-session pauses the clock, so checking on something doesn't eat into playtime.
 - **The screen stays awake during play** — a toddler staring in fascination without touching anything won't get the screen dimming and locking on them mid-session (on browsers that support the Wake Lock API; the lock is released the moment the session ends).
 - **Light and dark mode**, adjustable letter size, sound on/off, and optional vibration on each key on devices and browsers that support it (mostly Android).

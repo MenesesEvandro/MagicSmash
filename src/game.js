@@ -286,12 +286,14 @@ export function triggerInteraction(
 	orb.classList.remove("bounce");
 	void orb.offsetWidth;
 	orb.classList.add("bounce");
-	if (pointer) makePointerTrail(point);
+	const points = kaleidoscopePoints(effectPoint);
+	if (pointer)
+		for (const kaleidoscopePoint of points) makePointerTrail(kaleidoscopePoint);
 	if (!pointer || burst) {
-		makeSparkles(effectPoint);
+		for (const kaleidoscopePoint of points) makeSparkles(kaleidoscopePoint);
 		makeLetterTrail(displayed);
 	}
-	makeThemeMechanic(effectPoint);
+	for (const kaleidoscopePoint of points) makeThemeMechanic(kaleidoscopePoint);
 	animateBackground();
 	updateStreak();
 	updateStats();
@@ -306,6 +308,53 @@ export function triggerInteraction(
  */
 function vibrate() {
 	navigator.vibrate?.(15);
+}
+
+/**
+ * Points to fire a point-anchored effect at: just `point` when kaleidoscope
+ * mode is off, otherwise `point` plus its mirror images across #playArea's
+ * centre. Offsets are normalized to the play area's half-width/half-height
+ * before the axis-swapping diagonal reflections, so on a wide screen every
+ * mirrored point still lands inside the play area instead of past its top
+ * or bottom edge. The reflection count scales down as {@link state.streak}
+ * climbs (8 → 4 → 2) so a fast multi-key smash doesn't multiply an
+ * already-fast pace of particles on top of itself — a single deliberate
+ * press gets the full symmetry, and even mid-smash every burst keeps a
+ * visible mirrored twin rather than the mode silently switching off.
+ * @param {{clientX?: number, clientY?: number}} point
+ * @returns {{clientX?: number, clientY?: number}[]}
+ */
+function kaleidoscopePoints(point) {
+	if (
+		!data.kaleidoscope ||
+		!Number.isFinite(point.clientX) ||
+		!Number.isFinite(point.clientY)
+	)
+		return [point];
+	const reflections = state.streak >= 8 ? 2 : state.streak >= 4 ? 4 : 8;
+	const rect = $("#playArea").getBoundingClientRect();
+	const cx = rect.left + rect.width / 2;
+	const cy = rect.top + rect.height / 2;
+	const nx = (point.clientX - cx) / (rect.width / 2);
+	const ny = (point.clientY - cy) / (rect.height / 2);
+	const offsets =
+		reflections === 2
+			? [
+					[nx, ny],
+					[-nx, -ny],
+				]
+			: [
+					[nx, ny],
+					[-nx, ny],
+					[nx, -ny],
+					[-nx, -ny],
+				];
+	if (reflections === 8)
+		offsets.push([ny, nx], [-ny, nx], [ny, -nx], [-ny, -nx]);
+	return offsets.map(([ox, oy]) => ({
+		clientX: cx + (ox * rect.width) / 2,
+		clientY: cy + (oy * rect.height) / 2,
+	}));
 }
 
 /**

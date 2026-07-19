@@ -46,6 +46,8 @@
 		"soundHelp": "One sound for each key",
 		"vibration": "Vibration",
 		"vibrationHelp": "A little buzz for each key, on devices that support it",
+		"kaleidoscope": "Kaleidoscope",
+		"kaleidoscopeHelp": "Mirrors every effect around the screen",
 		"letterSize": "Letter size",
 		"letterSizeHelp": "Easier to see",
 		"fullscreen": "Open full screen",

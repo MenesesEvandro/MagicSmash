@@ -145,8 +145,9 @@ export function makePointerTrail(event) {
 
 /**
  * Fires the current theme's signature effect: a vehicle driving across the
- * screen for `vehicles`, otherwise a handful of theme symbols rising from
- * around the given point (key orb center when coordinates are missing).
+ * screen at the press's height for `vehicles`, otherwise a handful of theme
+ * symbols rising from around the given point (key orb center when
+ * coordinates are missing).
  * No-op for a theme id missing from {@link themeIcons}.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
  */
@@ -172,7 +173,12 @@ export function makeThemeMechanic(event) {
 			themeIcons.vehicles[
 				Math.floor(Math.random() * themeIcons.vehicles.length)
 			];
-		vehicle.style.setProperty("--y", `${12 + Math.random() * 72}%`);
+		// Drive across at the height of the press (clamped to the original
+		// 12–84% band) rather than a random lane, so the effect answers the
+		// touch's position — and so kaleidoscope mode's mirrored points show
+		// up as a symmetric fleet instead of being ignored.
+		const lane = Math.min(84, Math.max(12, (y / window.innerHeight) * 100));
+		vehicle.style.setProperty("--y", `${lane}%`);
 		effects.append(vehicle);
 		vehicle.addEventListener("animationend", () => vehicle.remove());
 		return;

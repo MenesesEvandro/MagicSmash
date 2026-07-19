@@ -13,6 +13,7 @@ export const initialData = {
 	duration: 5,
 	sound: true,
 	vibration: false,
+	kaleidoscope: false,
 	letterSize: 1,
 	totalPresses: 0,
 	totalSeconds: 0,

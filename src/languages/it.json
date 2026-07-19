@@ -46,6 +46,8 @@
 		"soundHelp": "Un suono per ogni tasto",
 		"vibration": "Vibrazione",
 		"vibrationHelp": "Una piccola vibrazione per ogni tasto, se il dispositivo lo supporta",
+		"kaleidoscope": "Caleidoscopio",
+		"kaleidoscopeHelp": "Riflette ogni effetto intorno allo schermo",
 		"letterSize": "Dimensione delle lettere",
 		"letterSizeHelp": "Più facile da vedere",
 		"fullscreen": "Apri a schermo intero",
