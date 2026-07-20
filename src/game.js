@@ -130,6 +130,19 @@ function currentElapsedSeconds() {
 }
 
 /**
+ * Enables or disables the top-bar language selector to match the parent
+ * gate. While the gate stands (setting on, session running, not paused), a
+ * mid-play tap on the select would pop the browser's native dropdown over
+ * the game — and a hold gesture can't guard a `<select>`, so disabling it
+ * is what closes that last ungated top-bar control. It comes back the
+ * moment the gate drops: welcome screen, panel open, or session over.
+ */
+export function updateParentGateLocks() {
+	$("#languageSelect").disabled =
+		data.parentGate && state.playing && !state.paused;
+}
+
+/**
  * Starts a play session (no-op if one is already running): resets session
  * state, keeps the screen awake, swaps the welcome card for the key stage,
  * and begins the 500 ms timer tick.
@@ -139,6 +152,7 @@ export function startGame() {
 	resetSession();
 	state.playing = true;
 	keepScreenAwake();
+	updateParentGateLocks();
 	$("#welcomeCard").classList.add("hidden");
 	$("#keyStage").classList.remove("hidden");
 	$("#sessionChip").classList.remove("hidden");
@@ -177,6 +191,7 @@ export function pauseSession() {
 	state.elapsedBeforePause = currentElapsedSeconds();
 	state.paused = true;
 	clearInterval(state.timerId);
+	updateParentGateLocks();
 }
 
 /**
@@ -188,6 +203,7 @@ export function resumeSession() {
 	if (!state.playing || !state.paused) return;
 	state.paused = false;
 	state.startedAt = Date.now();
+	updateParentGateLocks();
 	tick();
 	state.timerId = window.setInterval(tick, 500);
 }
@@ -205,6 +221,7 @@ export function endGame() {
 	state.paused = false;
 	clearInterval(state.timerId);
 	releaseWakeLock();
+	updateParentGateLocks();
 	data.totalSeconds += elapsed;
 	data.bestSpeed = Math.max(
 		data.bestSpeed,
@@ -223,14 +240,21 @@ export function endGame() {
 }
 
 /**
- * Global keydown handler; inert until languages are loaded. Suppresses the
- * browser default for keys that would scroll or move focus (Tab, space,
- * arrows, Alt, Escape), then feeds the press to {@link triggerInteraction}
- * with feedback (sound and/or vibration, each per its own setting).
+ * Global keydown handler; inert until languages are loaded and while the
+ * side panel is open. Suppresses the browser default for keys that would
+ * scroll or move focus (Tab, space, arrows, Alt, Escape), then feeds the
+ * press to {@link triggerInteraction} with feedback (sound and/or
+ * vibration, each per its own setting).
  * @param {KeyboardEvent} event
  */
 export function pressKey(event) {
 	if (Object.keys(languages).length === 0) return;
+	// The open side panel takes the keyboard with it: keys belong to the
+	// parent navigating the panel, not to the game — no effects or stats
+	// spawning behind the scrim (including from the key repeats of an
+	// Enter/Space still held after passing the parent gate), and no
+	// preventDefault below stealing Tab from the panel's own controls.
+	if (state.paused || $("#sidePanel").classList.contains("open")) return;
 	if (
 		event.key === "Tab" ||
 		event.key === " " ||

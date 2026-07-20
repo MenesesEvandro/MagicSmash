@@ -22,6 +22,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 - **Session timer** — 3, 5, 10, 15 minutes, or no limit, ending in a friendly recap screen. Opening Settings or Stats mid-session pauses the clock, so checking on something doesn't eat into playtime.
 - **The screen stays awake during play** — a toddler staring in fascination without touching anything won't get the screen dimming and locking on them mid-session (on browsers that support the Wake Lock API; the lock is released the moment the session ends).
 - **Light and dark mode**, adjustable letter size, sound on/off, and optional vibration on each key on devices and browsers that support it (mostly Android).
+- **A parent gate, on by default** — opening Settings or Stats mid-session takes a deliberate 2-second hold on the button (with a progress fill as feedback) instead of a tap, so a toddler's random smacks can't change settings or wander out of the game. Holding Enter or Space on the focused button works too, a second finger mashing nearby can't interrupt the hold, and the language selector locks while the gate stands so no top-bar control is left ungated. A blocked tap briefly shows a "hold to open" hint, the welcome screen stays ungated — the gate only stands while a session is actually running — and it can be turned off in Settings.
 - **Local stats only** — total presses, unique keys, playtime, best streak, favourite key. Stored on the device, never sent anywhere.
 - **An optional first name** for whoever's playing, saved locally.
 - **6 languages** — Portuguese (Brazil), English, Spanish, French, German, and Italian, so parents and kids anywhere in the world can play in the words they use at home, not just mine. If this turns out to be useful beyond my own living room, more languages will probably show up over time (thank you, Google Translate, for the first draft of every one after Portuguese — contributions from actual speakers very welcome).
@@ -37,14 +38,16 @@ Just open `index.html` in a browser. That's it — no server, no build step, no 
 The shipped `app.js` and `sw.js` are generated files — don't edit them directly. The real source lives in `src/`.
 
 ```bash
-npm install     # installs Biome (lint + format)
+npm install     # installs Biome (lint + format), jsdom, and Playwright (tests)
 npm run build   # lints, then rebuilds app.js and sw.js from src/
+npm test        # rebuilds, then runs the fast tests against the built app.js
+npm run test:e2e # rebuilds, then runs the real-browser tests (needs `npx playwright install chromium` once)
 npm run lint    # check for problems without fixing
 npm run format  # format the project
 npm run check   # lint + format together, with fixes
 ```
 
-`npm run build` fails if the linter finds anything, so `app.js`/`sw.js` are never regenerated from code that doesn't pass the checks.
+`npm run build` fails if the linter finds anything, so `app.js`/`sw.js` are never regenerated from code that doesn't pass the checks. Tests come in two layers, both driving the real `index.html` plus the freshly built bundle: the fast suite (`test/`) runs inside [jsdom](https://github.com/jsdom/jsdom) and covers the broad state matrix, while the E2E suite (`e2e/`, [Playwright](https://playwright.dev/) on Chromium) proves the behaviours only a real browser can — native button activation by held keys, real pointer input, real `<dialog>`s. A behaviour is tested where it actually lives: logic and state transitions in jsdom, browser-native semantics in Playwright.
 
 ## How it's built
 

@@ -218,6 +218,20 @@ button {
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	position: relative;
+}
+.gate-hint {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	padding: 6px 12px;
+	border-radius: 10px;
+	background: var(--glass-strong);
+	color: var(--ink);
+	font-size: 12px;
+	font-weight: 800;
+	white-space: nowrap;
+	pointer-events: none;
 }
 .language-picker select {
 	border: 1px solid var(--line);
@@ -227,6 +241,11 @@ button {
 	font-weight: 800;
 	color: var(--ink);
 	outline-color: var(--accent);
+}
+/* Locked by the parent gate while a session is running. */
+.language-picker select:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
 }
 .icon-button {
 	width: 40px;
@@ -238,6 +257,30 @@ button {
 	transition:
 		transform 0.2s,
 		background 0.2s;
+	position: relative;
+	overflow: hidden;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+}
+/* Progress fill while a panel button is held to pass the parent gate; its
+   duration comes from JS (--parent-gate-hold-ms) so the visual always
+   matches the actual hold requirement. */
+.icon-button.gate-holding::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--accent);
+	opacity: 0.4;
+	transform: scale(0);
+	animation: gate-fill var(--parent-gate-hold-ms, 2000ms) linear forwards;
+	pointer-events: none;
+}
+@keyframes gate-fill {
+	to {
+		transform: scale(1);
+	}
 }
 .icon-button:hover,
 .icon-button:focus-visible {

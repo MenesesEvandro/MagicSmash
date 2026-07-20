@@ -36,6 +36,7 @@
           <button class="icon-button" id="settingsButton" type="button" data-open-panel="settings" aria-label="Configurações">
             <span aria-hidden="true">⚙</span>
           </button>
+          <span class="gate-hint hidden" id="gateHint" aria-live="polite" data-i18n="parentGateHint">Segure para abrir</span>
         </div>
       </header>
 
@@ -200,6 +201,10 @@
         <div class="setting-row">
           <div><strong data-i18n="kaleidoscope">Caleidoscópio</strong><p data-i18n="kaleidoscopeHelp">Espelha os efeitos ao redor da tela</p></div>
           <label class="toggle"><input id="kaleidoscopeToggle" data-kaleidoscope-toggle type="checkbox" aria-label="Caleidoscópio" /><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div><strong data-i18n="parentGate">Acesso dos pais</strong><p data-i18n="parentGateHelp">Durante a brincadeira, segure os botões do topo por 2 segundos para abrir</p></div>
+          <label class="toggle"><input id="parentGateToggle" data-parent-gate-toggle type="checkbox" checked aria-label="Acesso dos pais" /><span></span></label>
         </div>
         <div class="setting-row range-row">
           <div><strong data-i18n="letterSize">Tamanho das letras</strong><p data-i18n="letterSizeHelp">Mais conforto para enxergar</p></div>
