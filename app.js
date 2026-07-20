@@ -17,6 +17,7 @@ const initialData = {
 	sound: true,
 	vibration: false,
 	kaleidoscope: false,
+	parentGate: true,
 	letterSize: 1,
 	totalPresses: 0,
 	totalSeconds: 0,
@@ -532,7 +533,7 @@ let languages = {};
  * on how that value gets here.
  */
 function loadLanguages() {
-	languages = {"pt-br":{"code":"pt-br","name":"Português (Brasil)","translations":{"language":"Idioma","welcomeEyebrow":"UM LUGAR SÓ SEU","welcomeTitle":"Aperte qualquer tecla<br />e faça acontecer.","welcomeCopy":"Cores, sons e surpresas para cada descoberta.","start":"Começar a brincar","keyboardTip":"Use o teclado para brincar","quickOptions":"AJUSTES RÁPIDOS PARA QUEM CUIDA","quickTheme":"Aventura","quickDuration":"Tempo","quickSound":"Som","appearance":"Aparência","lightMode":"Claro","darkMode":"Escuro","bottomPrompt":"É só apertar uma tecla","settings":"Configurações","stats":"Estatísticas","playingAs":"Brincando como","edit":"Editar","duration":"Tempo de brincadeira","unlimited":"Sem limite","endSession":"Encerrar brincadeira agora","theme":"Tema","themeCosmos":"Cosmos","themeOcean":"Oceano","themeGarden":"Jardim","themeCandy":"Doce","themeAnimals":"Animais","themeVehicles":"Veículos","themeBubbles":"Bolhas","themeMusic":"Música","themeColors":"Cores","themeWeather":"Clima","themeDinosaurs":"Dinossauros","themeFarm":"Fazenda","themeParty":"Festa","themeSpace":"Espaço fofo","themeBeach":"Praia","themeLights":"Luzes","themeToys":"Brinquedos","themeBedtime":"Hora de dormir","sound":"Sons suaves","soundHelp":"Um som a cada tecla","vibration":"Vibração","vibrationHelp":"Uma vibração a cada tecla, se o aparelho permitir","kaleidoscope":"Caleidoscópio","kaleidoscopeHelp":"Espelha os efeitos ao redor da tela","letterSize":"Tamanho das letras","letterSizeHelp":"Mais conforto para enxergar","fullscreen":"Abrir em tela cheia","updateAvailable":"Uma nova versão está disponível.","updateNow":"Atualizar agora","iosInstallTip":"No iPhone ou iPad, toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\" para instalar o Magic Smash.","gotIt":"Entendi","allTime":"DESDE O COMEÇO","keysPressed":"teclas apertadas","timePlaying":"tempo brincando","uniqueKeys":"teclas diferentes","bestSpeed":"melhor ritmo / min","favoriteKey":"tecla favorita","sessionStats":"ESTA BRINCADEIRA","bestStreak":"melhor sequência","resetStats":"Apagar estatísticas deste aparelho","profileTitle":"Quem está brincando?","profileHelp":"Este nome fica salvo só neste aparelho.","nameLabel":"Nome ou apelido","save":"Salvar","greatSession":"QUE BRINCADEIRA LINDA!","sessionComplete":"Sessão concluída","playAgain":"Brincar mais","backToHome":"Voltar para a página inicial","share":"Compartilhar","shareText":"Acabamos de brincar no Magic Smash e apertamos {presses} teclas com uma sequência de {streak}! 🎉 Venha brincar também:","linkCopied":"Link copiado!","encouragement":["Que legal!","Você conseguiu!","Brilha, estrela!","Mais uma!","Uau!"],"sequence":"sequência","sequences":"sequências","unnamed":"Pequena estrela","caregivers":"PARA QUEM CUIDA","space":"espaço!","letsPlay":"vamos lá!","resetStatsConfirm":"Apagar todas as estatísticas deste aparelho?"}},"en":{"code":"en","name":"English","translations":{"language":"Language","welcomeEyebrow":"A PLACE JUST FOR YOU","welcomeTitle":"Press any key<br />and make magic.","welcomeCopy":"Colours, sounds, and surprises with every discovery.","start":"Start playing","keyboardTip":"Use the keyboard to play","quickOptions":"QUICK SETTINGS FOR GROWN-UPS","quickTheme":"Adventure","quickDuration":"Time","quickSound":"Sound","appearance":"Appearance","lightMode":"Light","darkMode":"Dark","bottomPrompt":"Just press a key","settings":"Settings","stats":"Stats","playingAs":"Playing as","edit":"Edit","duration":"Play time","unlimited":"No limit","endSession":"End playtime now","theme":"Theme","themeCosmos":"Cosmos","themeOcean":"Ocean","themeGarden":"Garden","themeCandy":"Candy","themeAnimals":"Animals","themeVehicles":"Vehicles","themeBubbles":"Bubbles","themeMusic":"Music","themeColors":"Colours","themeWeather":"Weather","themeDinosaurs":"Dinosaurs","themeFarm":"Farm","themeParty":"Party","themeSpace":"Cute space","themeBeach":"Beach","themeLights":"Lights","themeToys":"Toys","themeBedtime":"Bedtime","sound":"Gentle sounds","soundHelp":"One sound for each key","vibration":"Vibration","vibrationHelp":"A little buzz for each key, on devices that support it","kaleidoscope":"Kaleidoscope","kaleidoscopeHelp":"Mirrors every effect around the screen","letterSize":"Letter size","letterSizeHelp":"Easier to see","fullscreen":"Open full screen","updateAvailable":"A new version is available.","updateNow":"Update now","iosInstallTip":"On an iPhone or iPad, tap the Share button, then \"Add to Home Screen\" to install Magic Smash.","gotIt":"Got it","allTime":"ALL TIME","keysPressed":"keys pressed","timePlaying":"time playing","uniqueKeys":"different keys","bestSpeed":"best rhythm / min","favoriteKey":"favourite key","sessionStats":"THIS PLAYTIME","bestStreak":"best streak","resetStats":"Clear statistics on this device","profileTitle":"Who is playing?","profileHelp":"This name is saved only on this device.","nameLabel":"Name or nickname","save":"Save","greatSession":"WHAT A LOVELY PLAYTIME!","sessionComplete":"Playtime complete","playAgain":"Play again","backToHome":"Back to home","share":"Share","shareText":"We just played Magic Smash and pressed {presses} keys with a streak of {streak}! 🎉 Come play too:","linkCopied":"Link copied!","encouragement":["Amazing!","You did it!","Shine bright!","One more!","Wow!"],"sequence":"streak","sequences":"streaks","unnamed":"Little star","caregivers":"FOR GROWN-UPS","space":"space!","letsPlay":"let’s go!","resetStatsConfirm":"Clear all statistics on this device?"}},"es":{"code":"es","name":"Español","translations":{"language":"Idioma","welcomeEyebrow":"UN LUGAR PARA TI","welcomeTitle":"Presiona una tecla<br />y haz magia.","welcomeCopy":"Colores, sonidos y sorpresas en cada descubrimiento.","start":"Empezar a jugar","keyboardTip":"Usa el teclado para jugar","quickOptions":"AJUSTES RÁPIDOS PARA QUIEN CUIDA","quickTheme":"Aventura","quickDuration":"Tiempo","quickSound":"Sonido","appearance":"Apariencia","lightMode":"Claro","darkMode":"Oscuro","bottomPrompt":"Solo presiona una tecla","settings":"Ajustes","stats":"Estadísticas","playingAs":"Jugando como","edit":"Editar","duration":"Tiempo de juego","unlimited":"Sin límite","endSession":"Terminar el juego ahora","theme":"Tema","themeCosmos":"Cosmos","themeOcean":"Océano","themeGarden":"Jardín","themeCandy":"Dulce","themeAnimals":"Animales","themeVehicles":"Vehículos","themeBubbles":"Burbujas","themeMusic":"Música","themeColors":"Colores","themeWeather":"Clima","themeDinosaurs":"Dinosaurios","themeFarm":"Granja","themeParty":"Fiesta","themeSpace":"Espacio tierno","themeBeach":"Playa","themeLights":"Luces","themeToys":"Juguetes","themeBedtime":"Hora de dormir","sound":"Sonidos suaves","soundHelp":"Un sonido por tecla","vibration":"Vibración","vibrationHelp":"Una vibración por cada tecla, si el aparato lo permite","kaleidoscope":"Caleidoscopio","kaleidoscopeHelp":"Refleja los efectos alrededor de la pantalla","letterSize":"Tamaño de letras","letterSizeHelp":"Más fácil de ver","fullscreen":"Abrir en pantalla completa","updateAvailable":"Hay una nueva versión disponible.","updateNow":"Actualizar ahora","iosInstallTip":"En un iPhone o iPad, toca el botón Compartir y luego \"Añadir a pantalla de inicio\" para instalar Magic Smash.","gotIt":"Entendido","allTime":"DESDE EL INICIO","keysPressed":"teclas presionadas","timePlaying":"tiempo jugando","uniqueKeys":"teclas diferentes","bestSpeed":"mejor ritmo / min","favoriteKey":"tecla favorita","sessionStats":"ESTE JUEGO","bestStreak":"mejor racha","resetStats":"Borrar estadísticas de este dispositivo","profileTitle":"¿Quién está jugando?","profileHelp":"Este nombre se guarda solo en este dispositivo.","nameLabel":"Nombre o apodo","save":"Guardar","greatSession":"¡QUÉ JUEGO TAN LINDO!","sessionComplete":"Juego terminado","playAgain":"Jugar más","backToHome":"Volver al inicio","share":"Compartir","shareText":"¡Acabamos de jugar Magic Smash y presionamos {presses} teclas con una racha de {streak}! 🎉 Ven a jugar tú también:","linkCopied":"¡Enlace copiado!","encouragement":["¡Qué bien!","¡Lo lograste!","¡Brilla!","¡Una más!","¡Guau!"],"sequence":"racha","sequences":"rachas","unnamed":"Pequeña estrella","caregivers":"PARA QUIEN CUIDA","space":"¡espacio!","letsPlay":"¡vamos!","resetStatsConfirm":"¿Borrar todas las estadísticas de este dispositivo?"}},"fr":{"code":"fr","name":"Français","translations":{"language":"Langue","welcomeEyebrow":"UN ESPACE RIEN QUE POUR TOI","welcomeTitle":"Appuie sur une touche<br />et fais naître la magie.","welcomeCopy":"Des couleurs, des sons et des surprises à chaque découverte.","start":"Commencer à jouer","keyboardTip":"Utilise le clavier pour jouer","quickOptions":"RÉGLAGES RAPIDES POUR LES PARENTS","quickTheme":"Aventure","quickDuration":"Durée","quickSound":"Son","appearance":"Apparence","lightMode":"Clair","darkMode":"Sombre","bottomPrompt":"Appuie simplement sur une touche","settings":"Réglages","stats":"Statistiques","playingAs":"Joue en tant que","edit":"Modifier","duration":"Temps de jeu","unlimited":"Sans limite","endSession":"Terminer la partie maintenant","theme":"Thème","themeCosmos":"Cosmos","themeOcean":"Océan","themeGarden":"Jardin","themeCandy":"Gourmandises","themeAnimals":"Animaux","themeVehicles":"Véhicules","themeBubbles":"Bulles","themeMusic":"Musique","themeColors":"Couleurs","themeWeather":"Météo","themeDinosaurs":"Dinosaures","themeFarm":"Ferme","themeParty":"Fête","themeSpace":"Espace doux","themeBeach":"Plage","themeLights":"Lumières","themeToys":"Jouets","themeBedtime":"Heure du dodo","sound":"Sons doux","soundHelp":"Un son à chaque touche","vibration":"Vibration","vibrationHelp":"Une petite vibration à chaque touche, si l'appareil le permet","kaleidoscope":"Kaléidoscope","kaleidoscopeHelp":"Reflète chaque effet autour de l'écran","letterSize":"Taille des lettres","letterSizeHelp":"Plus facile à voir","fullscreen":"Ouvrir en plein écran","updateAvailable":"Une nouvelle version est disponible.","updateNow":"Mettre à jour","iosInstallTip":"Sur iPhone ou iPad, appuyez sur le bouton Partager, puis sur « Sur l'écran d'accueil » pour installer Magic Smash.","gotIt":"Compris","allTime":"DEPUIS LE DÉBUT","keysPressed":"touches pressées","timePlaying":"temps de jeu","uniqueKeys":"touches différentes","bestSpeed":"meilleur rythme / min","favoriteKey":"touche préférée","sessionStats":"CETTE PARTIE","bestStreak":"meilleure série","resetStats":"Effacer les statistiques de cet appareil","profileTitle":"Qui joue ?","profileHelp":"Ce nom est enregistré uniquement sur cet appareil.","nameLabel":"Nom ou surnom","save":"Enregistrer","greatSession":"QUELLE BELLE PARTIE !","sessionComplete":"Partie terminée","playAgain":"Rejouer","backToHome":"Retour à l'accueil","share":"Partager","shareText":"On vient de jouer à Magic Smash et on a appuyé sur {presses} touches avec une série de {streak} ! 🎉 Viens jouer toi aussi :","linkCopied":"Lien copié !","encouragement":["Génial !","Tu as réussi !","Tu brilles !","Encore une !","Waouh !"],"sequence":"série","sequences":"séries","unnamed":"Petite étoile","caregivers":"POUR LES PARENTS","space":"espace !","letsPlay":"c’est parti !","resetStatsConfirm":"Effacer toutes les statistiques de cet appareil ?"}},"de":{"code":"de","name":"Deutsch","translations":{"language":"Sprache","welcomeEyebrow":"EIN ORT NUR FÜR DICH","welcomeTitle":"Drücke eine Taste<br />und lass Magie entstehen.","welcomeCopy":"Farben, Klänge und Überraschungen bei jeder Entdeckung.","start":"Losspielen","keyboardTip":"Spiele mit der Tastatur","quickOptions":"SCHNELLEINSTELLUNGEN FÜR ELTERN","quickTheme":"Abenteuer","quickDuration":"Zeit","quickSound":"Ton","appearance":"Darstellung","lightMode":"Hell","darkMode":"Dunkel","bottomPrompt":"Drücke einfach eine Taste","settings":"Einstellungen","stats":"Statistiken","playingAs":"Spielt als","edit":"Ändern","duration":"Spielzeit","unlimited":"Ohne Limit","endSession":"Spielzeit jetzt beenden","theme":"Thema","themeCosmos":"Kosmos","themeOcean":"Ozean","themeGarden":"Garten","themeCandy":"Süßes","themeAnimals":"Tiere","themeVehicles":"Fahrzeuge","themeBubbles":"Blasen","themeMusic":"Musik","themeColors":"Farben","themeWeather":"Wetter","themeDinosaurs":"Dinosaurier","themeFarm":"Bauernhof","themeParty":"Party","themeSpace":"Süßer Weltraum","themeBeach":"Strand","themeLights":"Lichter","themeToys":"Spielzeug","themeBedtime":"Schlafenszeit","sound":"Sanfte Klänge","soundHelp":"Ein Ton pro Taste","vibration":"Vibration","vibrationHelp":"Ein kurzes Vibrieren pro Taste, wenn das Gerät es unterstützt","kaleidoscope":"Kaleidoskop","kaleidoscopeHelp":"Spiegelt jeden Effekt rund um den Bildschirm","letterSize":"Buchstabengröße","letterSizeHelp":"Besser zu sehen","fullscreen":"Vollbild öffnen","updateAvailable":"Eine neue Version ist verfügbar.","updateNow":"Jetzt aktualisieren","iosInstallTip":"Tippe auf iPhone oder iPad auf „Teilen“ und dann auf „Zum Home-Bildschirm“, um Magic Smash zu installieren.","gotIt":"Verstanden","allTime":"SEIT DEM ANFANG","keysPressed":"gedrückte Tasten","timePlaying":"Spielzeit","uniqueKeys":"verschiedene Tasten","bestSpeed":"bester Rhythmus / Min.","favoriteKey":"Lieblingstaste","sessionStats":"DIESE SPIELZEIT","bestStreak":"beste Serie","resetStats":"Statistiken auf diesem Gerät löschen","profileTitle":"Wer spielt?","profileHelp":"Dieser Name wird nur auf diesem Gerät gespeichert.","nameLabel":"Name oder Spitzname","save":"Speichern","greatSession":"WAS FÜR EINE SCHÖNE SPIELZEIT!","sessionComplete":"Spielzeit beendet","playAgain":"Noch einmal spielen","backToHome":"Zurück zum Start","share":"Teilen","shareText":"Wir haben gerade Magic Smash gespielt und {presses} Tasten gedrückt, mit einer Serie von {streak}! 🎉 Spiel doch auch mal mit:","linkCopied":"Link kopiert!","encouragement":["Super!","Geschafft!","Du strahlst!","Noch einmal!","Wow!"],"sequence":"Serie","sequences":"Serien","unnamed":"Kleiner Stern","caregivers":"FÜR ELTERN","space":"Leertaste!","letsPlay":"los geht’s!","resetStatsConfirm":"Alle Statistiken auf diesem Gerät löschen?"}},"it":{"code":"it","name":"Italiano","translations":{"language":"Lingua","welcomeEyebrow":"UNO SPAZIO TUTTO PER TE","welcomeTitle":"Premi un tasto<br />e crea la magia.","welcomeCopy":"Colori, suoni e sorprese a ogni scoperta.","start":"Inizia a giocare","keyboardTip":"Usa la tastiera per giocare","quickOptions":"IMPOSTAZIONI RAPIDE PER I GENITORI","quickTheme":"Avventura","quickDuration":"Tempo","quickSound":"Suono","appearance":"Aspetto","lightMode":"Chiaro","darkMode":"Scuro","bottomPrompt":"Premi semplicemente un tasto","settings":"Impostazioni","stats":"Statistiche","playingAs":"Sta giocando come","edit":"Modifica","duration":"Tempo di gioco","unlimited":"Senza limite","endSession":"Termina il gioco ora","theme":"Tema","themeCosmos":"Cosmo","themeOcean":"Oceano","themeGarden":"Giardino","themeCandy":"Dolci","themeAnimals":"Animali","themeVehicles":"Veicoli","themeBubbles":"Bolle","themeMusic":"Musica","themeColors":"Colori","themeWeather":"Meteo","themeDinosaurs":"Dinosauri","themeFarm":"Fattoria","themeParty":"Festa","themeSpace":"Spazio dolce","themeBeach":"Spiaggia","themeLights":"Luci","themeToys":"Giocattoli","themeBedtime":"Ora della nanna","sound":"Suoni delicati","soundHelp":"Un suono per ogni tasto","vibration":"Vibrazione","vibrationHelp":"Una piccola vibrazione per ogni tasto, se il dispositivo lo supporta","kaleidoscope":"Caleidoscopio","kaleidoscopeHelp":"Riflette ogni effetto intorno allo schermo","letterSize":"Dimensione delle lettere","letterSizeHelp":"Più facile da vedere","fullscreen":"Apri a schermo intero","updateAvailable":"È disponibile una nuova versione.","updateNow":"Aggiorna ora","iosInstallTip":"Su iPhone o iPad, tocca il pulsante Condividi, poi \"Aggiungi a Home\" per installare Magic Smash.","gotIt":"Capito","allTime":"DALL’INIZIO","keysPressed":"tasti premuti","timePlaying":"tempo di gioco","uniqueKeys":"tasti diversi","bestSpeed":"miglior ritmo / min","favoriteKey":"tasto preferito","sessionStats":"QUESTA PARTITA","bestStreak":"migliore sequenza","resetStats":"Cancella le statistiche su questo dispositivo","profileTitle":"Chi sta giocando?","profileHelp":"Questo nome viene salvato solo su questo dispositivo.","nameLabel":"Nome o soprannome","save":"Salva","greatSession":"CHE BELLA PARTITA!","sessionComplete":"Partita completata","playAgain":"Gioca ancora","backToHome":"Torna alla home","share":"Condividi","shareText":"Abbiamo appena giocato a Magic Smash e premuto {presses} tasti con una sequenza di {streak}! 🎉 Vieni a giocare anche tu:","linkCopied":"Link copiato!","encouragement":["Fantastico!","Ce l’hai fatta!","Brilli!","Ancora una!","Wow!"],"sequence":"sequenza","sequences":"sequenze","unnamed":"Piccola stella","caregivers":"PER I GENITORI","space":"spazio!","letsPlay":"iniziamo!","resetStatsConfirm":"Cancellare tutte le statistiche su questo dispositivo?"}}};
+	languages = {"pt-br":{"code":"pt-br","name":"Português (Brasil)","translations":{"language":"Idioma","welcomeEyebrow":"UM LUGAR SÓ SEU","welcomeTitle":"Aperte qualquer tecla<br />e faça acontecer.","welcomeCopy":"Cores, sons e surpresas para cada descoberta.","start":"Começar a brincar","keyboardTip":"Use o teclado para brincar","quickOptions":"AJUSTES RÁPIDOS PARA QUEM CUIDA","quickTheme":"Aventura","quickDuration":"Tempo","quickSound":"Som","appearance":"Aparência","lightMode":"Claro","darkMode":"Escuro","bottomPrompt":"É só apertar uma tecla","settings":"Configurações","stats":"Estatísticas","playingAs":"Brincando como","edit":"Editar","duration":"Tempo de brincadeira","unlimited":"Sem limite","endSession":"Encerrar brincadeira agora","theme":"Tema","themeCosmos":"Cosmos","themeOcean":"Oceano","themeGarden":"Jardim","themeCandy":"Doce","themeAnimals":"Animais","themeVehicles":"Veículos","themeBubbles":"Bolhas","themeMusic":"Música","themeColors":"Cores","themeWeather":"Clima","themeDinosaurs":"Dinossauros","themeFarm":"Fazenda","themeParty":"Festa","themeSpace":"Espaço fofo","themeBeach":"Praia","themeLights":"Luzes","themeToys":"Brinquedos","themeBedtime":"Hora de dormir","sound":"Sons suaves","soundHelp":"Um som a cada tecla","vibration":"Vibração","vibrationHelp":"Uma vibração a cada tecla, se o aparelho permitir","kaleidoscope":"Caleidoscópio","kaleidoscopeHelp":"Espelha os efeitos ao redor da tela","parentGate":"Acesso dos pais","parentGateHelp":"Durante a brincadeira, segure os botões do topo por 2 segundos para abrir","parentGateHint":"Segure para abrir","letterSize":"Tamanho das letras","letterSizeHelp":"Mais conforto para enxergar","fullscreen":"Abrir em tela cheia","updateAvailable":"Uma nova versão está disponível.","updateNow":"Atualizar agora","iosInstallTip":"No iPhone ou iPad, toque no botão Compartilhar e depois em \"Adicionar à Tela de Início\" para instalar o Magic Smash.","gotIt":"Entendi","allTime":"DESDE O COMEÇO","keysPressed":"teclas apertadas","timePlaying":"tempo brincando","uniqueKeys":"teclas diferentes","bestSpeed":"melhor ritmo / min","favoriteKey":"tecla favorita","sessionStats":"ESTA BRINCADEIRA","bestStreak":"melhor sequência","resetStats":"Apagar estatísticas deste aparelho","profileTitle":"Quem está brincando?","profileHelp":"Este nome fica salvo só neste aparelho.","nameLabel":"Nome ou apelido","save":"Salvar","greatSession":"QUE BRINCADEIRA LINDA!","sessionComplete":"Sessão concluída","playAgain":"Brincar mais","backToHome":"Voltar para a página inicial","share":"Compartilhar","shareText":"Acabamos de brincar no Magic Smash e apertamos {presses} teclas com uma sequência de {streak}! 🎉 Venha brincar também:","linkCopied":"Link copiado!","encouragement":["Que legal!","Você conseguiu!","Brilha, estrela!","Mais uma!","Uau!"],"sequence":"sequência","sequences":"sequências","unnamed":"Pequena estrela","caregivers":"PARA QUEM CUIDA","space":"espaço!","letsPlay":"vamos lá!","resetStatsConfirm":"Apagar todas as estatísticas deste aparelho?"}},"en":{"code":"en","name":"English","translations":{"language":"Language","welcomeEyebrow":"A PLACE JUST FOR YOU","welcomeTitle":"Press any key<br />and make magic.","welcomeCopy":"Colours, sounds, and surprises with every discovery.","start":"Start playing","keyboardTip":"Use the keyboard to play","quickOptions":"QUICK SETTINGS FOR GROWN-UPS","quickTheme":"Adventure","quickDuration":"Time","quickSound":"Sound","appearance":"Appearance","lightMode":"Light","darkMode":"Dark","bottomPrompt":"Just press a key","settings":"Settings","stats":"Stats","playingAs":"Playing as","edit":"Edit","duration":"Play time","unlimited":"No limit","endSession":"End playtime now","theme":"Theme","themeCosmos":"Cosmos","themeOcean":"Ocean","themeGarden":"Garden","themeCandy":"Candy","themeAnimals":"Animals","themeVehicles":"Vehicles","themeBubbles":"Bubbles","themeMusic":"Music","themeColors":"Colours","themeWeather":"Weather","themeDinosaurs":"Dinosaurs","themeFarm":"Farm","themeParty":"Party","themeSpace":"Cute space","themeBeach":"Beach","themeLights":"Lights","themeToys":"Toys","themeBedtime":"Bedtime","sound":"Gentle sounds","soundHelp":"One sound for each key","vibration":"Vibration","vibrationHelp":"A little buzz for each key, on devices that support it","kaleidoscope":"Kaleidoscope","kaleidoscopeHelp":"Mirrors every effect around the screen","parentGate":"Parent gate","parentGateHelp":"During play, hold the top buttons for 2 seconds to open them","parentGateHint":"Hold to open","letterSize":"Letter size","letterSizeHelp":"Easier to see","fullscreen":"Open full screen","updateAvailable":"A new version is available.","updateNow":"Update now","iosInstallTip":"On an iPhone or iPad, tap the Share button, then \"Add to Home Screen\" to install Magic Smash.","gotIt":"Got it","allTime":"ALL TIME","keysPressed":"keys pressed","timePlaying":"time playing","uniqueKeys":"different keys","bestSpeed":"best rhythm / min","favoriteKey":"favourite key","sessionStats":"THIS PLAYTIME","bestStreak":"best streak","resetStats":"Clear statistics on this device","profileTitle":"Who is playing?","profileHelp":"This name is saved only on this device.","nameLabel":"Name or nickname","save":"Save","greatSession":"WHAT A LOVELY PLAYTIME!","sessionComplete":"Playtime complete","playAgain":"Play again","backToHome":"Back to home","share":"Share","shareText":"We just played Magic Smash and pressed {presses} keys with a streak of {streak}! 🎉 Come play too:","linkCopied":"Link copied!","encouragement":["Amazing!","You did it!","Shine bright!","One more!","Wow!"],"sequence":"streak","sequences":"streaks","unnamed":"Little star","caregivers":"FOR GROWN-UPS","space":"space!","letsPlay":"let’s go!","resetStatsConfirm":"Clear all statistics on this device?"}},"es":{"code":"es","name":"Español","translations":{"language":"Idioma","welcomeEyebrow":"UN LUGAR PARA TI","welcomeTitle":"Presiona una tecla<br />y haz magia.","welcomeCopy":"Colores, sonidos y sorpresas en cada descubrimiento.","start":"Empezar a jugar","keyboardTip":"Usa el teclado para jugar","quickOptions":"AJUSTES RÁPIDOS PARA QUIEN CUIDA","quickTheme":"Aventura","quickDuration":"Tiempo","quickSound":"Sonido","appearance":"Apariencia","lightMode":"Claro","darkMode":"Oscuro","bottomPrompt":"Solo presiona una tecla","settings":"Ajustes","stats":"Estadísticas","playingAs":"Jugando como","edit":"Editar","duration":"Tiempo de juego","unlimited":"Sin límite","endSession":"Terminar el juego ahora","theme":"Tema","themeCosmos":"Cosmos","themeOcean":"Océano","themeGarden":"Jardín","themeCandy":"Dulce","themeAnimals":"Animales","themeVehicles":"Vehículos","themeBubbles":"Burbujas","themeMusic":"Música","themeColors":"Colores","themeWeather":"Clima","themeDinosaurs":"Dinosaurios","themeFarm":"Granja","themeParty":"Fiesta","themeSpace":"Espacio tierno","themeBeach":"Playa","themeLights":"Luces","themeToys":"Juguetes","themeBedtime":"Hora de dormir","sound":"Sonidos suaves","soundHelp":"Un sonido por tecla","vibration":"Vibración","vibrationHelp":"Una vibración por cada tecla, si el aparato lo permite","kaleidoscope":"Caleidoscopio","kaleidoscopeHelp":"Refleja los efectos alrededor de la pantalla","parentGate":"Acceso para adultos","parentGateHelp":"Durante el juego, mantén pulsados los botones de arriba 2 segundos para abrirlos","parentGateHint":"Mantén pulsado para abrir","letterSize":"Tamaño de letras","letterSizeHelp":"Más fácil de ver","fullscreen":"Abrir en pantalla completa","updateAvailable":"Hay una nueva versión disponible.","updateNow":"Actualizar ahora","iosInstallTip":"En un iPhone o iPad, toca el botón Compartir y luego \"Añadir a pantalla de inicio\" para instalar Magic Smash.","gotIt":"Entendido","allTime":"DESDE EL INICIO","keysPressed":"teclas presionadas","timePlaying":"tiempo jugando","uniqueKeys":"teclas diferentes","bestSpeed":"mejor ritmo / min","favoriteKey":"tecla favorita","sessionStats":"ESTE JUEGO","bestStreak":"mejor racha","resetStats":"Borrar estadísticas de este dispositivo","profileTitle":"¿Quién está jugando?","profileHelp":"Este nombre se guarda solo en este dispositivo.","nameLabel":"Nombre o apodo","save":"Guardar","greatSession":"¡QUÉ JUEGO TAN LINDO!","sessionComplete":"Juego terminado","playAgain":"Jugar más","backToHome":"Volver al inicio","share":"Compartir","shareText":"¡Acabamos de jugar Magic Smash y presionamos {presses} teclas con una racha de {streak}! 🎉 Ven a jugar tú también:","linkCopied":"¡Enlace copiado!","encouragement":["¡Qué bien!","¡Lo lograste!","¡Brilla!","¡Una más!","¡Guau!"],"sequence":"racha","sequences":"rachas","unnamed":"Pequeña estrella","caregivers":"PARA QUIEN CUIDA","space":"¡espacio!","letsPlay":"¡vamos!","resetStatsConfirm":"¿Borrar todas las estadísticas de este dispositivo?"}},"fr":{"code":"fr","name":"Français","translations":{"language":"Langue","welcomeEyebrow":"UN ESPACE RIEN QUE POUR TOI","welcomeTitle":"Appuie sur une touche<br />et fais naître la magie.","welcomeCopy":"Des couleurs, des sons et des surprises à chaque découverte.","start":"Commencer à jouer","keyboardTip":"Utilise le clavier pour jouer","quickOptions":"RÉGLAGES RAPIDES POUR LES PARENTS","quickTheme":"Aventure","quickDuration":"Durée","quickSound":"Son","appearance":"Apparence","lightMode":"Clair","darkMode":"Sombre","bottomPrompt":"Appuie simplement sur une touche","settings":"Réglages","stats":"Statistiques","playingAs":"Joue en tant que","edit":"Modifier","duration":"Temps de jeu","unlimited":"Sans limite","endSession":"Terminer la partie maintenant","theme":"Thème","themeCosmos":"Cosmos","themeOcean":"Océan","themeGarden":"Jardin","themeCandy":"Gourmandises","themeAnimals":"Animaux","themeVehicles":"Véhicules","themeBubbles":"Bulles","themeMusic":"Musique","themeColors":"Couleurs","themeWeather":"Météo","themeDinosaurs":"Dinosaures","themeFarm":"Ferme","themeParty":"Fête","themeSpace":"Espace doux","themeBeach":"Plage","themeLights":"Lumières","themeToys":"Jouets","themeBedtime":"Heure du dodo","sound":"Sons doux","soundHelp":"Un son à chaque touche","vibration":"Vibration","vibrationHelp":"Une petite vibration à chaque touche, si l'appareil le permet","kaleidoscope":"Kaléidoscope","kaleidoscopeHelp":"Reflète chaque effet autour de l'écran","parentGate":"Accès parents","parentGateHelp":"Pendant le jeu, maintenez les boutons du haut 2 secondes pour les ouvrir","parentGateHint":"Maintenez pour ouvrir","letterSize":"Taille des lettres","letterSizeHelp":"Plus facile à voir","fullscreen":"Ouvrir en plein écran","updateAvailable":"Une nouvelle version est disponible.","updateNow":"Mettre à jour","iosInstallTip":"Sur iPhone ou iPad, appuyez sur le bouton Partager, puis sur « Sur l'écran d'accueil » pour installer Magic Smash.","gotIt":"Compris","allTime":"DEPUIS LE DÉBUT","keysPressed":"touches pressées","timePlaying":"temps de jeu","uniqueKeys":"touches différentes","bestSpeed":"meilleur rythme / min","favoriteKey":"touche préférée","sessionStats":"CETTE PARTIE","bestStreak":"meilleure série","resetStats":"Effacer les statistiques de cet appareil","profileTitle":"Qui joue ?","profileHelp":"Ce nom est enregistré uniquement sur cet appareil.","nameLabel":"Nom ou surnom","save":"Enregistrer","greatSession":"QUELLE BELLE PARTIE !","sessionComplete":"Partie terminée","playAgain":"Rejouer","backToHome":"Retour à l'accueil","share":"Partager","shareText":"On vient de jouer à Magic Smash et on a appuyé sur {presses} touches avec une série de {streak} ! 🎉 Viens jouer toi aussi :","linkCopied":"Lien copié !","encouragement":["Génial !","Tu as réussi !","Tu brilles !","Encore une !","Waouh !"],"sequence":"série","sequences":"séries","unnamed":"Petite étoile","caregivers":"POUR LES PARENTS","space":"espace !","letsPlay":"c’est parti !","resetStatsConfirm":"Effacer toutes les statistiques de cet appareil ?"}},"de":{"code":"de","name":"Deutsch","translations":{"language":"Sprache","welcomeEyebrow":"EIN ORT NUR FÜR DICH","welcomeTitle":"Drücke eine Taste<br />und lass Magie entstehen.","welcomeCopy":"Farben, Klänge und Überraschungen bei jeder Entdeckung.","start":"Losspielen","keyboardTip":"Spiele mit der Tastatur","quickOptions":"SCHNELLEINSTELLUNGEN FÜR ELTERN","quickTheme":"Abenteuer","quickDuration":"Zeit","quickSound":"Ton","appearance":"Darstellung","lightMode":"Hell","darkMode":"Dunkel","bottomPrompt":"Drücke einfach eine Taste","settings":"Einstellungen","stats":"Statistiken","playingAs":"Spielt als","edit":"Ändern","duration":"Spielzeit","unlimited":"Ohne Limit","endSession":"Spielzeit jetzt beenden","theme":"Thema","themeCosmos":"Kosmos","themeOcean":"Ozean","themeGarden":"Garten","themeCandy":"Süßes","themeAnimals":"Tiere","themeVehicles":"Fahrzeuge","themeBubbles":"Blasen","themeMusic":"Musik","themeColors":"Farben","themeWeather":"Wetter","themeDinosaurs":"Dinosaurier","themeFarm":"Bauernhof","themeParty":"Party","themeSpace":"Süßer Weltraum","themeBeach":"Strand","themeLights":"Lichter","themeToys":"Spielzeug","themeBedtime":"Schlafenszeit","sound":"Sanfte Klänge","soundHelp":"Ein Ton pro Taste","vibration":"Vibration","vibrationHelp":"Ein kurzes Vibrieren pro Taste, wenn das Gerät es unterstützt","kaleidoscope":"Kaleidoskop","kaleidoscopeHelp":"Spiegelt jeden Effekt rund um den Bildschirm","parentGate":"Elternsicherung","parentGateHelp":"Während des Spielens die oberen Tasten 2 Sekunden gedrückt halten, um sie zu öffnen","parentGateHint":"Zum Öffnen gedrückt halten","letterSize":"Buchstabengröße","letterSizeHelp":"Besser zu sehen","fullscreen":"Vollbild öffnen","updateAvailable":"Eine neue Version ist verfügbar.","updateNow":"Jetzt aktualisieren","iosInstallTip":"Tippe auf iPhone oder iPad auf „Teilen“ und dann auf „Zum Home-Bildschirm“, um Magic Smash zu installieren.","gotIt":"Verstanden","allTime":"SEIT DEM ANFANG","keysPressed":"gedrückte Tasten","timePlaying":"Spielzeit","uniqueKeys":"verschiedene Tasten","bestSpeed":"bester Rhythmus / Min.","favoriteKey":"Lieblingstaste","sessionStats":"DIESE SPIELZEIT","bestStreak":"beste Serie","resetStats":"Statistiken auf diesem Gerät löschen","profileTitle":"Wer spielt?","profileHelp":"Dieser Name wird nur auf diesem Gerät gespeichert.","nameLabel":"Name oder Spitzname","save":"Speichern","greatSession":"WAS FÜR EINE SCHÖNE SPIELZEIT!","sessionComplete":"Spielzeit beendet","playAgain":"Noch einmal spielen","backToHome":"Zurück zum Start","share":"Teilen","shareText":"Wir haben gerade Magic Smash gespielt und {presses} Tasten gedrückt, mit einer Serie von {streak}! 🎉 Spiel doch auch mal mit:","linkCopied":"Link kopiert!","encouragement":["Super!","Geschafft!","Du strahlst!","Noch einmal!","Wow!"],"sequence":"Serie","sequences":"Serien","unnamed":"Kleiner Stern","caregivers":"FÜR ELTERN","space":"Leertaste!","letsPlay":"los geht’s!","resetStatsConfirm":"Alle Statistiken auf diesem Gerät löschen?"}},"it":{"code":"it","name":"Italiano","translations":{"language":"Lingua","welcomeEyebrow":"UNO SPAZIO TUTTO PER TE","welcomeTitle":"Premi un tasto<br />e crea la magia.","welcomeCopy":"Colori, suoni e sorprese a ogni scoperta.","start":"Inizia a giocare","keyboardTip":"Usa la tastiera per giocare","quickOptions":"IMPOSTAZIONI RAPIDE PER I GENITORI","quickTheme":"Avventura","quickDuration":"Tempo","quickSound":"Suono","appearance":"Aspetto","lightMode":"Chiaro","darkMode":"Scuro","bottomPrompt":"Premi semplicemente un tasto","settings":"Impostazioni","stats":"Statistiche","playingAs":"Sta giocando come","edit":"Modifica","duration":"Tempo di gioco","unlimited":"Senza limite","endSession":"Termina il gioco ora","theme":"Tema","themeCosmos":"Cosmo","themeOcean":"Oceano","themeGarden":"Giardino","themeCandy":"Dolci","themeAnimals":"Animali","themeVehicles":"Veicoli","themeBubbles":"Bolle","themeMusic":"Musica","themeColors":"Colori","themeWeather":"Meteo","themeDinosaurs":"Dinosauri","themeFarm":"Fattoria","themeParty":"Festa","themeSpace":"Spazio dolce","themeBeach":"Spiaggia","themeLights":"Luci","themeToys":"Giocattoli","themeBedtime":"Ora della nanna","sound":"Suoni delicati","soundHelp":"Un suono per ogni tasto","vibration":"Vibrazione","vibrationHelp":"Una piccola vibrazione per ogni tasto, se il dispositivo lo supporta","kaleidoscope":"Caleidoscopio","kaleidoscopeHelp":"Riflette ogni effetto intorno allo schermo","parentGate":"Accesso genitori","parentGateHelp":"Durante il gioco, tieni premuti i pulsanti in alto per 2 secondi per aprirli","parentGateHint":"Tieni premuto per aprire","letterSize":"Dimensione delle lettere","letterSizeHelp":"Più facile da vedere","fullscreen":"Apri a schermo intero","updateAvailable":"È disponibile una nuova versione.","updateNow":"Aggiorna ora","iosInstallTip":"Su iPhone o iPad, tocca il pulsante Condividi, poi \"Aggiungi a Home\" per installare Magic Smash.","gotIt":"Capito","allTime":"DALL’INIZIO","keysPressed":"tasti premuti","timePlaying":"tempo di gioco","uniqueKeys":"tasti diversi","bestSpeed":"miglior ritmo / min","favoriteKey":"tasto preferito","sessionStats":"QUESTA PARTITA","bestStreak":"migliore sequenza","resetStats":"Cancella le statistiche su questo dispositivo","profileTitle":"Chi sta giocando?","profileHelp":"Questo nome viene salvato solo su questo dispositivo.","nameLabel":"Nome o soprannome","save":"Salva","greatSession":"CHE BELLA PARTITA!","sessionComplete":"Partita completata","playAgain":"Gioca ancora","backToHome":"Torna alla home","share":"Condividi","shareText":"Abbiamo appena giocato a Magic Smash e premuto {presses} tasti con una sequenza di {streak}! 🎉 Vieni a giocare anche tu:","linkCopied":"Link copiato!","encouragement":["Fantastico!","Ce l’hai fatta!","Brilli!","Ancora una!","Wow!"],"sequence":"sequenza","sequences":"sequenze","unnamed":"Piccola stella","caregivers":"PER I GENITORI","space":"spazio!","letsPlay":"iniziamo!","resetStatsConfirm":"Cancellare tutte le statistiche su questo dispositivo?"}}};
 }
 
 /**
@@ -767,6 +768,19 @@ function currentElapsedSeconds() {
 }
 
 /**
+ * Enables or disables the top-bar language selector to match the parent
+ * gate. While the gate stands (setting on, session running, not paused), a
+ * mid-play tap on the select would pop the browser's native dropdown over
+ * the game — and a hold gesture can't guard a `<select>`, so disabling it
+ * is what closes that last ungated top-bar control. It comes back the
+ * moment the gate drops: welcome screen, panel open, or session over.
+ */
+function updateParentGateLocks() {
+	$("#languageSelect").disabled =
+		data.parentGate && state.playing && !state.paused;
+}
+
+/**
  * Starts a play session (no-op if one is already running): resets session
  * state, keeps the screen awake, swaps the welcome card for the key stage,
  * and begins the 500 ms timer tick.
@@ -776,6 +790,7 @@ function startGame() {
 	resetSession();
 	state.playing = true;
 	keepScreenAwake();
+	updateParentGateLocks();
 	$("#welcomeCard").classList.add("hidden");
 	$("#keyStage").classList.remove("hidden");
 	$("#sessionChip").classList.remove("hidden");
@@ -814,6 +829,7 @@ function pauseSession() {
 	state.elapsedBeforePause = currentElapsedSeconds();
 	state.paused = true;
 	clearInterval(state.timerId);
+	updateParentGateLocks();
 }
 
 /**
@@ -825,6 +841,7 @@ function resumeSession() {
 	if (!state.playing || !state.paused) return;
 	state.paused = false;
 	state.startedAt = Date.now();
+	updateParentGateLocks();
 	tick();
 	state.timerId = window.setInterval(tick, 500);
 }
@@ -842,6 +859,7 @@ function endGame() {
 	state.paused = false;
 	clearInterval(state.timerId);
 	releaseWakeLock();
+	updateParentGateLocks();
 	data.totalSeconds += elapsed;
 	data.bestSpeed = Math.max(
 		data.bestSpeed,
@@ -860,14 +878,21 @@ function endGame() {
 }
 
 /**
- * Global keydown handler; inert until languages are loaded. Suppresses the
- * browser default for keys that would scroll or move focus (Tab, space,
- * arrows, Alt, Escape), then feeds the press to {@link triggerInteraction}
- * with feedback (sound and/or vibration, each per its own setting).
+ * Global keydown handler; inert until languages are loaded and while the
+ * side panel is open. Suppresses the browser default for keys that would
+ * scroll or move focus (Tab, space, arrows, Alt, Escape), then feeds the
+ * press to {@link triggerInteraction} with feedback (sound and/or
+ * vibration, each per its own setting).
  * @param {KeyboardEvent} event
  */
 function pressKey(event) {
 	if (Object.keys(languages).length === 0) return;
+	// The open side panel takes the keyboard with it: keys belong to the
+	// parent navigating the panel, not to the game — no effects or stats
+	// spawning behind the scrim (including from the key repeats of an
+	// Enter/Space still held after passing the parent gate), and no
+	// preventDefault below stealing Tab from the panel's own controls.
+	if (state.paused || $("#sidePanel").classList.contains("open")) return;
 	if (
 		event.key === "Tab" ||
 		event.key === " " ||
@@ -1162,12 +1187,18 @@ function registerServiceWorker(onUpdateReady) {
 
 // ---- src/ui.js ----
 const KEY_BOUNCE_DURATION_MS = 340;
+/** How long the panel buttons must be held to pass the parent gate. */
+const PARENT_GATE_HOLD_MS = 2000;
 
-/** Exposes JS-owned animation timing to CSS via a custom property on the root element. */
+/** Exposes JS-owned animation timing to CSS via custom properties on the root element. */
 function applyAnimationSettings() {
 	document.documentElement.style.setProperty(
 		"--key-bounce-duration-ms",
 		`${KEY_BOUNCE_DURATION_MS}ms`,
+	);
+	document.documentElement.style.setProperty(
+		"--parent-gate-hold-ms",
+		`${PARENT_GATE_HOLD_MS}ms`,
 	);
 }
 
@@ -1288,6 +1319,27 @@ function updateKaleidoscope() {
 	$$("[data-kaleidoscope-toggle]").forEach((toggle) => {
 		toggle.checked = data.kaleidoscope;
 	});
+}
+
+/** Syncs the parent gate toggle. */
+function updateParentGate() {
+	$$("[data-parent-gate-toggle]").forEach((toggle) => {
+		toggle.checked = data.parentGate;
+	});
+}
+
+let gateHintTimerId = null;
+
+/**
+ * Briefly shows the "hold to open" hint next to the panel buttons, so a
+ * parent whose tap was just blocked by the gate learns the gesture instead
+ * of assuming the buttons are broken. Repeated taps restart the timer.
+ */
+function showParentGateHint() {
+	const hint = $("#gateHint");
+	hint.classList.remove("hidden");
+	clearTimeout(gateHintTimerId);
+	gateHintTimerId = window.setTimeout(() => hint.classList.add("hidden"), 1600);
 }
 
 /** Shows the end-session button only while a session is running. */
@@ -1416,8 +1468,139 @@ $("#playArea").addEventListener("pointerdown", pressPointer, {
 $("#playArea").addEventListener("pointermove", pressPointer, {
 	passive: false,
 });
+/**
+ * Whether the parent gate stands between a press and the panels right now:
+ * only while the setting is on and a session is actively running. On the
+ * welcome screen, or while the panel is already open (session paused), the
+ * buttons behave normally — the gate exists to stop a toddler's mid-play
+ * taps, not to slow the parent down while they're already in control.
+ */
+function parentGateActive() {
+	return data.parentGate && state.playing && !state.paused;
+}
+
+/**
+ * The panel-button hold in progress, if any: its button, its timer, and the
+ * holder that started it — a pointerId, or "keyboard" for an Enter/Space
+ * hold. Only that same holder can cancel it, so a toddler's concurrent taps
+ * landing on the buttons can't break the parent's hold partway through.
+ */
+let gateHold = null;
+
+function cancelGateHold() {
+	if (!gateHold) return;
+	clearTimeout(gateHold.timerId);
+	gateHold.button.classList.remove("gate-holding");
+	gateHold = null;
+}
+
+/**
+ * The key whose hold just opened the panel, from that moment until it is
+ * released; null otherwise. Opening the panel moves focus to its close
+ * button while the Enter/Space is still physically down, so the OS's key
+ * repeats would otherwise natively activate the close button — shutting the
+ * panel right after it opened. Swallowing that key's repeats (and only its
+ * repeats — a fresh press is a deliberate act) until its own keyup closes
+ * the gap; tracking the specific key means some other key's keyup (a
+ * toddler's finger lifting elsewhere on the keyboard) can't end the
+ * suppression early while the held key is still down.
+ */
+let swallowRepeatsOfKey = null;
+window.addEventListener(
+	"keydown",
+	(event) => {
+		if (event.repeat && event.key === swallowRepeatsOfKey) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+	{ capture: true },
+);
+window.addEventListener(
+	"keyup",
+	(event) => {
+		if (event.key === swallowRepeatsOfKey) swallowRepeatsOfKey = null;
+	},
+	{ capture: true },
+);
+// Once the window loses focus, key events stop being delivered — the held
+// key's keyup may simply never arrive, which would leave the suppression
+// stuck until some future press of the same key. By the time the app is
+// back, the key is long released, so clearing is always the right call.
+window.addEventListener("blur", () => {
+	swallowRepeatsOfKey = null;
+});
+document.addEventListener("visibilitychange", () => {
+	if (document.visibilityState === "hidden") swallowRepeatsOfKey = null;
+});
+
+function beginGateHold(button, holder, heldKey) {
+	button.classList.add("gate-holding");
+	gateHold = {
+		button,
+		holder,
+		timerId: window.setTimeout(() => {
+			cancelGateHold();
+			if (holder === "keyboard") swallowRepeatsOfKey = heldKey;
+			openPanel(button.dataset.openPanel);
+		}, PARENT_GATE_HOLD_MS),
+	};
+}
+
+// With the gate down, a plain click opens the panel. With it up, the click
+// only shows the "hold to open" hint, and holding the button for
+// PARENT_GATE_HOLD_MS — pointer kept down and on the button the whole time,
+// with a CSS fill animating the same duration as feedback — is what opens
+// it. Deliberately parent-shaped: a toddler's taps are far too brief.
+// Holding Enter or Space on the focused button works the same way, so the
+// gate never locks out someone who can't use a pointer.
 $$("[data-open-panel]").forEach((button) => {
-	button.addEventListener("click", () => openPanel(button.dataset.openPanel));
+	button.addEventListener("click", () => {
+		if (parentGateActive()) {
+			showParentGateHint();
+			return;
+		}
+		openPanel(button.dataset.openPanel);
+	});
+	button.addEventListener("pointerdown", (event) => {
+		if (!parentGateActive() || gateHold) return;
+		beginGateHold(button, event.pointerId);
+	});
+	for (const type of ["pointerup", "pointercancel", "pointerleave"]) {
+		button.addEventListener(type, (event) => {
+			if (gateHold?.button === button && gateHold.holder === event.pointerId)
+				cancelGateHold();
+		});
+	}
+	button.addEventListener("keydown", (event) => {
+		if (!parentGateActive()) return;
+		if (event.key !== "Enter" && event.key !== " ") return;
+		// No native click synthesis (the click would only flash the hint),
+		// and no play effects from the game's global keydown handler while
+		// the parent is deliberately holding the gate open.
+		event.preventDefault();
+		event.stopPropagation();
+		if (event.repeat || gateHold) return;
+		beginGateHold(button, "keyboard", event.key);
+	});
+	button.addEventListener("keyup", (event) => {
+		if (event.key !== "Enter" && event.key !== " ") return;
+		if (gateHold?.button === button && gateHold.holder === "keyboard") {
+			cancelGateHold();
+			// Pointer users get the hint from the click that follows a short
+			// press; a released key produces no click, so show it here.
+			showParentGateHint();
+		}
+	});
+	button.addEventListener("blur", () => {
+		if (gateHold?.button === button && gateHold.holder === "keyboard")
+			cancelGateHold();
+	});
+	// A 2-second touch hold is also how browsers open context menus; that
+	// would interrupt the hold right before it completes.
+	button.addEventListener("contextmenu", (event) => {
+		if (parentGateActive()) event.preventDefault();
+	});
 });
 $("#closePanel").addEventListener("click", closePanel);
 $("#scrim").addEventListener("click", closePanel);
@@ -1457,6 +1640,14 @@ $$("[data-kaleidoscope-toggle]").forEach((toggle) => {
 	toggle.addEventListener("change", (event) => {
 		data.kaleidoscope = event.target.checked;
 		updateKaleidoscope();
+		saveData();
+	});
+});
+$$("[data-parent-gate-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.parentGate = event.target.checked;
+		updateParentGate();
+		updateParentGateLocks();
 		saveData();
 	});
 });
@@ -1508,6 +1699,7 @@ $("#resetStats").addEventListener("click", () => {
 		sound: data.sound,
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
+		parentGate: data.parentGate,
 		letterSize: data.letterSize,
 	};
 	resetStats(keep);
@@ -1537,6 +1729,8 @@ function initializeApp() {
 	updateSound();
 	updateVibration();
 	updateKaleidoscope();
+	updateParentGate();
+	updateParentGateLocks();
 	updateLetterSize();
 	updateStats();
 }

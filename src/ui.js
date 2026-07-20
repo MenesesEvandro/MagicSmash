@@ -11,12 +11,18 @@ import { data, saveData, state } from "./state.js";
 import { themeIcons, themeNames } from "./themes.js";
 
 const KEY_BOUNCE_DURATION_MS = 340;
+/** How long the panel buttons must be held to pass the parent gate. */
+export const PARENT_GATE_HOLD_MS = 2000;
 
-/** Exposes JS-owned animation timing to CSS via a custom property on the root element. */
+/** Exposes JS-owned animation timing to CSS via custom properties on the root element. */
 export function applyAnimationSettings() {
 	document.documentElement.style.setProperty(
 		"--key-bounce-duration-ms",
 		`${KEY_BOUNCE_DURATION_MS}ms`,
+	);
+	document.documentElement.style.setProperty(
+		"--parent-gate-hold-ms",
+		`${PARENT_GATE_HOLD_MS}ms`,
 	);
 }
 
@@ -137,6 +143,27 @@ export function updateKaleidoscope() {
 	$$("[data-kaleidoscope-toggle]").forEach((toggle) => {
 		toggle.checked = data.kaleidoscope;
 	});
+}
+
+/** Syncs the parent gate toggle. */
+export function updateParentGate() {
+	$$("[data-parent-gate-toggle]").forEach((toggle) => {
+		toggle.checked = data.parentGate;
+	});
+}
+
+let gateHintTimerId = null;
+
+/**
+ * Briefly shows the "hold to open" hint next to the panel buttons, so a
+ * parent whose tap was just blocked by the gate learns the gesture instead
+ * of assuming the buttons are broken. Repeated taps restart the timer.
+ */
+export function showParentGateHint() {
+	const hint = $("#gateHint");
+	hint.classList.remove("hidden");
+	clearTimeout(gateHintTimerId);
+	gateHintTimerId = window.setTimeout(() => hint.classList.add("hidden"), 1600);
 }
 
 /** Shows the end-session button only while a session is running. */
