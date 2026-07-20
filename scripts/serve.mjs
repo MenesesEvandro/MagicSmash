@@ -23,7 +23,15 @@ const mimeTypes = {
 };
 
 createServer(async (request, response) => {
-	const urlPath = decodeURIComponent(new URL(request.url, "http://x").pathname);
+	let urlPath;
+	try {
+		urlPath = decodeURIComponent(new URL(request.url, "http://x").pathname);
+	} catch {
+		// Malformed percent-encoding (e.g. "/%zz") throws; answering 400
+		// beats the unhandled rejection that would kill the whole server.
+		response.writeHead(400).end();
+		return;
+	}
 	const relative = urlPath.endsWith("/") ? `${urlPath}index.html` : urlPath;
 	const filePath = normalize(join(root, relative));
 	// normalize() collapses any ../ segments; anything that escaped the root
