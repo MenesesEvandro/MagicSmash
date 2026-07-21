@@ -5,6 +5,7 @@ import {
 	makeLetterTrail,
 	makePointerTrail,
 	makeSparkles,
+	makeSuperSmash,
 	makeThemeMechanic,
 } from "./effects.js";
 import { languages, t } from "./i18n.js";
@@ -416,6 +417,16 @@ export function pressPointer(event) {
 	)
 		return;
 	if (!state.playing) return;
+
+	if (event.type === "pointerdown") {
+		state.activePointers.add(event.pointerId);
+		if (state.activePointers.size >= 4) {
+			state.activePointers.clear();
+			makeSuperSmash(event);
+			return;
+		}
+	}
+
 	const isMouseTrail =
 		event.type === "pointermove" && event.pointerType === "mouse";
 	if (event.type === "pointermove" && !isMouseTrail) return;
@@ -430,4 +441,12 @@ export function pressPointer(event) {
 		burst: event.type === "pointerdown",
 		feedback: event.type === "pointerdown",
 	});
+}
+
+/**
+ * Removes a pointer from the active pointers set when it leaves the screen.
+ * @param {PointerEvent} event
+ */
+export function releasePointer(event) {
+	state.activePointers.delete(event.pointerId);
 }
