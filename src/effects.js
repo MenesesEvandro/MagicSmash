@@ -1,3 +1,4 @@
+import { playTone } from "./audio.js";
 import { $, $$ } from "./dom.js";
 import { data, state } from "./state.js";
 import { themeIcons } from "./themes.js";
@@ -287,5 +288,51 @@ export function makeLetterTrail(letter) {
 		pop.style.setProperty("--turn", `${-35 + Math.random() * 70}deg`);
 		layer.append(pop);
 		pop.addEventListener("animationend", () => pop.remove());
+	}
+}
+
+/**
+ * Creates a massive screen-wide burst of particles and a giant central emoji,
+ * playing a sequence of tones and a strong haptic pattern.
+ * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ */
+export function makeSuperSmash(event) {
+	const rect = $("#playArea").getBoundingClientRect();
+	const x = Number.isFinite(event.clientX)
+		? event.clientX
+		: rect.left + rect.width / 2;
+	const y = Number.isFinite(event.clientY)
+		? event.clientY
+		: rect.top + rect.height / 2;
+
+	const icons = themeIcons[data.theme];
+
+	for (let i = 0; i < 40; i++) {
+		const spark = document.createElement("span");
+		spark.className = "spark super-spark";
+		spark.textContent = icons[Math.floor(Math.random() * icons.length)];
+		spark.style.setProperty("--x", `${x}px`);
+		spark.style.setProperty("--y", `${y}px`);
+		spark.style.setProperty("--dx", `${(Math.random() - 0.5) * 800}px`);
+		spark.style.setProperty("--dy", `${(Math.random() - 0.5) * 800}px`);
+		$("#sparkles").append(spark);
+		spark.addEventListener("animationend", () => spark.remove());
+	}
+
+	const superEmoji = document.createElement("span");
+	superEmoji.className = "super-smash-emoji";
+	superEmoji.textContent = icons[Math.floor(Math.random() * icons.length)];
+	superEmoji.style.setProperty("--x", `${x}px`);
+	superEmoji.style.setProperty("--y", `${y}px`);
+	$("#themeEffects").append(superEmoji);
+	superEmoji.addEventListener("animationend", () => superEmoji.remove());
+
+	if (data.sound) {
+		playTone();
+		setTimeout(playTone, 80);
+		setTimeout(playTone, 160);
+	}
+	if (data.vibration) {
+		navigator.vibrate?.([40, 40, 40, 40, 40]);
 	}
 }

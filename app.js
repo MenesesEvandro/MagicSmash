@@ -55,6 +55,7 @@ const state = {
 	bestStreak: 0,
 	lastKeyTime: 0,
 	lastPointerTime: 0,
+	activePointers: new Set(),
 	startedAt: null,
 	elapsedBeforePause: 0,
 	paused: false,
@@ -516,6 +517,52 @@ function makeLetterTrail(letter) {
 		pop.style.setProperty("--turn", `${-35 + Math.random() * 70}deg`);
 		layer.append(pop);
 		pop.addEventListener("animationend", () => pop.remove());
+	}
+}
+
+/**
+ * Creates a massive screen-wide burst of particles and a giant central emoji,
+ * playing a sequence of tones and a strong haptic pattern.
+ * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ */
+function makeSuperSmash(event) {
+	const rect = $("#playArea").getBoundingClientRect();
+	const x = Number.isFinite(event.clientX)
+		? event.clientX
+		: rect.left + rect.width / 2;
+	const y = Number.isFinite(event.clientY)
+		? event.clientY
+		: rect.top + rect.height / 2;
+
+	const icons = themeIcons[data.theme];
+
+	for (let i = 0; i < 40; i++) {
+		const spark = document.createElement("span");
+		spark.className = "spark super-spark";
+		spark.textContent = icons[Math.floor(Math.random() * icons.length)];
+		spark.style.setProperty("--x", `${x}px`);
+		spark.style.setProperty("--y", `${y}px`);
+		spark.style.setProperty("--dx", `${(Math.random() - 0.5) * 800}px`);
+		spark.style.setProperty("--dy", `${(Math.random() - 0.5) * 800}px`);
+		$("#sparkles").append(spark);
+		spark.addEventListener("animationend", () => spark.remove());
+	}
+
+	const superEmoji = document.createElement("span");
+	superEmoji.className = "super-smash-emoji";
+	superEmoji.textContent = icons[Math.floor(Math.random() * icons.length)];
+	superEmoji.style.setProperty("--x", `${x}px`);
+	superEmoji.style.setProperty("--y", `${y}px`);
+	$("#themeEffects").append(superEmoji);
+	superEmoji.addEventListener("animationend", () => superEmoji.remove());
+
+	if (data.sound) {
+		playTone();
+		setTimeout(playTone, 80);
+		setTimeout(playTone, 160);
+	}
+	if (data.vibration) {
+		navigator.vibrate?.([40, 40, 40, 40, 40]);
 	}
 }
 
@@ -1054,6 +1101,16 @@ function pressPointer(event) {
 	)
 		return;
 	if (!state.playing) return;
+
+	if (event.type === "pointerdown") {
+		state.activePointers.add(event.pointerId);
+		if (state.activePointers.size >= 4) {
+			state.activePointers.clear();
+			makeSuperSmash(event);
+			return;
+		}
+	}
+
 	const isMouseTrail =
 		event.type === "pointermove" && event.pointerType === "mouse";
 	if (event.type === "pointermove" && !isMouseTrail) return;
@@ -1068,6 +1125,14 @@ function pressPointer(event) {
 		burst: event.type === "pointerdown",
 		feedback: event.type === "pointerdown",
 	});
+}
+
+/**
+ * Removes a pointer from the active pointers set when it leaves the screen.
+ * @param {PointerEvent} event
+ */
+function releasePointer(event) {
+	state.activePointers.delete(event.pointerId);
 }
 
 // ---- src/pwa.js ----
@@ -1467,6 +1532,13 @@ $("#playArea").addEventListener("pointerdown", pressPointer, {
 });
 $("#playArea").addEventListener("pointermove", pressPointer, {
 	passive: false,
+});
+$("#playArea").addEventListener("pointerup", releasePointer, { passive: true });
+$("#playArea").addEventListener("pointercancel", releasePointer, {
+	passive: true,
+});
+$("#playArea").addEventListener("pointerleave", releasePointer, {
+	passive: true,
 });
 /**
  * Whether the parent gate stands between a press and the panels right now:

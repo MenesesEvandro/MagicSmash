@@ -1735,6 +1735,40 @@ body.small-letters .key-orb {
 		opacity: 0;
 	}
 }
+
+.super-spark {
+	font-size: clamp(35px, 5vw, 60px);
+	filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+	animation-duration: 1.2s;
+}
+
+.super-smash-emoji {
+	position: absolute;
+	left: var(--x);
+	top: var(--y);
+	font-size: clamp(150px, 40vw, 300px);
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+	animation: superSmashEmojiAnim 1s cubic-bezier(0.16, 0.8, 0.3, 1) forwards;
+	filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.9));
+	z-index: 100;
+}
+
+@keyframes superSmashEmojiAnim {
+	0% {
+		transform: translate(-50%, -50%) scale(0);
+		opacity: 1;
+	}
+	50% {
+		transform: translate(-50%, -50%) scale(1.2);
+		opacity: 1;
+	}
+	100% {
+		transform: translate(-50%, -50%) scale(1.5);
+		opacity: 0;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*:before,

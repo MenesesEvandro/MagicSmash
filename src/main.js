@@ -4,6 +4,7 @@ import {
 	endGame,
 	pressKey,
 	pressPointer,
+	releasePointer,
 	startGame,
 	updateParentGateLocks,
 	updateStats,
@@ -56,6 +57,13 @@ $("#playArea").addEventListener("pointerdown", pressPointer, {
 });
 $("#playArea").addEventListener("pointermove", pressPointer, {
 	passive: false,
+});
+$("#playArea").addEventListener("pointerup", releasePointer, { passive: true });
+$("#playArea").addEventListener("pointercancel", releasePointer, {
+	passive: true,
+});
+$("#playArea").addEventListener("pointerleave", releasePointer, {
+	passive: true,
 });
 /**
  * Whether the parent gate stands between a press and the panels right now:
