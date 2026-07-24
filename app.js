@@ -521,8 +521,10 @@ function makeLetterTrail(letter) {
 }
 
 /**
- * Creates a massive screen-wide burst of particles and a giant central emoji,
- * playing a sequence of tones and a strong haptic pattern.
+ * Creates a massive screen-wide burst of particles and a giant central
+ * emoji for a whole-hand slap. Purely visual, like every other effect in
+ * this module — the game decides whether and how a Super Smash sounds or
+ * vibrates, the same way it does for every other interaction.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
  */
 function makeSuperSmash(event) {
@@ -555,15 +557,6 @@ function makeSuperSmash(event) {
 	superEmoji.style.setProperty("--y", `${y}px`);
 	$("#themeEffects").append(superEmoji);
 	superEmoji.addEventListener("animationend", () => superEmoji.remove());
-
-	if (data.sound) {
-		playTone();
-		setTimeout(playTone, 80);
-		setTimeout(playTone, 160);
-	}
-	if (data.vibration) {
-		navigator.vibrate?.([40, 40, 40, 40, 40]);
-	}
 }
 
 // ---- src/i18n.js ----
@@ -789,6 +782,7 @@ function resetSession() {
 	state.streak = 0;
 	state.bestStreak = 0;
 	state.lastKeyTime = 0;
+	state.activePointers.clear();
 	state.startedAt = Date.now();
 	state.elapsedBeforePause = 0;
 	state.paused = false;
@@ -904,6 +898,7 @@ function endGame() {
 	const elapsed = Math.max(1, Math.round(currentElapsedSeconds()));
 	state.playing = false;
 	state.paused = false;
+	state.activePointers.clear();
 	clearInterval(state.timerId);
 	releaseWakeLock();
 	updateParentGateLocks();
@@ -956,7 +951,10 @@ function pressKey(event) {
  * Registers one interaction and plays all of its feedback: starts a session
  * if needed, updates streaks (presses under 1.6 s apart chain) and per-key
  * counters, shows the key with a random encouragement phrase, fires the
- * visual effects, optionally plays a tone, and persists.
+ * visual effects, optionally plays a tone, and persists. Every interaction
+ * — including Super Smash — goes through here, so stats, streak, and
+ * persistence stay in one place instead of each caller tracking its own
+ * subset of the bookkeeping.
  * @param {string} displayed Character shown on the orb and tracked in stats.
  * @param {string} label Text for the key-name line.
  * @param {{clientX?: number, clientY?: number}} point Effect origin for
@@ -969,12 +967,15 @@ function pressKey(event) {
  * at `point` and skip the sparkle/letter burst unless `burst` is set.
  * @param {boolean} [options.burst=false] Fire the sparkle/letter burst even
  * for a pointer interaction.
+ * @param {boolean} [options.superSmash=false] A whole-hand slap: replaces
+ * the usual sparkle/theme/letter effects with {@link makeSuperSmash}'s
+ * screen-wide burst, and the usual single tone/buzz with a bigger pattern.
  */
 function triggerInteraction(
 	displayed,
 	label,
 	point,
-	{ feedback = false, pointer = false, burst = false } = {},
+	{ feedback = false, pointer = false, burst = false, superSmash = false } = {},
 ) {
 	if (!state.playing) startGame();
 	const effectPoint = pointer ? point : randomEffectPoint();
@@ -995,28 +996,47 @@ function triggerInteraction(
 	orb.classList.remove("bounce");
 	void orb.offsetWidth;
 	orb.classList.add("bounce");
-	const points = kaleidoscopePoints(effectPoint);
-	if (pointer)
-		for (const kaleidoscopePoint of points) makePointerTrail(kaleidoscopePoint);
-	if (!pointer || burst) {
-		for (const kaleidoscopePoint of points) makeSparkles(kaleidoscopePoint);
-		makeLetterTrail(displayed);
+	if (superSmash) {
+		makeSuperSmash(effectPoint);
+	} else {
+		const points = kaleidoscopePoints(effectPoint);
+		if (pointer)
+			for (const kaleidoscopePoint of points)
+				makePointerTrail(kaleidoscopePoint);
+		if (!pointer || burst) {
+			for (const kaleidoscopePoint of points) makeSparkles(kaleidoscopePoint);
+			makeLetterTrail(displayed);
+		}
+		for (const kaleidoscopePoint of points)
+			makeThemeMechanic(kaleidoscopePoint);
 	}
-	for (const kaleidoscopePoint of points) makeThemeMechanic(kaleidoscopePoint);
 	animateBackground();
 	updateStreak();
 	updateStats();
-	if (feedback && data.sound) playTone();
-	if (feedback && data.vibration) vibrate();
+	if (feedback && data.sound) superSmash ? playSuperTone() : playTone();
+	if (feedback && data.vibration)
+		vibrate(superSmash ? SUPER_SMASH_PATTERN : 15);
 	saveData();
 }
 
+/** Vibration pattern for Super Smash: five short, evenly-spaced pulses. */
+const SUPER_SMASH_PATTERN = [40, 40, 40, 40, 40];
+
 /**
- * Fires a short haptic pulse. A no-op wherever the Vibration API doesn't
- * exist (iOS Safari, most desktop browsers) or has no hardware to act on.
+ * Fires a short haptic pulse, or a custom pattern. A no-op wherever the
+ * Vibration API doesn't exist (iOS Safari, most desktop browsers) or has no
+ * hardware to act on.
+ * @param {number | number[]} [pattern=15]
  */
-function vibrate() {
-	navigator.vibrate?.(15);
+function vibrate(pattern = 15) {
+	navigator.vibrate?.(pattern);
+}
+
+/** Super Smash's bigger sound: three quick tones instead of one. */
+function playSuperTone() {
+	playTone();
+	setTimeout(playTone, 80);
+	setTimeout(playTone, 160);
 }
 
 /**
@@ -1086,6 +1106,15 @@ function randomEffectPoint() {
 	};
 }
 
+/** Simultaneous touches that trigger Super Smash instead of an ordinary tap. */
+const SUPER_SMASH_TOUCH_THRESHOLD = 4;
+/**
+ * "Key" a Super Smash is tracked under in stats (favourite key, unique
+ * keys). It isn't a real key, so it stays visually and semantically
+ * distinct from any theme icon a normal tap might display.
+ */
+const SUPER_SMASH_KEY = "✋";
+
 /**
  * Pointer handler for the play area; inert until languages are loaded, a
  * session is running, and the target is not a control. Interactions display
@@ -1104,9 +1133,17 @@ function pressPointer(event) {
 
 	if (event.type === "pointerdown") {
 		state.activePointers.add(event.pointerId);
-		if (state.activePointers.size >= 4) {
+		if (state.activePointers.size >= SUPER_SMASH_TOUCH_THRESHOLD) {
 			state.activePointers.clear();
-			makeSuperSmash(event);
+			// Goes through triggerInteraction like any other press — not a
+			// direct makeSuperSmash() call — so the touch that crosses the
+			// threshold still counts toward stats, streak, and persistence
+			// instead of vanishing from them.
+			triggerInteraction(SUPER_SMASH_KEY, SUPER_SMASH_KEY, event, {
+				pointer: true,
+				feedback: true,
+				superSmash: true,
+			});
 			return;
 		}
 	}
