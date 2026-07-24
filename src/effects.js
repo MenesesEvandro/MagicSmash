@@ -1,4 +1,3 @@
-import { playTone } from "./audio.js";
 import { $, $$ } from "./dom.js";
 import { data, state } from "./state.js";
 import { themeIcons } from "./themes.js";
@@ -292,8 +291,10 @@ export function makeLetterTrail(letter) {
 }
 
 /**
- * Creates a massive screen-wide burst of particles and a giant central emoji,
- * playing a sequence of tones and a strong haptic pattern.
+ * Creates a massive screen-wide burst of particles and a giant central
+ * emoji for a whole-hand slap. Purely visual, like every other effect in
+ * this module — the game decides whether and how a Super Smash sounds or
+ * vibrates, the same way it does for every other interaction.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
  */
 export function makeSuperSmash(event) {
@@ -326,13 +327,4 @@ export function makeSuperSmash(event) {
 	superEmoji.style.setProperty("--y", `${y}px`);
 	$("#themeEffects").append(superEmoji);
 	superEmoji.addEventListener("animationend", () => superEmoji.remove());
-
-	if (data.sound) {
-		playTone();
-		setTimeout(playTone, 80);
-		setTimeout(playTone, 160);
-	}
-	if (data.vibration) {
-		navigator.vibrate?.([40, 40, 40, 40, 40]);
-	}
 }
