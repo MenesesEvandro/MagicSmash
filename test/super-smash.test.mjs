@@ -157,6 +157,29 @@ test("kaleidoscope mode does not mirror the Super Smash burst", async (t) => {
 	);
 });
 
+test("the touch that fires Super Smash has its default prevented", async (t) => {
+	const window = bootApp();
+	t.after(() => window.close());
+	await startSession(window);
+	const area = window.document.getElementById("playArea");
+
+	// The first three fingers are ordinary taps below the threshold — not
+	// what's under test — so only the crossing touch's event is inspected.
+	slap(window, TOUCH_THRESHOLD - 1);
+	const finalTouch = pointerEvent(window, "pointerdown", {
+		pointerId: TOUCH_THRESHOLD,
+		clientX: 100,
+		clientY: 100,
+	});
+	area.dispatchEvent(finalTouch);
+
+	assert.equal(
+		finalTouch.defaultPrevented,
+		true,
+		"a 4-finger slap must not be left for the browser to read as pinch-zoom or a scroll",
+	);
+});
+
 test("fewer than the threshold never fires Super Smash", async (t) => {
 	const window = bootApp();
 	t.after(() => window.close());

@@ -458,6 +458,11 @@ export function pressPointer(event) {
 		state.activePointers.add(event.pointerId);
 		if (state.activePointers.size >= SUPER_SMASH_TOUCH_THRESHOLD) {
 			state.activePointers.clear();
+			// A 4-finger slap is exactly the gesture browsers read as
+			// pinch-zoom or a scroll; ordinary taps below already call this
+			// later in the function, but this branch returns before reaching
+			// it, so it needs its own call.
+			event.preventDefault();
 			// Goes through triggerInteraction like any other press — not a
 			// direct makeSuperSmash() call — so the touch that crosses the
 			// threshold still counts toward stats, streak, and persistence

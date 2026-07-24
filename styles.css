@@ -295,6 +295,11 @@ button {
 	padding: 105px 24px 72px;
 	isolation: isolate;
 	position: relative;
+	/* A Super Smash slap (4+ fingers) is exactly the gesture a browser reads
+	   as pinch-zoom or a scroll; this stops it being interpreted as one
+	   before JS even runs, as a backstop alongside the preventDefault() in
+	   pressPointer() for whenever fullscreen didn't get a chance to. */
+	touch-action: none;
 	background:
 		radial-gradient(
 			circle at 15% 14%,
