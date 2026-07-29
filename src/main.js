@@ -4,8 +4,10 @@ import {
 	endGame,
 	pressKey,
 	pressPointer,
+	releaseKey,
 	releasePointer,
 	startGame,
+	stopHeldKeyGrowth,
 	updateParentGateLocks,
 	updateStats,
 } from "./game.js";
@@ -52,6 +54,7 @@ $("#homeButton").addEventListener("click", () => {
 	if (!state.playing) window.scrollTo({ top: 0, behavior: "smooth" });
 });
 window.addEventListener("keydown", pressKey, { passive: false });
+window.addEventListener("keyup", releaseKey, { passive: true });
 $("#playArea").addEventListener("pointerdown", pressPointer, {
 	passive: false,
 });
@@ -124,11 +127,17 @@ window.addEventListener(
 // key's keyup may simply never arrive, which would leave the suppression
 // stuck until some future press of the same key. By the time the app is
 // back, the key is long released, so clearing is always the right call.
+// The same loss of context also strands a held-key growth loop — its
+// keyup, just like the gate's repeat suppression above, may never arrive.
 window.addEventListener("blur", () => {
 	swallowRepeatsOfKey = null;
+	stopHeldKeyGrowth();
 });
 document.addEventListener("visibilitychange", () => {
-	if (document.visibilityState === "hidden") swallowRepeatsOfKey = null;
+	if (document.visibilityState === "hidden") {
+		swallowRepeatsOfKey = null;
+		stopHeldKeyGrowth();
+	}
 });
 
 function beginGateHold(button, holder, heldKey) {

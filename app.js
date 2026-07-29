@@ -871,6 +871,7 @@ function pauseSession() {
 	state.paused = true;
 	clearInterval(state.timerId);
 	updateParentGateLocks();
+	stopHeldKeyGrowth();
 }
 
 /**
@@ -902,6 +903,7 @@ function endGame() {
 	clearInterval(state.timerId);
 	releaseWakeLock();
 	updateParentGateLocks();
+	stopHeldKeyGrowth();
 	data.totalSeconds += elapsed;
 	data.bestSpeed = Math.max(
 		data.bestSpeed,
@@ -922,9 +924,11 @@ function endGame() {
 /**
  * Global keydown handler; inert until languages are loaded and while the
  * side panel is open. Suppresses the browser default for keys that would
- * scroll or move focus (Tab, space, arrows, Alt, Escape), then feeds the
- * press to {@link triggerInteraction} with feedback (sound and/or
- * vibration, each per its own setting).
+ * scroll or move focus (Tab, space, arrows, Alt, Escape). A fresh press
+ * feeds {@link triggerInteraction} with feedback (sound and/or vibration,
+ * each per its own setting); an OS key-repeat from a held key doesn't —
+ * see {@link startHeldKeyGrowth} — so a key leaned on doesn't spam a full
+ * effect burst hundreds of times a second.
  * @param {KeyboardEvent} event
  */
 function pressKey(event) {
@@ -942,9 +946,178 @@ function pressKey(event) {
 		["Alt", "Escape"].includes(event.key)
 	)
 		event.preventDefault();
+	if (event.repeat) {
+		startHeldKeyGrowth(heldKeyId(event));
+		return;
+	}
 	triggerInteraction(displayKey(event), keyName(event), event, {
 		feedback: true,
 	});
+}
+
+/**
+ * A stable identifier for "this physical key" across a hold, for matching
+ * a keyup back to the repeat that started growing it. `event.key` isn't
+ * safe for that: it reflects the *current* modifier state, not the state
+ * when the key went down, so holding Shift+A and releasing Shift before A
+ * turns later repeats' `key` from "A" to "a" — and a keyup landing with
+ * yet another modifier combination in effect could report a `key` that
+ * never matches what growth actually started under, leaving the loop
+ * running with nothing left to stop it. `event.code` reports the
+ * physical key ("KeyA") regardless of modifiers, so it doesn't have this
+ * problem; falling back to `key` covers callers that can't set `code`
+ * (e.g. synthetic events in tests) — `code` defaults to `""` rather than
+ * `undefined` when unset, so this has to be `||`, not `??`, or the empty
+ * string would win and every key would collapse onto the same identifier.
+ * @param {KeyboardEvent} event
+ * @returns {string}
+ */
+function heldKeyId(event) {
+	return event.code || event.key;
+}
+
+/**
+ * Global keyup handler: ends the held-key growth effect once the key that
+ * started it is actually released.
+ * @param {KeyboardEvent} event
+ */
+function releaseKey(event) {
+	if (heldGrowth?.key === heldKeyId(event)) stopHeldKeyGrowth();
+}
+
+/** Time one growth cycle takes to reach the screen's edge. */
+const HELD_KEY_GROW_MS = 1600;
+/** How long the flash between one cycle ending and the next starting lasts. */
+const HELD_KEY_POP_MS = 150;
+/** The ring's opacity while actively growing (the pop flashes brighter). */
+const HELD_KEY_RING_OPACITY = 0.8;
+
+/**
+ * The held-key growth effect currently running, if any: {@link heldKeyId}
+ * of the key that started it, and the `requestAnimationFrame` id of its
+ * next scheduled step (either phase — see {@link stepGrow}/{@link
+ * stepPop} — uses the same field, so a single `cancelAnimationFrame`
+ * always cancels whatever's pending).
+ */
+let heldGrowth = null;
+
+/**
+ * @returns {number} The `scale()` the ring needs to reach for its edge to
+ * pass the farther edge of the screen from its center — "runs out of
+ * screen" is the ring's natural cap, not an arbitrary fixed size, so it
+ * scales with the device rather than looking tiny on a big monitor or
+ * absurdly large on a phone.
+ */
+function ringScaleToFillScreen() {
+	const rect = $("#keyOrb").getBoundingClientRect();
+	const orbSize = Math.max(rect.width, rect.height) || 1;
+	const reach = Math.max(window.innerWidth, window.innerHeight);
+	return (reach / orbSize) * 1.2;
+}
+
+/**
+ * Starts (or, if already running for this exact key, leaves alone) a
+ * continuous growth effect around the key orb: a ring that widens for as
+ * long as the key stays down, instead of every OS key-repeat re-running
+ * the normal tap effects. A different key interrupting an existing effect
+ * replaces it outright, since only one orb — and one ring around it —
+ * exists on screen at a time.
+ * @param {string} key {@link heldKeyId} of the key being held.
+ */
+function startHeldKeyGrowth(key) {
+	if (heldGrowth?.key === key) return;
+	cancelAnimationFrame(heldGrowth?.frameId);
+	heldGrowth = { key, frameId: null };
+	beginGrowPhase();
+}
+
+/** Resets the ring to invisible and starts a fresh growth cycle from it. */
+function beginGrowPhase() {
+	if (!heldGrowth) return;
+	const ring = $("#heldKeyRing");
+	ring.style.transition = "none";
+	ring.style.opacity = "0";
+	ring.style.transform = "scale(1)";
+	// Computed once per cycle, not per frame: it's only ever needed at this
+	// fixed number of points a hold could pass through it (roughly once a
+	// second), and getBoundingClientRect() can force a layout — not
+	// something to pay for on every animation frame.
+	stepGrow(ring, performance.now(), ringScaleToFillScreen());
+}
+
+/**
+ * One frame of the ring's growth toward the edge of the screen: sets its
+ * size directly from elapsed time (no CSS transition — each frame is an
+ * instant jump, so the ring never lags behind the key still being held).
+ * Growth isn't unbounded: reaching the screen's edge ends the cycle in a
+ * quick pop, rather than the ring either stopping dead or growing forever
+ * past where anyone could still see it.
+ * @param {HTMLElement} ring `#heldKeyRing`, looked up once in
+ * {@link beginGrowPhase} and threaded through every frame — a querySelector
+ * per frame would be wasted work on an element that never changes.
+ * @param {number} startedAt `performance.now()` when this cycle began.
+ * @param {number} targetScale This cycle's {@link ringScaleToFillScreen}
+ * result, computed once in {@link beginGrowPhase} and threaded through
+ * every frame rather than recomputed.
+ */
+function stepGrow(ring, startedAt, targetScale) {
+	if (!heldGrowth) return;
+	const progress = Math.min(
+		1,
+		(performance.now() - startedAt) / HELD_KEY_GROW_MS,
+	);
+	// Fades in over the first sixth of the cycle, then holds steady — so it's
+	// already clearly visible well before it starts covering real ground.
+	ring.style.opacity = String(
+		Math.min(1, progress * 6) * HELD_KEY_RING_OPACITY,
+	);
+	ring.style.transform = `scale(${1 + progress * (targetScale - 1)})`;
+	if (progress < 1) {
+		heldGrowth.frameId = requestAnimationFrame(() =>
+			stepGrow(ring, startedAt, targetScale),
+		);
+		return;
+	}
+	beginPopPhase();
+}
+
+/** Brightens the ring at its full, screen-filling size for a beat, marking the cycle's turnover before the next one begins. */
+function beginPopPhase() {
+	if (!heldGrowth) return;
+	$("#heldKeyRing").style.opacity = "1";
+	stepPop(performance.now());
+}
+
+/**
+ * Holds the pop's flash for {@link HELD_KEY_POP_MS}, then loops back into
+ * another growth cycle — for as long as the key is still held, this
+ * repeats indefinitely instead of the ring ever just sitting maxed out.
+ * @param {number} startedAt `performance.now()` when the pop began.
+ */
+function stepPop(startedAt) {
+	if (!heldGrowth) return;
+	if (performance.now() - startedAt < HELD_KEY_POP_MS) {
+		heldGrowth.frameId = requestAnimationFrame(() => stepPop(startedAt));
+		return;
+	}
+	beginGrowPhase();
+}
+
+/**
+ * Ends any held-key growth effect: stops the frame loop (whichever phase
+ * it was in) and lets the ring fade out from wherever it currently is,
+ * instead of either snapping away instantly or (worse) being left to keep
+ * animating after the key that drove it is gone. Also called defensively
+ * whenever play stops or the window loses the context to ever see the
+ * matching keyup (pause, session end, blur, the page going hidden).
+ */
+function stopHeldKeyGrowth() {
+	if (!heldGrowth) return;
+	cancelAnimationFrame(heldGrowth.frameId);
+	heldGrowth = null;
+	const ring = $("#heldKeyRing");
+	ring.style.transition = "opacity 0.4s ease";
+	ring.style.opacity = "0";
 }
 
 /**
@@ -1569,6 +1742,7 @@ $("#homeButton").addEventListener("click", () => {
 	if (!state.playing) window.scrollTo({ top: 0, behavior: "smooth" });
 });
 window.addEventListener("keydown", pressKey, { passive: false });
+window.addEventListener("keyup", releaseKey, { passive: true });
 $("#playArea").addEventListener("pointerdown", pressPointer, {
 	passive: false,
 });
@@ -1641,11 +1815,17 @@ window.addEventListener(
 // key's keyup may simply never arrive, which would leave the suppression
 // stuck until some future press of the same key. By the time the app is
 // back, the key is long released, so clearing is always the right call.
+// The same loss of context also strands a held-key growth loop — its
+// keyup, just like the gate's repeat suppression above, may never arrive.
 window.addEventListener("blur", () => {
 	swallowRepeatsOfKey = null;
+	stopHeldKeyGrowth();
 });
 document.addEventListener("visibilitychange", () => {
-	if (document.visibilityState === "hidden") swallowRepeatsOfKey = null;
+	if (document.visibilityState === "hidden") {
+		swallowRepeatsOfKey = null;
+		stopHeldKeyGrowth();
+	}
 });
 
 function beginGateHold(button, holder, heldKey) {
