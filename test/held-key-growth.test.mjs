@@ -35,9 +35,10 @@ function bootApp() {
 	return window;
 }
 
-function keyEvent(window, type, key, { repeat = false } = {}) {
+function keyEvent(window, type, key, { repeat = false, code } = {}) {
 	return new window.KeyboardEvent(type, {
 		key,
+		code,
 		repeat,
 		bubbles: true,
 		cancelable: true,
@@ -114,6 +115,36 @@ test("a held key grows the ring, and releasing it starts the ring fading back ou
 	assert.ok(
 		ring.style.transition.includes("opacity"),
 		"the release must be a transition, not an instant snap",
+	);
+});
+
+test("a keyup whose `key` never matches the hold's still stops growth, via `code`", async (t) => {
+	const window = bootApp();
+	t.after(() => window.close());
+	await startSession(window);
+
+	// Hold Shift+A: growth starts under key "A" (Shift down), physical key
+	// KeyA. No further repeat ever arrives before release — the real
+	// failure mode this guards against needs no repeat in between to
+	// "resync" a key-only comparison; Shift and A could be released close
+	// enough together that only A's keyup is ever seen, and by then the
+	// modifier state has already flipped.
+	window.dispatchEvent(keyEvent(window, "keydown", "A", { code: "KeyA" }));
+	window.dispatchEvent(
+		keyEvent(window, "keydown", "A", { repeat: true, code: "KeyA" }),
+	);
+	await sleep(50);
+	assert.ok(ringOpacity(window) > 0, "growth must have started");
+
+	// Shift released first (no event on A), then A's own keyup arrives
+	// reporting the now-unmodified "a" — a value growth never started
+	// under, though the physical key (code) never changed.
+	window.dispatchEvent(keyEvent(window, "keyup", "a", { code: "KeyA" }));
+	const ring = window.document.getElementById("heldKeyRing");
+	assert.equal(
+		ring.style.opacity,
+		"0",
+		"matching by code must stop growth even though `key` never matches across the hold",
 	);
 });
 

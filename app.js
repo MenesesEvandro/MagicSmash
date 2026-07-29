@@ -947,7 +947,7 @@ function pressKey(event) {
 	)
 		event.preventDefault();
 	if (event.repeat) {
-		startHeldKeyGrowth(event.key);
+		startHeldKeyGrowth(heldKeyId(event));
 		return;
 	}
 	triggerInteraction(displayKey(event), keyName(event), event, {
@@ -956,12 +956,33 @@ function pressKey(event) {
 }
 
 /**
+ * A stable identifier for "this physical key" across a hold, for matching
+ * a keyup back to the repeat that started growing it. `event.key` isn't
+ * safe for that: it reflects the *current* modifier state, not the state
+ * when the key went down, so holding Shift+A and releasing Shift before A
+ * turns later repeats' `key` from "A" to "a" — and a keyup landing with
+ * yet another modifier combination in effect could report a `key` that
+ * never matches what growth actually started under, leaving the loop
+ * running with nothing left to stop it. `event.code` reports the
+ * physical key ("KeyA") regardless of modifiers, so it doesn't have this
+ * problem; falling back to `key` covers callers that can't set `code`
+ * (e.g. synthetic events in tests) — `code` defaults to `""` rather than
+ * `undefined` when unset, so this has to be `||`, not `??`, or the empty
+ * string would win and every key would collapse onto the same identifier.
+ * @param {KeyboardEvent} event
+ * @returns {string}
+ */
+function heldKeyId(event) {
+	return event.code || event.key;
+}
+
+/**
  * Global keyup handler: ends the held-key growth effect once the key that
  * started it is actually released.
  * @param {KeyboardEvent} event
  */
 function releaseKey(event) {
-	if (heldGrowth?.key === event.key) stopHeldKeyGrowth();
+	if (heldGrowth?.key === heldKeyId(event)) stopHeldKeyGrowth();
 }
 
 /** Time one growth cycle takes to reach the screen's edge. */
@@ -972,10 +993,11 @@ const HELD_KEY_POP_MS = 150;
 const HELD_KEY_RING_OPACITY = 0.8;
 
 /**
- * The held-key growth effect currently running, if any: which key started
- * it, and the `requestAnimationFrame` id of its next scheduled step (either
- * phase — see {@link stepGrow}/{@link stepPop} — uses the same field, so a
- * single `cancelAnimationFrame` always cancels whatever's pending).
+ * The held-key growth effect currently running, if any: {@link heldKeyId}
+ * of the key that started it, and the `requestAnimationFrame` id of its
+ * next scheduled step (either phase — see {@link stepGrow}/{@link
+ * stepPop} — uses the same field, so a single `cancelAnimationFrame`
+ * always cancels whatever's pending).
  */
 let heldGrowth = null;
 
@@ -1000,7 +1022,7 @@ function ringScaleToFillScreen() {
  * the normal tap effects. A different key interrupting an existing effect
  * replaces it outright, since only one orb — and one ring around it —
  * exists on screen at a time.
- * @param {string} key `event.key` of the key being held.
+ * @param {string} key {@link heldKeyId} of the key being held.
  */
 function startHeldKeyGrowth(key) {
 	if (heldGrowth?.key === key) return;
