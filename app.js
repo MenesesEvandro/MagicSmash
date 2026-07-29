@@ -1042,7 +1042,7 @@ function beginGrowPhase() {
 	// fixed number of points a hold could pass through it (roughly once a
 	// second), and getBoundingClientRect() can force a layout — not
 	// something to pay for on every animation frame.
-	stepGrow(performance.now(), ringScaleToFillScreen());
+	stepGrow(ring, performance.now(), ringScaleToFillScreen());
 }
 
 /**
@@ -1052,18 +1052,20 @@ function beginGrowPhase() {
  * Growth isn't unbounded: reaching the screen's edge ends the cycle in a
  * quick pop, rather than the ring either stopping dead or growing forever
  * past where anyone could still see it.
+ * @param {HTMLElement} ring `#heldKeyRing`, looked up once in
+ * {@link beginGrowPhase} and threaded through every frame — a querySelector
+ * per frame would be wasted work on an element that never changes.
  * @param {number} startedAt `performance.now()` when this cycle began.
  * @param {number} targetScale This cycle's {@link ringScaleToFillScreen}
  * result, computed once in {@link beginGrowPhase} and threaded through
  * every frame rather than recomputed.
  */
-function stepGrow(startedAt, targetScale) {
+function stepGrow(ring, startedAt, targetScale) {
 	if (!heldGrowth) return;
 	const progress = Math.min(
 		1,
 		(performance.now() - startedAt) / HELD_KEY_GROW_MS,
 	);
-	const ring = $("#heldKeyRing");
 	// Fades in over the first sixth of the cycle, then holds steady — so it's
 	// already clearly visible well before it starts covering real ground.
 	ring.style.opacity = String(
@@ -1072,7 +1074,7 @@ function stepGrow(startedAt, targetScale) {
 	ring.style.transform = `scale(${1 + progress * (targetScale - 1)})`;
 	if (progress < 1) {
 		heldGrowth.frameId = requestAnimationFrame(() =>
-			stepGrow(startedAt, targetScale),
+			stepGrow(ring, startedAt, targetScale),
 		);
 		return;
 	}
