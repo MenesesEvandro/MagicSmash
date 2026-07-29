@@ -709,6 +709,33 @@ h1 {
 	color: var(--accent-deep);
 	min-height: 21px;
 }
+.key-orb-wrap {
+	position: relative;
+	width: fit-content;
+	margin: auto;
+}
+/*
+ * Grows around the held orb for as long as a key repeats — cycling all the
+ * way out to the screen's edge, popping, and starting over for as long as
+ * the key stays down (see startHeldKeyGrowth() in src/game.js) — instead
+ * of the app spamming a full effect burst on every OS key-repeat. Sits
+ * behind .key-orb in source order on purpose: the ring's own footprint
+ * exactly matches the orb's at rest (opacity 0, scale 1), so only the part
+ * it grows past the orb's edges ever becomes visible. Border and glow are
+ * fixed here — transform: scale() already magnifies both along with
+ * everything else as the ring grows, so only opacity/transform need
+ * touching every frame. No CSS transition while growing (JS drives every
+ * frame directly); stopHeldKeyGrowth() adds one only for the release fade.
+ */
+.held-key-ring {
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	border: 6px solid var(--accent);
+	box-shadow: 0 0 24px 6px var(--accent);
+	pointer-events: none;
+	opacity: 0;
+}
 .key-orb {
 	width: clamp(150px, 23vw, 245px);
 	height: clamp(150px, 23vw, 245px);
