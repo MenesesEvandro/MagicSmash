@@ -719,13 +719,14 @@ h1 {
  * way out to the screen's edge, popping, and starting over for as long as
  * the key stays down (see startHeldKeyGrowth() in src/game.js) — instead
  * of the app spamming a full effect burst on every OS key-repeat. Sits
- * behind .key-orb in source order on purpose: the ring's own footprint
- * exactly matches the orb's at rest (opacity 0, scale 1), so only the part
- * it grows past the orb's edges ever becomes visible. Border and glow are
- * fixed here — transform: scale() already magnifies both along with
- * everything else as the ring grows, so only opacity/transform need
- * touching every frame. No CSS transition while growing (JS drives every
- * frame directly); stopHeldKeyGrowth() adds one only for the release fade.
+ * behind .key-orb in source order on purpose: at rest (opacity 0) nothing
+ * shows regardless, but the moment opacity rises, its border and glow —
+ * fixed sizes, not animated — are already visible poking out past the
+ * orb's edges before any scale growth at all; transform: scale() then
+ * magnifies that same border/glow outward over the rest of the cycle, so
+ * only opacity/transform need touching every frame. No CSS transition
+ * while growing (JS drives every frame directly); stopHeldKeyGrowth()
+ * adds one only for the release fade.
  */
 .held-key-ring {
 	position: absolute;

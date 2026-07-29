@@ -1016,7 +1016,11 @@ function beginGrowPhase() {
 	ring.style.transition = "none";
 	ring.style.opacity = "0";
 	ring.style.transform = "scale(1)";
-	stepGrow(performance.now());
+	// Computed once per cycle, not per frame: it's only ever needed at this
+	// fixed number of points a hold could pass through it (roughly once a
+	// second), and getBoundingClientRect() can force a layout — not
+	// something to pay for on every animation frame.
+	stepGrow(performance.now(), ringScaleToFillScreen());
 }
 
 /**
@@ -1027,8 +1031,11 @@ function beginGrowPhase() {
  * quick pop, rather than the ring either stopping dead or growing forever
  * past where anyone could still see it.
  * @param {number} startedAt `performance.now()` when this cycle began.
+ * @param {number} targetScale This cycle's {@link ringScaleToFillScreen}
+ * result, computed once in {@link beginGrowPhase} and threaded through
+ * every frame rather than recomputed.
  */
-function stepGrow(startedAt) {
+function stepGrow(startedAt, targetScale) {
 	if (!heldGrowth) return;
 	const progress = Math.min(
 		1,
@@ -1040,9 +1047,11 @@ function stepGrow(startedAt) {
 	ring.style.opacity = String(
 		Math.min(1, progress * 6) * HELD_KEY_RING_OPACITY,
 	);
-	ring.style.transform = `scale(${1 + progress * (ringScaleToFillScreen() - 1)})`;
+	ring.style.transform = `scale(${1 + progress * (targetScale - 1)})`;
 	if (progress < 1) {
-		heldGrowth.frameId = requestAnimationFrame(() => stepGrow(startedAt));
+		heldGrowth.frameId = requestAnimationFrame(() =>
+			stepGrow(startedAt, targetScale),
+		);
 		return;
 	}
 	beginPopPhase();
