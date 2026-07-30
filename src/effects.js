@@ -89,6 +89,82 @@ export function animateBackground() {
 }
 
 /**
+ * How long without input before the background livens up on its own. On
+ * the shorter side of what the idea sketch suggested (30–60s): for a
+ * one-to-two-year-old's attention span, a half-minute of a static screen
+ * risks the moment to re-catch their eye having already passed.
+ */
+const IDLE_TIMEOUT_MS = 10000;
+/** How often {@link animateBackground} fires on its own while idle. */
+const IDLE_TICK_MS = 1500;
+
+/** The pending "go idle" timeout, if any. */
+let idleTimerId = null;
+/** The recurring animateBackground() driver while idle, if currently idle. */
+let idleTickerId = null;
+
+/**
+ * @returns {boolean} Whether the visitor asked the OS for less motion.
+ * Attract mode is *deliberately* attention-grabbing movement that starts
+ * on its own, with nobody having touched anything — exactly what that
+ * preference exists to opt out of. The stylesheet's global reduced-motion
+ * rule already flattens the animations themselves, so this is mainly about
+ * not running the ticker behind them for no reason.
+ */
+function prefersReducedMotion() {
+	return (
+		window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true
+	);
+}
+
+/**
+ * Speeds up the ambient drift (see the `body.idle` rule in styles.css) and
+ * starts nudging it with {@link animateBackground} every {@link
+ * IDLE_TICK_MS} — a toddler who wandered off, or just paused to stare,
+ * still sees something happening on its own instead of a static screen.
+ */
+function enterIdle() {
+	state.idle = true;
+	document.body.classList.add("idle");
+	idleTickerId = window.setInterval(animateBackground, IDLE_TICK_MS);
+}
+
+/** Drops back to the normal, quieter ambient drift. */
+function exitIdle() {
+	state.idle = false;
+	document.body.classList.remove("idle");
+	clearInterval(idleTickerId);
+	idleTickerId = null;
+}
+
+/**
+ * Rearms the idle countdown from a real interaction — call on every
+ * keypress and pointer interaction. Pops the background back to its normal
+ * pace immediately if it had already gone idle, the same way any input
+ * would. A no-op outside active, unpaused play: there's nothing to idle
+ * out of on the welcome screen or with the settings/stats panel open, so
+ * no countdown is armed in either case.
+ */
+export function resetIdleTimer() {
+	clearTimeout(idleTimerId);
+	idleTimerId = null;
+	if (state.idle) exitIdle();
+	if (!state.playing || state.paused || prefersReducedMotion()) return;
+	idleTimerId = window.setTimeout(enterIdle, IDLE_TIMEOUT_MS);
+}
+
+/**
+ * Fully stops any idle countdown or state — call whenever play stops being
+ * active (paused, ended) so the background doesn't keep counting down, or
+ * stay livened up, behind the scenes.
+ */
+export function stopIdleTimer() {
+	clearTimeout(idleTimerId);
+	idleTimerId = null;
+	exitIdle();
+}
+
+/**
  * Bursts five theme icons outward from the given point, or from the key
  * orb's center when the point has no finite coordinates. Each spark removes
  * itself when its animation ends.

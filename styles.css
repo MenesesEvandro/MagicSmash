@@ -380,6 +380,16 @@ body[data-mode="dark"] .play-area {
 .magic-object.pop-grow {
 	animation: backgroundParty 0.72s cubic-bezier(0.16, 0.8, 0.33, 1);
 }
+/*
+ * Set by resetIdleTimer()/enterIdle() in src/effects.js after a stretch of
+ * no input during play: the same float animation just runs faster and a
+ * touch brighter, rather than a new animation entirely — cheap, and reads
+ * immediately as "the screen woke up" without anything new to learn.
+ */
+body.idle .magic-object {
+	animation-duration: calc(var(--float-duration) * 0.35);
+	opacity: 0.85;
+}
 .letter-pop {
 	position: absolute;
 	left: var(--left);

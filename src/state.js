@@ -56,6 +56,7 @@ export const state = {
 	startedAt: null,
 	elapsedBeforePause: 0,
 	paused: false,
+	idle: false,
 	timerId: null,
 	backgroundShuffleId: null,
 };

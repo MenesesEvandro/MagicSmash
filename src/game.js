@@ -7,6 +7,8 @@ import {
 	makeSparkles,
 	makeSuperSmash,
 	makeThemeMechanic,
+	resetIdleTimer,
+	stopIdleTimer,
 } from "./effects.js";
 import { languages, t } from "./i18n.js";
 import { data, saveData, state } from "./state.js";
@@ -155,6 +157,7 @@ export function startGame() {
 	state.playing = true;
 	keepScreenAwake();
 	updateParentGateLocks();
+	resetIdleTimer();
 	$("#welcomeCard").classList.add("hidden");
 	$("#keyStage").classList.remove("hidden");
 	$("#sessionChip").classList.remove("hidden");
@@ -195,6 +198,7 @@ export function pauseSession() {
 	clearInterval(state.timerId);
 	updateParentGateLocks();
 	stopHeldKeyGrowth();
+	stopIdleTimer();
 }
 
 /**
@@ -207,6 +211,7 @@ export function resumeSession() {
 	state.paused = false;
 	state.startedAt = Date.now();
 	updateParentGateLocks();
+	resetIdleTimer();
 	tick();
 	state.timerId = window.setInterval(tick, 500);
 }
@@ -227,6 +232,7 @@ export function endGame() {
 	releaseWakeLock();
 	updateParentGateLocks();
 	stopHeldKeyGrowth();
+	stopIdleTimer();
 	data.totalSeconds += elapsed;
 	data.bestSpeed = Math.max(
 		data.bestSpeed,
@@ -270,6 +276,12 @@ export function pressKey(event) {
 	)
 		event.preventDefault();
 	if (event.repeat) {
+		// A held key is input like any other, even though it deliberately
+		// skips triggerInteraction below (and with it the idle reset every
+		// other interaction gets): without this, leaning on one key long
+		// enough would let the attract mode fire while its ring is still
+		// visibly growing.
+		resetIdleTimer();
 		startHeldKeyGrowth(heldKeyId(event));
 		return;
 	}
@@ -474,6 +486,7 @@ export function triggerInteraction(
 	{ feedback = false, pointer = false, burst = false, superSmash = false } = {},
 ) {
 	if (!state.playing) startGame();
+	resetIdleTimer();
 	const effectPoint = pointer ? point : randomEffectPoint();
 	const now = Date.now();
 	state.streak = now - state.lastKeyTime < 1600 ? state.streak + 1 : 1;
