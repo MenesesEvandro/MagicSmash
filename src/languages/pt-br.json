@@ -51,6 +51,8 @@
 		"parentGate": "Acesso dos pais",
 		"parentGateHelp": "Durante a brincadeira, segure os botões do topo por 2 segundos para abrir",
 		"parentGateHint": "Segure para abrir",
+		"edgeDeadZone": "Ignorar bordas",
+		"edgeDeadZoneHelp": "Toques bem na borda da tela não contam, para mãozinhas que seguram o tablet pelas bordas",
 		"letterSize": "Tamanho das letras",
 		"letterSizeHelp": "Mais conforto para enxergar",
 		"fullscreen": "Abrir em tela cheia",

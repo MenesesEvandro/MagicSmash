@@ -37,6 +37,7 @@ import {
 	showParentGateHint,
 	showUpdateBanner,
 	updateDuration,
+	updateEdgeDeadZone,
 	updateKaleidoscope,
 	updateLetterSize,
 	updateParentGate,
@@ -269,6 +270,13 @@ $$("[data-parent-gate-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-edge-dead-zone-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.edgeDeadZone = event.target.checked;
+		updateEdgeDeadZone();
+		saveData();
+	});
+});
 $("#letterSize").addEventListener("input", (event) => {
 	data.letterSize = Number(event.target.value);
 	updateLetterSize();
@@ -318,6 +326,7 @@ $("#resetStats").addEventListener("click", () => {
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
 		parentGate: data.parentGate,
+		edgeDeadZone: data.edgeDeadZone,
 		letterSize: data.letterSize,
 	};
 	resetStats(keep);
@@ -349,6 +358,7 @@ function initializeApp() {
 	updateKaleidoscope();
 	updateParentGate();
 	updateParentGateLocks();
+	updateEdgeDeadZone();
 	updateLetterSize();
 	updateStats();
 }

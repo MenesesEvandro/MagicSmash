@@ -51,6 +51,8 @@
 		"parentGate": "Accesso genitori",
 		"parentGateHelp": "Durante il gioco, tieni premuti i pulsanti in alto per 2 secondi per aprirli",
 		"parentGateHint": "Tieni premuto per aprire",
+		"edgeDeadZone": "Ignora i bordi",
+		"edgeDeadZoneHelp": "I tocchi proprio sul bordo dello schermo non contano, per le manine che tengono il tablet dai lati",
 		"letterSize": "Dimensione delle lettere",
 		"letterSizeHelp": "Più facile da vedere",
 		"fullscreen": "Apri a schermo intero",

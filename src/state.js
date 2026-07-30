@@ -15,6 +15,7 @@ export const initialData = {
 	vibration: false,
 	kaleidoscope: false,
 	parentGate: true,
+	edgeDeadZone: false,
 	letterSize: 1,
 	totalPresses: 0,
 	totalSeconds: 0,

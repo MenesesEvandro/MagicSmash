@@ -152,6 +152,13 @@ export function updateParentGate() {
 	});
 }
 
+/** Syncs the edge dead zone toggle. */
+export function updateEdgeDeadZone() {
+	$$("[data-edge-dead-zone-toggle]").forEach((toggle) => {
+		toggle.checked = data.edgeDeadZone;
+	});
+}
+
 let gateHintTimerId = null;
 
 /**

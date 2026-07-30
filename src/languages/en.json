@@ -51,6 +51,8 @@
 		"parentGate": "Parent gate",
 		"parentGateHelp": "During play, hold the top buttons for 2 seconds to open them",
 		"parentGateHint": "Hold to open",
+		"edgeDeadZone": "Ignore edges",
+		"edgeDeadZoneHelp": "Touches right at the screen's edge don't count, for little hands gripping the tablet by its sides",
 		"letterSize": "Letter size",
 		"letterSizeHelp": "Easier to see",
 		"fullscreen": "Open full screen",
