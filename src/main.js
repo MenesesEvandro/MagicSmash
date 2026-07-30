@@ -1,5 +1,9 @@
 import { $, $$ } from "./dom.js";
-import { startBackgroundShuffle } from "./effects.js";
+import {
+	resetIdleTimer,
+	startBackgroundShuffle,
+	stopIdleTimer,
+} from "./effects.js";
 import {
 	endGame,
 	pressKey,
@@ -137,6 +141,14 @@ document.addEventListener("visibilitychange", () => {
 	if (document.visibilityState === "hidden") {
 		swallowRepeatsOfKey = null;
 		stopHeldKeyGrowth();
+		// Attract mode exists to catch a nearby child's eye; on a page
+		// nobody can see, its ticker would just churn the DOM for nothing.
+		stopIdleTimer();
+	} else {
+		// Back in view: re-arm the countdown so the background can still
+		// liven up for a child who's watching but not touching. A no-op
+		// unless a session is actually running.
+		resetIdleTimer();
 	}
 });
 
