@@ -12,10 +12,26 @@ const appJs = readFileSync(new URL("../app.js", import.meta.url), "utf8");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Matches IDLE_TIMEOUT_MS in src/effects.js, plus a little slack. */
-const IDLE_MS = 10000 + 300;
+/**
+ * How much faster the app's own timers run inside these tests. Idle mode is
+ * defined in tens of seconds — waiting that out for real would put well
+ * over a minute of pure sleeping into the suite. Scaling the window's
+ * setTimeout/setInterval compresses the wall clock without touching a line
+ * of app logic: the same code runs, in the same order, against the same
+ * thresholds; only the delays it asks for are shorter. Deliberately
+ * moderate — 20× leaves the idle timeout at 500 ms, comfortably above the
+ * scheduling jitter a loaded CI box adds, where a far larger factor would
+ * trade slow tests for flaky ones.
+ */
+const TIME_SCALE = 20;
 
-/** Boots a fresh app instance: real index.html + built app.js in jsdom. */
+/** IDLE_TIMEOUT_MS from src/effects.js, scaled, plus slack for jitter. */
+const IDLE_MS = 10000 / TIME_SCALE + 200;
+
+/**
+ * Boots a fresh app instance: real index.html + built app.js in jsdom,
+ * with the window's timers scaled by {@link TIME_SCALE}.
+ */
 function bootApp() {
 	const dom = new JSDOM(html, {
 		url: "http://localhost/",
@@ -31,6 +47,20 @@ function bootApp() {
 			this.open = false;
 		};
 	}
+	// Installed before the app script runs, so every timer it schedules
+	// goes through these. Both bare `setTimeout(...)` and `window.setTimeout
+	// (...)` in the bundle resolve here, since the script executes with this
+	// window as its global. requestAnimationFrame is deliberately left
+	// alone: the held-key growth loop measures itself with performance.now()
+	// rather than timer delays, so scaling it would prove nothing and only
+	// desync the two clocks.
+	const realSetTimeout = window.setTimeout;
+	const realSetInterval = window.setInterval;
+	window.setTimeout = (handler, delay = 0, ...args) =>
+		realSetTimeout.call(window, handler, delay / TIME_SCALE, ...args);
+	window.setInterval = (handler, delay = 0, ...args) =>
+		realSetInterval.call(window, handler, delay / TIME_SCALE, ...args);
+
 	const script = window.document.createElement("script");
 	script.textContent = appJs;
 	window.document.body.appendChild(script);
@@ -87,7 +117,11 @@ test("holding a key counts as input: idle must not fire while its ring is still 
 			bubbles: true,
 		}),
 	);
-	for (let i = 0; i < 220; i++) {
+	// Repeats at a realistic OS rate, for comfortably longer than the
+	// (scaled) idle timeout — so the countdown would have fired several
+	// times over if a held key didn't keep resetting it.
+	const heldUntil = Date.now() + IDLE_MS * 2;
+	while (Date.now() < heldUntil) {
 		window.dispatchEvent(
 			new window.KeyboardEvent("keydown", {
 				key: "a",
@@ -96,7 +130,7 @@ test("holding a key counts as input: idle must not fire while its ring is still 
 				bubbles: true,
 			}),
 		);
-		await sleep(50);
+		await sleep(30);
 	}
 
 	assert.equal(
