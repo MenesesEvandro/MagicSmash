@@ -1416,9 +1416,10 @@ const PALM_CONTACT_MIN_PX = 40;
 /**
  * @param {PointerEvent} event
  * @returns {boolean} Whether `event`'s own contact geometry reads as a palm
- * or forearm rather than a fingertip. Mouse and pen input always report a
- * width/height of 1, so this only ever matches touch — no separate check
- * needed to keep it from misfiring on a mouse click.
+ * or forearm rather than a fingertip. Gated on pointerType itself rather
+ * than trusting width/height alone — mouse and pen are spec'd to always
+ * report 1, but relying on that instead of checking the type outright would
+ * leave a mouse click one non-conforming browser away from misfiring.
  */
 function isPalmContact(event) {
 	return (
@@ -1464,14 +1465,16 @@ function pressPointer(event) {
 	// re-arms this throttle, and getBoundingClientRect() in isInEdgeDeadZone
 	// runs on every raw pointermove instead of one per 160 ms.
 	state.lastPointerTime = now;
-	// Excluded from Super Smash's count below too, not just an ordinary
-	// tap: a toddler bracing the tablet with a whole hand along an edge is
+	// Checked before the dead zone below rather than after: it's a plain size
+	// comparison with no rect lookup, so trying it first skips
+	// isInEdgeDeadZone()'s layout-forcing getBoundingClientRect() call
+	// whenever a palm-sized contact alone already rules the event out.
+	if (data.palmRejection && isPalmContact(event)) return;
+	// Both this and the palm check above are excluded from Super Smash's
+	// count below too, not just an ordinary tap: a toddler bracing the
+	// tablet with a whole hand — along an edge, or resting flat — is
 	// gripping it, not slapping the play area.
 	if (data.edgeDeadZone && isInEdgeDeadZone(event)) return;
-	// Same reasoning as the dead zone above, for a resting forearm or flat
-	// palm instead of a gripping edge: neither is an intentional touch, so
-	// neither should count toward an ordinary tap or toward Super Smash.
-	if (data.palmRejection && isPalmContact(event)) return;
 
 	if (event.type === "pointerdown") {
 		state.activePointers.add(event.pointerId);
