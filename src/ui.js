@@ -165,6 +165,13 @@ export function updateEdgeDeadZone() {
 	$("#edgeDeadZoneSize").value = data.edgeDeadZoneSize;
 }
 
+/** Syncs the palm rejection toggle. */
+export function updatePalmRejection() {
+	$$("[data-palm-rejection-toggle]").forEach((toggle) => {
+		toggle.checked = data.palmRejection;
+	});
+}
+
 let gateHintTimerId = null;
 
 /**

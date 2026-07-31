@@ -17,6 +17,7 @@ export const initialData = {
 	parentGate: true,
 	edgeDeadZone: false,
 	edgeDeadZoneSize: 1,
+	palmRejection: false,
 	letterSize: 1,
 	totalPresses: 0,
 	totalSeconds: 0,

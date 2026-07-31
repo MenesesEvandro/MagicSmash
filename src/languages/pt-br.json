@@ -55,6 +55,8 @@
 		"edgeDeadZoneHelp": "Toques bem na borda da tela não contam, para mãozinhas que seguram o tablet pelas bordas",
 		"edgeDeadZoneSize": "Tamanho da zona morta",
 		"edgeDeadZoneSizeHelp": "Quanto maior, mais espaço perto das bordas é ignorado",
+		"palmRejection": "Ignorar mão apoiada",
+		"palmRejectionHelp": "Um antebraço ou a palma da mão apoiados na tela não contam como toque",
 		"letterSize": "Tamanho das letras",
 		"letterSizeHelp": "Mais conforto para enxergar",
 		"fullscreen": "Abrir em tela cheia",
