@@ -625,6 +625,33 @@ const SUPER_SMASH_TOUCH_THRESHOLD = 4;
 const SUPER_SMASH_KEY = "✋";
 
 /**
+ * How much of #playArea's edge, in CSS pixels, {@link data.edgeDeadZone}
+ * ignores touches within, indexed by {@link data.edgeDeadZoneSize} (0 small,
+ * 1 medium, 2 large). A toddler's grip is a physical width regardless of
+ * screen size, so these are fixed pixel margins rather than percentages —
+ * the same margin on a phone and a large tablet.
+ */
+const EDGE_DEAD_ZONE_MARGIN_PX = [16, 32, 48];
+
+/**
+ * @param {PointerEvent} event
+ * @returns {boolean} Whether `event` landed within the edge dead zone.
+ * Only meaningful when {@link data.edgeDeadZone} is on — callers gate on
+ * that setting themselves, so this only ever does the (layout-forcing)
+ * rect lookup when it might actually matter.
+ */
+function isInEdgeDeadZone(event) {
+	const margin = EDGE_DEAD_ZONE_MARGIN_PX[data.edgeDeadZoneSize];
+	const rect = $("#playArea").getBoundingClientRect();
+	return (
+		event.clientX - rect.left < margin ||
+		rect.right - event.clientX < margin ||
+		event.clientY - rect.top < margin ||
+		rect.bottom - event.clientY < margin
+	);
+}
+
+/**
  * Pointer handler for the play area; inert until languages are loaded, a
  * session is running, and the target is not a control. Interactions display
  * a random icon from the current theme: taps and clicks (pointerdown) act
@@ -640,15 +667,36 @@ export function pressPointer(event) {
 		return;
 	if (!state.playing) return;
 
+	// Filtering (and throttling) pointermove down to what could plausibly
+	// matter *before* the dead-zone check below, rather than after, means
+	// getBoundingClientRect() — which can force a layout — never runs on
+	// the dozens of raw pointermove events a dragging mouse fires between
+	// two throttled ones.
+	const isMouseTrail =
+		event.type === "pointermove" && event.pointerType === "mouse";
+	if (event.type === "pointermove" && !isMouseTrail) return;
+	const now = Date.now();
+	if (isMouseTrail && now - state.lastPointerTime < 160) return;
+	// Every event past this point is ours, whether or not the dead-zone
+	// check below goes on to ignore it — otherwise a repeated tap sitting on
+	// top of the orb's text falls through to the browser's own default
+	// (selecting it, the way a rapid native double-click would), and nothing
+	// in the app ever clears that selection.
+	event.preventDefault();
+	// Also advanced for an event the dead zone below goes on to ignore, not
+	// just a registered one — otherwise a mouse trail along the edge never
+	// re-arms this throttle, and getBoundingClientRect() in isInEdgeDeadZone
+	// runs on every raw pointermove instead of one per 160 ms.
+	state.lastPointerTime = now;
+	// Excluded from Super Smash's count below too, not just an ordinary
+	// tap: a toddler bracing the tablet with a whole hand along an edge is
+	// gripping it, not slapping the play area.
+	if (data.edgeDeadZone && isInEdgeDeadZone(event)) return;
+
 	if (event.type === "pointerdown") {
 		state.activePointers.add(event.pointerId);
 		if (state.activePointers.size >= SUPER_SMASH_TOUCH_THRESHOLD) {
 			state.activePointers.clear();
-			// A 4-finger slap is exactly the gesture browsers read as
-			// pinch-zoom or a scroll; ordinary taps below already call this
-			// later in the function, but this branch returns before reaching
-			// it, so it needs its own call.
-			event.preventDefault();
 			// Goes through triggerInteraction like any other press — not a
 			// direct makeSuperSmash() call — so the touch that crosses the
 			// threshold still counts toward stats, streak, and persistence
@@ -662,13 +710,6 @@ export function pressPointer(event) {
 		}
 	}
 
-	const isMouseTrail =
-		event.type === "pointermove" && event.pointerType === "mouse";
-	if (event.type === "pointermove" && !isMouseTrail) return;
-	const now = Date.now();
-	if (isMouseTrail && now - state.lastPointerTime < 160) return;
-	state.lastPointerTime = now;
-	event.preventDefault();
 	const icons = themeIcons[data.theme];
 	const displayed = icons[Math.floor(Math.random() * icons.length)];
 	triggerInteraction(displayed, displayed, event, {

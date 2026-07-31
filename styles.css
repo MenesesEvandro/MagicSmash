@@ -1244,6 +1244,10 @@ body[data-mode="dark"] .child-card .text-button {
 	accent-color: var(--accent);
 	width: 100px;
 }
+.range-row input:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
 .secondary-button {
 	border: 1px solid var(--accent);
 	background: transparent;

@@ -152,6 +152,19 @@ export function updateParentGate() {
 	});
 }
 
+/**
+ * Syncs the edge dead zone toggle, and its size slider along with it — the
+ * size only means anything once the zone itself is on, so the slider is
+ * disabled rather than hidden while it's off, to keep its position visible.
+ */
+export function updateEdgeDeadZone() {
+	$$("[data-edge-dead-zone-toggle]").forEach((toggle) => {
+		toggle.checked = data.edgeDeadZone;
+	});
+	$("#edgeDeadZoneSize").disabled = !data.edgeDeadZone;
+	$("#edgeDeadZoneSize").value = data.edgeDeadZoneSize;
+}
+
 let gateHintTimerId = null;
 
 /**
