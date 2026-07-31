@@ -277,6 +277,10 @@ $$("[data-edge-dead-zone-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$("#edgeDeadZoneSize").addEventListener("input", (event) => {
+	data.edgeDeadZoneSize = Number(event.target.value);
+	saveData();
+});
 $("#letterSize").addEventListener("input", (event) => {
 	data.letterSize = Number(event.target.value);
 	updateLetterSize();
@@ -327,6 +331,7 @@ $("#resetStats").addEventListener("click", () => {
 		kaleidoscope: data.kaleidoscope,
 		parentGate: data.parentGate,
 		edgeDeadZone: data.edgeDeadZone,
+		edgeDeadZoneSize: data.edgeDeadZoneSize,
 		letterSize: data.letterSize,
 	};
 	resetStats(keep);

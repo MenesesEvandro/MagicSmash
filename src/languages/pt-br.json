@@ -53,6 +53,8 @@
 		"parentGateHint": "Segure para abrir",
 		"edgeDeadZone": "Ignorar bordas",
 		"edgeDeadZoneHelp": "Toques bem na borda da tela não contam, para mãozinhas que seguram o tablet pelas bordas",
+		"edgeDeadZoneSize": "Tamanho da zona morta",
+		"edgeDeadZoneSizeHelp": "Quanto maior, mais espaço perto das bordas é ignorado",
 		"letterSize": "Tamanho das letras",
 		"letterSizeHelp": "Mais conforto para enxergar",
 		"fullscreen": "Abrir em tela cheia",

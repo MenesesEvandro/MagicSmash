@@ -53,6 +53,8 @@
 		"parentGateHint": "Hold to open",
 		"edgeDeadZone": "Ignore edges",
 		"edgeDeadZoneHelp": "Touches right at the screen's edge don't count, for little hands gripping the tablet by its sides",
+		"edgeDeadZoneSize": "Dead zone size",
+		"edgeDeadZoneSizeHelp": "The bigger it is, the more of the edge gets ignored",
 		"letterSize": "Letter size",
 		"letterSizeHelp": "Easier to see",
 		"fullscreen": "Open full screen",

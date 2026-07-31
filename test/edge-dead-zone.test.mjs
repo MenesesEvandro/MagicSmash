@@ -28,6 +28,14 @@ const AREA = {
 const EDGE_POINT = { clientX: 5, clientY: 450 };
 /** Comfortably away from every edge. */
 const CENTER_POINT = { clientX: 800, clientY: 450 };
+/** Past the small (16px) margin but within the medium/large ones. */
+const MID_EDGE_POINT = { clientX: 20, clientY: 450 };
+
+function setEdgeDeadZoneSize(window, value) {
+	const slider = window.document.getElementById("edgeDeadZoneSize");
+	slider.value = String(value);
+	slider.dispatchEvent(new window.Event("input", { bubbles: true }));
+}
 
 /** Boots a fresh app instance: real index.html + built app.js in jsdom. */
 function bootApp() {
@@ -140,6 +148,55 @@ test("with the setting on, an edge tap still gets its default prevented", async 
 		event.defaultPrevented,
 		true,
 		"ignoring a tap for the dead zone must not skip preventDefault",
+	);
+});
+
+test("the size slider is disabled until the dead zone setting is on", async (t) => {
+	const window = bootApp();
+	t.after(() => window.close());
+
+	assert.equal(
+		window.document.getElementById("edgeDeadZoneSize").disabled,
+		true,
+		"the slider must start disabled, since the setting itself starts off",
+	);
+
+	window.document.getElementById("edgeDeadZoneToggle").click();
+
+	assert.equal(
+		window.document.getElementById("edgeDeadZoneSize").disabled,
+		false,
+		"turning the setting on must enable its size slider",
+	);
+});
+
+test("the size slider controls how much of the edge gets ignored", async (t) => {
+	const window = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("edgeDeadZoneToggle").click();
+	await startSession(window);
+
+	const area = window.document.getElementById("playArea");
+
+	setEdgeDeadZoneSize(window, 0); // small: 16px
+	area.dispatchEvent(pointerEvent(window, "pointerdown", MID_EDGE_POINT));
+	assert.equal(
+		pressCount(window),
+		1,
+		"a tap past the small margin must register as an ordinary tap",
+	);
+
+	setEdgeDeadZoneSize(window, 2); // large: 48px
+	area.dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			...MID_EDGE_POINT,
+			pointerId: 2,
+		}),
+	);
+	assert.equal(
+		pressCount(window),
+		1,
+		"the same tap must be ignored once the zone is widened to cover it",
 	);
 });
 

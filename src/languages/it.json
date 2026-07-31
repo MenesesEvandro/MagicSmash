@@ -53,6 +53,8 @@
 		"parentGateHint": "Tieni premuto per aprire",
 		"edgeDeadZone": "Ignora i bordi",
 		"edgeDeadZoneHelp": "I tocchi proprio sul bordo dello schermo non contano, per le manine che tengono il tablet dai lati",
+		"edgeDeadZoneSize": "Dimensione della zona morta",
+		"edgeDeadZoneSizeHelp": "Più è grande, più bordo viene ignorato",
 		"letterSize": "Dimensione delle lettere",
 		"letterSizeHelp": "Più facile da vedere",
 		"fullscreen": "Apri a schermo intero",

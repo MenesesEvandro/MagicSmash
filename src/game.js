@@ -626,11 +626,12 @@ const SUPER_SMASH_KEY = "✋";
 
 /**
  * How much of #playArea's edge, in CSS pixels, {@link data.edgeDeadZone}
- * ignores touches within. A toddler's grip is a physical width regardless
- * of screen size, so this is a fixed pixel margin rather than a
- * percentage — the same margin on a phone and a large tablet.
+ * ignores touches within, indexed by {@link data.edgeDeadZoneSize} (0 small,
+ * 1 medium, 2 large). A toddler's grip is a physical width regardless of
+ * screen size, so these are fixed pixel margins rather than percentages —
+ * the same margin on a phone and a large tablet.
  */
-const EDGE_DEAD_ZONE_MARGIN_PX = 32;
+const EDGE_DEAD_ZONE_MARGIN_PX = [16, 32, 48];
 
 /**
  * @param {PointerEvent} event
@@ -640,12 +641,13 @@ const EDGE_DEAD_ZONE_MARGIN_PX = 32;
  * rect lookup when it might actually matter.
  */
 function isInEdgeDeadZone(event) {
+	const margin = EDGE_DEAD_ZONE_MARGIN_PX[data.edgeDeadZoneSize];
 	const rect = $("#playArea").getBoundingClientRect();
 	return (
-		event.clientX - rect.left < EDGE_DEAD_ZONE_MARGIN_PX ||
-		rect.right - event.clientX < EDGE_DEAD_ZONE_MARGIN_PX ||
-		event.clientY - rect.top < EDGE_DEAD_ZONE_MARGIN_PX ||
-		rect.bottom - event.clientY < EDGE_DEAD_ZONE_MARGIN_PX
+		event.clientX - rect.left < margin ||
+		rect.right - event.clientX < margin ||
+		event.clientY - rect.top < margin ||
+		rect.bottom - event.clientY < margin
 	);
 }
 
