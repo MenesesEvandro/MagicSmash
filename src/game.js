@@ -652,6 +652,27 @@ function isInEdgeDeadZone(event) {
 }
 
 /**
+ * Roughly how wide, in CSS pixels, a fingertip's contact ellipse gets before
+ * it's probably not a fingertip anymore. {@link data.palmRejection} drops
+ * any touch at or past this size.
+ */
+const PALM_CONTACT_MIN_PX = 40;
+
+/**
+ * @param {PointerEvent} event
+ * @returns {boolean} Whether `event`'s own contact geometry reads as a palm
+ * or forearm rather than a fingertip. Mouse and pen input always report a
+ * width/height of 1, so this only ever matches touch — no separate check
+ * needed to keep it from misfiring on a mouse click.
+ */
+function isPalmContact(event) {
+	return (
+		event.pointerType === "touch" &&
+		Math.max(event.width, event.height) >= PALM_CONTACT_MIN_PX
+	);
+}
+
+/**
  * Pointer handler for the play area; inert until languages are loaded, a
  * session is running, and the target is not a control. Interactions display
  * a random icon from the current theme: taps and clicks (pointerdown) act
@@ -692,6 +713,10 @@ export function pressPointer(event) {
 	// tap: a toddler bracing the tablet with a whole hand along an edge is
 	// gripping it, not slapping the play area.
 	if (data.edgeDeadZone && isInEdgeDeadZone(event)) return;
+	// Same reasoning as the dead zone above, for a resting forearm or flat
+	// palm instead of a gripping edge: neither is an intentional touch, so
+	// neither should count toward an ordinary tap or toward Super Smash.
+	if (data.palmRejection && isPalmContact(event)) return;
 
 	if (event.type === "pointerdown") {
 		state.activePointers.add(event.pointerId);

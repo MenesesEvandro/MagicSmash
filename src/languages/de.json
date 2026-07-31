@@ -55,6 +55,8 @@
 		"edgeDeadZoneHelp": "Berührungen ganz am Bildschirmrand zählen nicht, für kleine Hände, die das Tablet an den Seiten halten",
 		"edgeDeadZoneSize": "Größe der toten Zone",
 		"edgeDeadZoneSizeHelp": "Je größer, desto mehr vom Rand wird ignoriert",
+		"palmRejection": "Aufliegende Hand ignorieren",
+		"palmRejectionHelp": "Ein Unterarm oder eine Handfläche, die auf dem Bildschirm liegen, zählen nicht als Berührung",
 		"letterSize": "Buchstabengröße",
 		"letterSizeHelp": "Besser zu sehen",
 		"fullscreen": "Vollbild öffnen",
