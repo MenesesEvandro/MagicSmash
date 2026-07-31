@@ -132,6 +132,43 @@ test("with the setting on, a tap away from the edge still registers normally", a
 	);
 });
 
+test("an ignored mouse trail event still advances the pointermove throttle", async (t) => {
+	const window = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("edgeDeadZoneToggle").click();
+	await startSession(window);
+
+	const area = window.document.getElementById("playArea");
+	let rectCalls = 0;
+	area.getBoundingClientRect = () => {
+		rectCalls++;
+		return AREA;
+	};
+
+	// Regression: two mouse pointermoves along the edge, back to back, must
+	// only force one layout — the dead zone ignoring the first must not skip
+	// updating the throttle timestamp, or every raw pointermove along the
+	// edge would call getBoundingClientRect() instead of one per 160 ms.
+	area.dispatchEvent(
+		pointerEvent(window, "pointermove", {
+			...EDGE_POINT,
+			pointerType: "mouse",
+		}),
+	);
+	area.dispatchEvent(
+		pointerEvent(window, "pointermove", {
+			...EDGE_POINT,
+			pointerType: "mouse",
+		}),
+	);
+
+	assert.equal(
+		rectCalls,
+		1,
+		"the second pointermove within 160ms must be throttled before it reaches the dead-zone check",
+	);
+});
+
 test("with the setting on, an edge tap still gets its default prevented", async (t) => {
 	const window = bootApp();
 	t.after(() => window.close());

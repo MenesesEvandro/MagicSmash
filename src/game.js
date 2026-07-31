@@ -683,6 +683,11 @@ export function pressPointer(event) {
 	// (selecting it, the way a rapid native double-click would), and nothing
 	// in the app ever clears that selection.
 	event.preventDefault();
+	// Also advanced for an event the dead zone below goes on to ignore, not
+	// just a registered one — otherwise a mouse trail along the edge never
+	// re-arms this throttle, and getBoundingClientRect() in isInEdgeDeadZone
+	// runs on every raw pointermove instead of one per 160 ms.
+	state.lastPointerTime = now;
 	// Excluded from Super Smash's count below too, not just an ordinary
 	// tap: a toddler bracing the tablet with a whole hand along an edge is
 	// gripping it, not slapping the play area.
@@ -705,7 +710,6 @@ export function pressPointer(event) {
 		}
 	}
 
-	state.lastPointerTime = now;
 	const icons = themeIcons[data.theme];
 	const displayed = icons[Math.floor(Math.random() * icons.length)];
 	triggerInteraction(displayed, displayed, event, {
