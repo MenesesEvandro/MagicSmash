@@ -24,15 +24,72 @@ function nearestPentatonicNote(frequency) {
 }
 
 /**
+ * One fixed colour per {@link PENTATONIC_NOTES} pitch class (C D E G A), for
+ * {@link data.noteColors} — always the same note, always the same colour,
+ * regardless of theme or octave.
+ */
+export const NOTE_COLORS = [
+	"#e2503a",
+	"#e0872e",
+	"#d4b02a",
+	"#4a9e5c",
+	"#3d84c6",
+];
+
+/**
+ * Picks the note this interaction's tone will play: an absolute frequency
+ * already snapped to {@link PENTATONIC_SCALE} (the frequency range comes
+ * from the current theme, same as always), plus that note's pitch class —
+ * an index into {@link PENTATONIC_NOTES} and {@link NOTE_COLORS} alike,
+ * independent of which octave it landed in. Split out from playTone() so a
+ * note can be picked (and, once {@link data.noteColors} exists, coloured)
+ * without needing the Web Audio API to actually be available.
+ * @returns {{frequency: number, noteIndex: number}}
+ */
+function pickNote() {
+	if (data.theme === "music") {
+		const octaveIndex = Math.floor(Math.random() * PENTATONIC_OCTAVE.length);
+		return {
+			frequency: PENTATONIC_OCTAVE[octaveIndex],
+			noteIndex: octaveIndex % PENTATONIC_NOTES.length,
+		};
+	}
+	const target =
+		data.theme === "bubbles"
+			? 640 + Math.random() * 260
+			: data.theme === "dinosaurs"
+				? 130 + Math.random() * 80
+				: data.theme === "farm"
+					? 220 + Math.random() * 180
+					: data.theme === "weather"
+						? 270 + Math.random() * 130
+						: data.theme === "bedtime"
+							? 310 + Math.random() * 70
+							: data.theme === "space"
+								? 430 + Math.random() * 250
+								: data.theme === "ocean"
+									? 300 + Math.random() * 220
+									: 370 + Math.random() * 270;
+	const frequency = nearestPentatonicNote(target);
+	return {
+		frequency,
+		noteIndex: PENTATONIC_SCALE.indexOf(frequency) % PENTATONIC_NOTES.length,
+	};
+}
+
+/**
  * Plays a short synthesized tone through the Web Audio API. Waveform, pitch
  * range, pitch sweep, and length all derive from the current theme, giving
  * each theme its own sound character; every theme's pitch is snapped to the
  * nearest {@link PENTATONIC_SCALE} note, so a rapid smash across many keys
  * comes out sounding musical instead of random. Creates the shared
  * AudioContext on first call; failures are swallowed since sound is
- * optional.
+ * optional — but the note is picked before that call, so the returned index
+ * is still meaningful even when audio itself isn't available.
+ * @returns {number} The played note's pitch class — see {@link pickNote}.
  */
 export function playTone() {
+	const { frequency, noteIndex } = pickNote();
 	try {
 		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
 		const oscillator = audioContext.createOscillator();
@@ -43,26 +100,7 @@ export function playTone() {
 			: data.theme === "lights"
 				? "square"
 				: "sine";
-		oscillator.frequency.value =
-			data.theme === "music"
-				? PENTATONIC_OCTAVE[
-						Math.floor(Math.random() * PENTATONIC_OCTAVE.length)
-					]
-				: data.theme === "bubbles"
-					? nearestPentatonicNote(640 + Math.random() * 260)
-					: data.theme === "dinosaurs"
-						? nearestPentatonicNote(130 + Math.random() * 80)
-						: data.theme === "farm"
-							? nearestPentatonicNote(220 + Math.random() * 180)
-							: data.theme === "weather"
-								? nearestPentatonicNote(270 + Math.random() * 130)
-								: data.theme === "bedtime"
-									? nearestPentatonicNote(310 + Math.random() * 70)
-									: data.theme === "space"
-										? nearestPentatonicNote(430 + Math.random() * 250)
-										: data.theme === "ocean"
-											? nearestPentatonicNote(300 + Math.random() * 220)
-											: nearestPentatonicNote(370 + Math.random() * 270);
+		oscillator.frequency.value = frequency;
 		if (data.theme === "vehicles")
 			oscillator.frequency.exponentialRampToValueAtTime(
 				nearestPentatonicNote(230),
@@ -89,4 +127,5 @@ export function playTone() {
 	} catch {
 		/* Sound is optional; silently continue when unavailable. */
 	}
+	return noteIndex;
 }

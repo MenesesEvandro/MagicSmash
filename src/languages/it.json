@@ -48,6 +48,8 @@
 		"vibrationHelp": "Una piccola vibrazione per ogni tasto, se il dispositivo lo supporta",
 		"kaleidoscope": "Caleidoscopio",
 		"kaleidoscopeHelp": "Riflette ogni effetto intorno allo schermo",
+		"noteColors": "Colore per nota",
+		"noteColorsHelp": "La sfera centrale si accende sempre dello stesso colore per la stessa nota musicale",
 		"parentGate": "Accesso genitori",
 		"parentGateHelp": "Durante il gioco, tieni premuti i pulsanti in alto per 2 secondi per aprirli",
 		"parentGateHint": "Tieni premuto per aprire",

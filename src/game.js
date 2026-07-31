@@ -1,4 +1,4 @@
-import { playTone } from "./audio.js";
+import { NOTE_COLORS, playTone } from "./audio.js";
 import { $ } from "./dom.js";
 import {
 	animateBackground,
@@ -522,7 +522,20 @@ export function triggerInteraction(
 	animateBackground();
 	updateStreak();
 	updateStats();
-	if (feedback && data.sound) superSmash ? playSuperTone() : playTone();
+	if (feedback && data.sound) {
+		if (superSmash) {
+			playSuperTone();
+		} else {
+			// Coloured only alongside an actual played tone — with no note
+			// playing, there's nothing consistent for the colour to be tied
+			// to — so this piggybacks on the same feedback/sound gate rather
+			// than picking a note independently.
+			const noteIndex = playTone();
+			if (data.noteColors) {
+				orb.style.setProperty("--note-accent", NOTE_COLORS[noteIndex]);
+			}
+		}
+	}
 	if (feedback && data.vibration)
 		vibrate(superSmash ? SUPER_SMASH_PATTERN : 15);
 	saveData();

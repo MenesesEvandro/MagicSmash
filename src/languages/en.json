@@ -48,6 +48,8 @@
 		"vibrationHelp": "A little buzz for each key, on devices that support it",
 		"kaleidoscope": "Kaleidoscope",
 		"kaleidoscopeHelp": "Mirrors every effect around the screen",
+		"noteColors": "Colour by note",
+		"noteColorsHelp": "The centre orb always lights up the same colour for the same musical note",
 		"parentGate": "Parent gate",
 		"parentGateHelp": "During play, hold the top buttons for 2 seconds to open them",
 		"parentGateHint": "Hold to open",
