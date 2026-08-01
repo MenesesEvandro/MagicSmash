@@ -1,4 +1,4 @@
-import { playTone } from "./audio.js";
+import { NOTE_COLORS, playTone } from "./audio.js";
 import { $ } from "./dom.js";
 import {
 	animateBackground,
@@ -522,7 +522,18 @@ export function triggerInteraction(
 	animateBackground();
 	updateStreak();
 	updateStats();
-	if (feedback && data.sound) superSmash ? playSuperTone() : playTone();
+	if (feedback && data.sound) {
+		// Coloured only alongside an actual played tone — with no note
+		// playing, there's nothing consistent for the colour to be tied to —
+		// so this piggybacks on the same feedback/sound gate rather than
+		// picking a note independently. Super Smash still plays tones (three
+		// of them, via playSuperTone()), so it gets a colour too, from
+		// whichever note its first one lands on.
+		const noteIndex = superSmash ? playSuperTone() : playTone();
+		if (data.noteColors) {
+			orb.style.setProperty("--note-accent", NOTE_COLORS[noteIndex]);
+		}
+	}
 	if (feedback && data.vibration)
 		vibrate(superSmash ? SUPER_SMASH_PATTERN : 15);
 	saveData();
@@ -541,11 +552,17 @@ function vibrate(pattern = 15) {
 	navigator.vibrate?.(pattern);
 }
 
-/** Super Smash's bigger sound: three quick tones instead of one. */
+/**
+ * Super Smash's bigger sound: three quick tones instead of one.
+ * @returns {number} The first tone's note — see {@link playTone} — since
+ * that's the one whichever caller colours the orb by can use right away,
+ * rather than waiting on the two still queued behind setTimeout.
+ */
 function playSuperTone() {
-	playTone();
+	const noteIndex = playTone();
 	setTimeout(playTone, 80);
 	setTimeout(playTone, 160);
+	return noteIndex;
 }
 
 /**

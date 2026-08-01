@@ -48,6 +48,8 @@
 		"vibrationHelp": "Une petite vibration à chaque touche, si l'appareil le permet",
 		"kaleidoscope": "Kaléidoscope",
 		"kaleidoscopeHelp": "Reflète chaque effet autour de l'écran",
+		"noteColors": "Couleur selon la note",
+		"noteColorsHelp": "La bulle centrale s'allume toujours de la même couleur pour la même note de musique",
 		"parentGate": "Accès parents",
 		"parentGateHelp": "Pendant le jeu, maintenez les boutons du haut 2 secondes pour les ouvrir",
 		"parentGateHint": "Maintenez pour ouvrir",

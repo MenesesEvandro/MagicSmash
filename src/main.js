@@ -40,6 +40,7 @@ import {
 	updateEdgeDeadZone,
 	updateKaleidoscope,
 	updateLetterSize,
+	updateNoteColors,
 	updatePalmRejection,
 	updateParentGate,
 	updateSound,
@@ -263,6 +264,13 @@ $$("[data-kaleidoscope-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-note-colors-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.noteColors = event.target.checked;
+		updateNoteColors();
+		saveData();
+	});
+});
 $$("[data-parent-gate-toggle]").forEach((toggle) => {
 	toggle.addEventListener("change", (event) => {
 		data.parentGate = event.target.checked;
@@ -337,6 +345,7 @@ $("#resetStats").addEventListener("click", () => {
 		sound: data.sound,
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
+		noteColors: data.noteColors,
 		parentGate: data.parentGate,
 		edgeDeadZone: data.edgeDeadZone,
 		edgeDeadZoneSize: data.edgeDeadZoneSize,
@@ -370,6 +379,7 @@ function initializeApp() {
 	updateSound();
 	updateVibration();
 	updateKaleidoscope();
+	updateNoteColors();
 	updateParentGate();
 	updateParentGateLocks();
 	updateEdgeDeadZone();

@@ -145,6 +145,18 @@ export function updateKaleidoscope() {
 	});
 }
 
+/**
+ * Syncs the note-colours toggle, and clears any colour a previous tap left
+ * on the key orb when the setting is off — otherwise it would keep showing
+ * whatever note played last instead of the theme's own accent.
+ */
+export function updateNoteColors() {
+	$$("[data-note-colors-toggle]").forEach((toggle) => {
+		toggle.checked = data.noteColors;
+	});
+	if (!data.noteColors) $("#keyOrb").style.removeProperty("--note-accent");
+}
+
 /** Syncs the parent gate toggle. */
 export function updateParentGate() {
 	$$("[data-parent-gate-toggle]").forEach((toggle) => {
