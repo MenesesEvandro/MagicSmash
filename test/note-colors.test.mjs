@@ -11,6 +11,8 @@ import { JSDOM } from "jsdom";
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const appJs = readFileSync(new URL("../app.js", import.meta.url), "utf8");
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 /** Must match NOTE_COLORS in src/audio.js. */
 const NOTE_COLORS = ["#e2503a", "#e0872e", "#d4b02a", "#4a9e5c", "#3d84c6"];
 
@@ -94,6 +96,44 @@ test("turning the setting off clears a colour a previous tap left behind", (t) =
 		noteAccent(window),
 		"",
 		"turning the setting off must clear the colour immediately, not just stop updating it",
+	);
+});
+
+test("with the setting on, a Super Smash colours the orb too", async (t) => {
+	const window = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("noteColorsToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(50);
+
+	const area = window.document.getElementById("playArea");
+	const dispatchTouch = (id) => {
+		const event = new window.Event("pointerdown", {
+			bubbles: true,
+			cancelable: true,
+		});
+		Object.assign(event, {
+			pointerId: id,
+			clientX: 100 + id * 10,
+			clientY: 100,
+		});
+		area.dispatchEvent(event);
+	};
+	// The first three touches are ordinary taps (below
+	// SUPER_SMASH_TOUCH_THRESHOLD) and already colour the orb themselves —
+	// clearing --note-accent right before the fourth isolates whether Super
+	// Smash's own tone colours it, instead of the assertion below passing on
+	// leftover colour from one of those three.
+	for (let id = 1; id <= 3; id++) dispatchTouch(id);
+	window.document
+		.getElementById("keyOrb")
+		.style.removeProperty("--note-accent");
+
+	dispatchTouch(4);
+
+	assert.ok(
+		NOTE_COLORS.includes(noteAccent(window)),
+		`expected Super Smash to colour the orb too, got ${noteAccent(window)}`,
 	);
 });
 

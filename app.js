@@ -129,12 +129,15 @@ const NOTE_COLORS = [
 
 /**
  * Picks the note this interaction's tone will play: an absolute frequency
- * already snapped to {@link PENTATONIC_SCALE} (the frequency range comes
- * from the current theme, same as always), plus that note's pitch class —
- * an index into {@link PENTATONIC_NOTES} and {@link NOTE_COLORS} alike,
- * independent of which octave it landed in. Split out from playTone() so a
- * note can be picked (and, once {@link data.noteColors} exists, coloured)
- * without needing the Web Audio API to actually be available.
+ * that's always one of the app's pentatonic notes (the frequency range
+ * comes from the current theme, same as always) — snapped to
+ * {@link PENTATONIC_SCALE} via {@link nearestPentatonicNote} for every
+ * theme except Music, which instead picks straight from
+ * {@link PENTATONIC_OCTAVE} — plus that note's pitch class, an index into
+ * {@link PENTATONIC_NOTES} and {@link NOTE_COLORS} alike, independent of
+ * which octave it landed in. Split out from playTone() so a note can be
+ * picked (and, once {@link data.noteColors} exists, coloured) without
+ * needing the Web Audio API to actually be available.
  * @returns {{frequency: number, noteIndex: number}}
  */
 function pickNote() {
@@ -1318,17 +1321,15 @@ function triggerInteraction(
 	updateStreak();
 	updateStats();
 	if (feedback && data.sound) {
-		if (superSmash) {
-			playSuperTone();
-		} else {
-			// Coloured only alongside an actual played tone — with no note
-			// playing, there's nothing consistent for the colour to be tied
-			// to — so this piggybacks on the same feedback/sound gate rather
-			// than picking a note independently.
-			const noteIndex = playTone();
-			if (data.noteColors) {
-				orb.style.setProperty("--note-accent", NOTE_COLORS[noteIndex]);
-			}
+		// Coloured only alongside an actual played tone — with no note
+		// playing, there's nothing consistent for the colour to be tied to —
+		// so this piggybacks on the same feedback/sound gate rather than
+		// picking a note independently. Super Smash still plays tones (three
+		// of them, via playSuperTone()), so it gets a colour too, from
+		// whichever note its first one lands on.
+		const noteIndex = superSmash ? playSuperTone() : playTone();
+		if (data.noteColors) {
+			orb.style.setProperty("--note-accent", NOTE_COLORS[noteIndex]);
 		}
 	}
 	if (feedback && data.vibration)
@@ -1349,11 +1350,17 @@ function vibrate(pattern = 15) {
 	navigator.vibrate?.(pattern);
 }
 
-/** Super Smash's bigger sound: three quick tones instead of one. */
+/**
+ * Super Smash's bigger sound: three quick tones instead of one.
+ * @returns {number} The first tone's note — see {@link playTone} — since
+ * that's the one whichever caller colours the orb by can use right away,
+ * rather than waiting on the two still queued behind setTimeout.
+ */
 function playSuperTone() {
-	playTone();
+	const noteIndex = playTone();
 	setTimeout(playTone, 80);
 	setTimeout(playTone, 160);
+	return noteIndex;
 }
 
 /**

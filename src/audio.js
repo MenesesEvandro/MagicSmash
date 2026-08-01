@@ -38,12 +38,15 @@ export const NOTE_COLORS = [
 
 /**
  * Picks the note this interaction's tone will play: an absolute frequency
- * already snapped to {@link PENTATONIC_SCALE} (the frequency range comes
- * from the current theme, same as always), plus that note's pitch class —
- * an index into {@link PENTATONIC_NOTES} and {@link NOTE_COLORS} alike,
- * independent of which octave it landed in. Split out from playTone() so a
- * note can be picked (and, once {@link data.noteColors} exists, coloured)
- * without needing the Web Audio API to actually be available.
+ * that's always one of the app's pentatonic notes (the frequency range
+ * comes from the current theme, same as always) — snapped to
+ * {@link PENTATONIC_SCALE} via {@link nearestPentatonicNote} for every
+ * theme except Music, which instead picks straight from
+ * {@link PENTATONIC_OCTAVE} — plus that note's pitch class, an index into
+ * {@link PENTATONIC_NOTES} and {@link NOTE_COLORS} alike, independent of
+ * which octave it landed in. Split out from playTone() so a note can be
+ * picked (and, once {@link data.noteColors} exists, coloured) without
+ * needing the Web Audio API to actually be available.
  * @returns {{frequency: number, noteIndex: number}}
  */
 function pickNote() {
