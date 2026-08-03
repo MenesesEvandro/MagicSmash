@@ -105,11 +105,6 @@ export function playTone(pan = 0) {
 		// GainNode keeps it a harmless pass-through so a tap still makes
 		// sound there, just centred, instead of createStereoPanner() itself
 		// throwing and the catch below silently dropping the tone entirely.
-		// Some older engines (notably early iOS Safari) never shipped
-		// StereoPannerNode; falling back to a second, otherwise-untouched
-		// GainNode keeps it a harmless pass-through so a tap still makes
-		// sound there, just centred, instead of createStereoPanner() itself
-		// throwing and the catch below silently dropping the tone entirely.
 		const supportsPanning =
 			typeof audioContext.createStereoPanner === "function";
 		const panner = supportsPanning
