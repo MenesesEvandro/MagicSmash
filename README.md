@@ -16,7 +16,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 
 - **Press anything** — letters, numbers, spacebar, arrow keys, all of it. There's no wrong key.
 - **14 themes** — Vehicles, Bubbles, Music, Colors, Weather, Dinosaurs, Farm, Party, Space, Beach, Ocean, Lights, Toys, and Bedtime. Each one has its own icon set, color palette, sound, and animation.
-- **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation.
+- **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation. A tap's tone also pans left or right to match where it landed on the screen — a touch in the corner sounds like it's coming from that corner; keyboard presses, with no on-screen position of their own, always play centred.
 - **A living background** — icons drift lazily across the screen and pop when a key is pressed.
 - **Optional kaleidoscope mode** — mirrors every effect around the centre of the screen for a radial, symmetric pattern, easing off automatically during a fast smash so it never overwhelms.
 - **Optional colour-by-note mode** — every theme's tone is already snapped to a shared 5-note scale, and this ties each of those notes to one fixed colour on the key orb, always, no matter which theme is playing. Repeated across a session, that steady pairing gives a passive, wordless way to start noticing that a sound and a colour go together.

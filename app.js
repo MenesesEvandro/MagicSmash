@@ -180,14 +180,19 @@ function pickNote() {
  * AudioContext on first call; failures are swallowed since sound is
  * optional — but the note is picked before that call, so the returned index
  * is still meaningful even when audio itself isn't available.
+ * @param {number} [pan=0] Stereo position, -1 (left) to 1 (right) — where on
+ * screen the interaction happened, defaulting to 0 (centred) for keyboard
+ * input, which has no natural on-screen position of its own.
  * @returns {number} The played note's pitch class — see {@link pickNote}.
  */
-function playTone() {
+function playTone(pan = 0) {
 	const { frequency, noteIndex } = pickNote();
 	try {
 		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
 		const oscillator = audioContext.createOscillator();
 		const gain = audioContext.createGain();
+		const panner = audioContext.createStereoPanner();
+		panner.pan.value = pan;
 		const now = audioContext.currentTime;
 		oscillator.type = ["vehicles", "dinosaurs", "toys"].includes(data.theme)
 			? "triangle"
@@ -215,7 +220,7 @@ function playTone() {
 			0.001,
 			now + (data.theme === "music" ? 0.36 : 0.22),
 		);
-		oscillator.connect(gain).connect(audioContext.destination);
+		oscillator.connect(gain).connect(panner).connect(audioContext.destination);
 		oscillator.start();
 		oscillator.stop(now + (data.theme === "music" ? 0.37 : 0.23));
 	} catch {
@@ -1268,7 +1273,9 @@ function stopHeldKeyGrowth() {
  * @param {object} [options]
  * @param {boolean} [options.feedback=false] Discrete interaction (a keypress
  * or tap, not a mouse-trail move): plays a tone and/or vibrates, each still
- * independently gated by its own setting (`data.sound`, `data.vibration`).
+ * independently gated by its own setting (`data.sound`, `data.vibration`) —
+ * see {@link panFromPoint} for how `point` also steers where that tone
+ * plays from, left to right.
  * @param {boolean} [options.pointer=false] Pointer interaction: draw a trail
  * at `point` and skip the sparkle/letter burst unless `burst` is set.
  * @param {boolean} [options.burst=false] Fire the sparkle/letter burst even
@@ -1321,13 +1328,14 @@ function triggerInteraction(
 	updateStreak();
 	updateStats();
 	if (feedback && data.sound) {
+		const pan = panFromPoint(point, pointer);
 		// Coloured only alongside an actual played tone — with no note
 		// playing, there's nothing consistent for the colour to be tied to —
 		// so this piggybacks on the same feedback/sound gate rather than
 		// picking a note independently. Super Smash still plays tones (three
 		// of them, via playSuperTone()), so it gets a colour too, from
 		// whichever note its first one lands on.
-		const noteIndex = superSmash ? playSuperTone() : playTone();
+		const noteIndex = superSmash ? playSuperTone(pan) : playTone(pan);
 		if (data.noteColors) {
 			orb.style.setProperty("--note-accent", NOTE_COLORS[noteIndex]);
 		}
@@ -1352,15 +1360,34 @@ function vibrate(pattern = 15) {
 
 /**
  * Super Smash's bigger sound: three quick tones instead of one.
+ * @param {number} [pan=0] Forwarded to every tone — see {@link playTone}.
  * @returns {number} The first tone's note — see {@link playTone} — since
  * that's the one whichever caller colours the orb by can use right away,
  * rather than waiting on the two still queued behind setTimeout.
  */
-function playSuperTone() {
-	const noteIndex = playTone();
-	setTimeout(playTone, 80);
-	setTimeout(playTone, 160);
+function playSuperTone(pan = 0) {
+	const noteIndex = playTone(pan);
+	setTimeout(() => playTone(pan), 80);
+	setTimeout(() => playTone(pan), 160);
 	return noteIndex;
+}
+
+/**
+ * Left/right stereo position for this interaction's tone: -1 (left edge of
+ * #playArea) to 1 (right edge), 0 in the middle. Only pointer interactions
+ * have a real on-screen X to derive this from — the random point keyboard
+ * interactions get from {@link randomEffectPoint} is for visuals, not an
+ * actual touch position, so keyboard input always plays centred.
+ * @param {{clientX?: number}} point
+ * @param {boolean} pointer
+ * @returns {number}
+ */
+function panFromPoint(point, pointer) {
+	if (!pointer || !Number.isFinite(point.clientX)) return 0;
+	const rect = $("#playArea").getBoundingClientRect();
+	if (rect.width <= 0) return 0;
+	const fraction = (point.clientX - rect.left) / rect.width;
+	return Math.min(1, Math.max(-1, fraction * 2 - 1));
 }
 
 /**
