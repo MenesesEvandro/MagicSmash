@@ -63,8 +63,46 @@ function installFakeAudioContext(window) {
 	return panValues;
 }
 
-/** Boots a fresh app instance: real index.html + built app.js in jsdom. */
-function bootApp() {
+/** Installs a fake AudioContext with no createStereoPanner at all, matching
+ * an engine (older iOS Safari) that never shipped StereoPannerNode. Returns
+ * a live `played` flag so a test can confirm playTone() still produces
+ * sound instead of the fallback throwing and the tone getting silently
+ * swallowed by playTone()'s own catch. */
+function installFakeAudioContextWithoutPanning(window) {
+	let played = false;
+	window.AudioContext = class {
+		constructor() {
+			this.currentTime = 0;
+			this.destination = fakeNode();
+		}
+		createOscillator() {
+			return fakeNode({
+				type: "",
+				frequency: { value: 0, exponentialRampToValueAtTime() {} },
+				start() {
+					played = true;
+				},
+				stop() {},
+			});
+		}
+		createGain() {
+			return fakeNode({
+				gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} },
+			});
+		}
+	};
+	return {
+		get played() {
+			return played;
+		},
+	};
+}
+
+/** Boots a fresh app instance: real index.html + built app.js in jsdom.
+ * @param {(window: object) => object} installAudio Installs whichever fake
+ * AudioContext the test needs before the app's own script runs.
+ */
+function bootApp(installAudio = installFakeAudioContext) {
 	const dom = new JSDOM(html, {
 		url: "http://localhost/",
 		runScripts: "dangerously",
@@ -79,12 +117,12 @@ function bootApp() {
 			this.open = false;
 		};
 	}
-	const panValues = installFakeAudioContext(window);
+	const audio = installAudio(window);
 	const script = window.document.createElement("script");
 	script.textContent = appJs;
 	window.document.body.appendChild(script);
 	window.document.getElementById("playArea").getBoundingClientRect = () => AREA;
-	return { window, panValues };
+	return { window, audio };
 }
 
 async function startSession(window) {
@@ -99,7 +137,7 @@ function pointerEvent(window, type, init) {
 }
 
 test("a tap at the play area's left edge pans fully left", async (t) => {
-	const { window, panValues } = bootApp();
+	const { window, audio: panValues } = bootApp();
 	t.after(() => window.close());
 	await startSession(window);
 
@@ -113,7 +151,7 @@ test("a tap at the play area's left edge pans fully left", async (t) => {
 });
 
 test("a tap at the play area's right edge pans fully right", async (t) => {
-	const { window, panValues } = bootApp();
+	const { window, audio: panValues } = bootApp();
 	t.after(() => window.close());
 	await startSession(window);
 
@@ -127,7 +165,7 @@ test("a tap at the play area's right edge pans fully right", async (t) => {
 });
 
 test("a tap in the middle of the play area stays centred", async (t) => {
-	const { window, panValues } = bootApp();
+	const { window, audio: panValues } = bootApp();
 	t.after(() => window.close());
 	await startSession(window);
 
@@ -141,7 +179,7 @@ test("a tap in the middle of the play area stays centred", async (t) => {
 });
 
 test("a keyboard press always plays centred, regardless of its random effect point", async (t) => {
-	const { window, panValues } = bootApp();
+	const { window, audio: panValues } = bootApp();
 	t.after(() => window.close());
 	await startSession(window);
 
@@ -154,4 +192,22 @@ test("a keyboard press always plays centred, regardless of its random effect poi
 	);
 
 	assert.equal(panValues.at(-1).value, 0);
+});
+
+test("falls back to a plain pass-through when the engine has no StereoPannerNode", async (t) => {
+	const { window, audio } = bootApp(installFakeAudioContextWithoutPanning);
+	t.after(() => window.close());
+	await startSession(window);
+
+	window.document
+		.getElementById("playArea")
+		.dispatchEvent(
+			pointerEvent(window, "pointerdown", { clientX: 0, clientY: 250 }),
+		);
+
+	assert.equal(
+		audio.played,
+		true,
+		"a tap must still produce sound even when stereo panning isn't supported",
+	);
 });

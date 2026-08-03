@@ -100,8 +100,22 @@ export function playTone(pan = 0) {
 		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
 		const oscillator = audioContext.createOscillator();
 		const gain = audioContext.createGain();
-		const panner = audioContext.createStereoPanner();
-		panner.pan.value = pan;
+		// Some older engines (notably early iOS Safari) never shipped
+		// StereoPannerNode; falling back to a second, otherwise-untouched
+		// GainNode keeps it a harmless pass-through so a tap still makes
+		// sound there, just centred, instead of createStereoPanner() itself
+		// throwing and the catch below silently dropping the tone entirely.
+		// Some older engines (notably early iOS Safari) never shipped
+		// StereoPannerNode; falling back to a second, otherwise-untouched
+		// GainNode keeps it a harmless pass-through so a tap still makes
+		// sound there, just centred, instead of createStereoPanner() itself
+		// throwing and the catch below silently dropping the tone entirely.
+		const supportsPanning =
+			typeof audioContext.createStereoPanner === "function";
+		const panner = supportsPanning
+			? audioContext.createStereoPanner()
+			: audioContext.createGain();
+		if (supportsPanning) panner.pan.value = Math.min(1, Math.max(-1, pan));
 		const now = audioContext.currentTime;
 		oscillator.type = ["vehicles", "dinosaurs", "toys"].includes(data.theme)
 			? "triangle"
