@@ -89,14 +89,28 @@ function pickNote() {
  * AudioContext on first call; failures are swallowed since sound is
  * optional — but the note is picked before that call, so the returned index
  * is still meaningful even when audio itself isn't available.
+ * @param {number} [pan=0] Stereo position, -1 (left) to 1 (right) — where on
+ * screen the interaction happened, defaulting to 0 (centred) for keyboard
+ * input, which has no natural on-screen position of its own.
  * @returns {number} The played note's pitch class — see {@link pickNote}.
  */
-export function playTone() {
+export function playTone(pan = 0) {
 	const { frequency, noteIndex } = pickNote();
 	try {
 		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
 		const oscillator = audioContext.createOscillator();
 		const gain = audioContext.createGain();
+		// Some older engines (notably early iOS Safari) never shipped
+		// StereoPannerNode; falling back to a second, otherwise-untouched
+		// GainNode keeps it a harmless pass-through so a tap still makes
+		// sound there, just centred, instead of createStereoPanner() itself
+		// throwing and the catch below silently dropping the tone entirely.
+		const supportsPanning =
+			typeof audioContext.createStereoPanner === "function";
+		const panner = supportsPanning
+			? audioContext.createStereoPanner()
+			: audioContext.createGain();
+		if (supportsPanning) panner.pan.value = Math.min(1, Math.max(-1, pan));
 		const now = audioContext.currentTime;
 		oscillator.type = ["vehicles", "dinosaurs", "toys"].includes(data.theme)
 			? "triangle"
@@ -124,7 +138,7 @@ export function playTone() {
 			0.001,
 			now + (data.theme === "music" ? 0.36 : 0.22),
 		);
-		oscillator.connect(gain).connect(audioContext.destination);
+		oscillator.connect(gain).connect(panner).connect(audioContext.destination);
 		oscillator.start();
 		oscillator.stop(now + (data.theme === "music" ? 0.37 : 0.23));
 	} catch {
