@@ -198,40 +198,40 @@
         </div>
 
         <div class="setting-row">
-          <div><strong data-i18n="sound">Sons suaves</strong><p data-i18n="soundHelp">Um som a cada tecla</p></div>
-          <label class="toggle"><input id="soundToggle" data-sound-toggle type="checkbox" checked aria-label="Sons suaves" /><span></span></label>
+          <div><strong id="soundLabel" data-i18n="sound">Sons suaves</strong><p id="soundDesc" data-i18n="soundHelp">Um som a cada tecla</p></div>
+          <label class="toggle"><input id="soundToggle" data-sound-toggle type="checkbox" checked aria-labelledby="soundLabel" aria-describedby="soundDesc" /><span></span></label>
         </div>
         <div class="setting-row">
-          <div><strong data-i18n="vibration">Vibração</strong><p data-i18n="vibrationHelp">Uma vibração a cada tecla, se o aparelho permitir</p></div>
-          <label class="toggle"><input id="vibrationToggle" data-vibration-toggle type="checkbox" aria-label="Vibração" /><span></span></label>
+          <div><strong id="vibrationLabel" data-i18n="vibration">Vibração</strong><p id="vibrationDesc" data-i18n="vibrationHelp">Uma vibração a cada tecla, se o aparelho permitir</p></div>
+          <label class="toggle"><input id="vibrationToggle" data-vibration-toggle type="checkbox" aria-labelledby="vibrationLabel" aria-describedby="vibrationDesc" /><span></span></label>
         </div>
         <div class="setting-row">
-          <div><strong data-i18n="kaleidoscope">Caleidoscópio</strong><p data-i18n="kaleidoscopeHelp">Espelha os efeitos ao redor da tela</p></div>
-          <label class="toggle"><input id="kaleidoscopeToggle" data-kaleidoscope-toggle type="checkbox" aria-label="Caleidoscópio" /><span></span></label>
+          <div><strong id="kaleidoscopeLabel" data-i18n="kaleidoscope">Caleidoscópio</strong><p id="kaleidoscopeDesc" data-i18n="kaleidoscopeHelp">Espelha os efeitos ao redor da tela</p></div>
+          <label class="toggle"><input id="kaleidoscopeToggle" data-kaleidoscope-toggle type="checkbox" aria-labelledby="kaleidoscopeLabel" aria-describedby="kaleidoscopeDesc" /><span></span></label>
         </div>
         <div class="setting-row">
-          <div><strong data-i18n="noteColors">Cor por nota</strong><p data-i18n="noteColorsHelp">A bolinha central sempre acende a mesma cor para a mesma nota musical</p></div>
-          <label class="toggle"><input id="noteColorsToggle" data-note-colors-toggle type="checkbox" aria-label="Cor por nota" /><span></span></label>
+          <div><strong id="noteColorsLabel" data-i18n="noteColors">Cor por nota</strong><p id="noteColorsDesc" data-i18n="noteColorsHelp">A bolinha central sempre acende a mesma cor para a mesma nota musical</p></div>
+          <label class="toggle"><input id="noteColorsToggle" data-note-colors-toggle type="checkbox" aria-labelledby="noteColorsLabel" aria-describedby="noteColorsDesc" /><span></span></label>
         </div>
         <div class="setting-row">
-          <div><strong data-i18n="parentGate">Acesso dos pais</strong><p data-i18n="parentGateHelp">Durante a brincadeira, segure os botões do topo por 2 segundos para abrir</p></div>
-          <label class="toggle"><input id="parentGateToggle" data-parent-gate-toggle type="checkbox" checked aria-label="Acesso dos pais" /><span></span></label>
+          <div><strong id="parentGateLabel" data-i18n="parentGate">Acesso dos pais</strong><p id="parentGateDesc" data-i18n="parentGateHelp">Durante a brincadeira, segure os botões do topo por 2 segundos para abrir</p></div>
+          <label class="toggle"><input id="parentGateToggle" data-parent-gate-toggle type="checkbox" checked aria-labelledby="parentGateLabel" aria-describedby="parentGateDesc" /><span></span></label>
         </div>
         <div class="setting-row">
-          <div><strong data-i18n="edgeDeadZone">Ignorar bordas</strong><p data-i18n="edgeDeadZoneHelp">Toques bem na borda da tela não contam, para mãozinhas que seguram o tablet pelas bordas</p></div>
-          <label class="toggle"><input id="edgeDeadZoneToggle" data-edge-dead-zone-toggle type="checkbox" aria-label="Ignorar bordas" /><span></span></label>
+          <div><strong id="edgeDeadZoneLabel" data-i18n="edgeDeadZone">Ignorar bordas</strong><p id="edgeDeadZoneDesc" data-i18n="edgeDeadZoneHelp">Toques bem na borda da tela não contam, para mãozinhas que seguram o tablet pelas bordas</p></div>
+          <label class="toggle"><input id="edgeDeadZoneToggle" data-edge-dead-zone-toggle type="checkbox" aria-labelledby="edgeDeadZoneLabel" aria-describedby="edgeDeadZoneDesc" /><span></span></label>
         </div>
         <div class="setting-row range-row">
-          <div><strong data-i18n="edgeDeadZoneSize">Tamanho da zona morta</strong><p data-i18n="edgeDeadZoneSizeHelp">Quanto maior, mais espaço perto das bordas é ignorado</p></div>
-          <input id="edgeDeadZoneSize" type="range" min="0" max="2" value="1" aria-label="Tamanho da zona morta" />
+          <div><strong id="edgeDeadZoneSizeLabel" data-i18n="edgeDeadZoneSize">Tamanho da zona morta</strong><p id="edgeDeadZoneSizeDesc" data-i18n="edgeDeadZoneSizeHelp">Quanto maior, mais espaço perto das bordas é ignorado</p></div>
+          <input id="edgeDeadZoneSize" type="range" min="0" max="2" value="1" aria-labelledby="edgeDeadZoneSizeLabel" aria-describedby="edgeDeadZoneSizeDesc" />
         </div>
         <div class="setting-row">
-          <div><strong data-i18n="palmRejection">Ignorar mão apoiada</strong><p data-i18n="palmRejectionHelp">Um antebraço ou a palma da mão apoiados na tela não contam como toque</p></div>
-          <label class="toggle"><input id="palmRejectionToggle" data-palm-rejection-toggle type="checkbox" aria-label="Ignorar mão apoiada" /><span></span></label>
+          <div><strong id="palmRejectionLabel" data-i18n="palmRejection">Ignorar mão apoiada</strong><p id="palmRejectionDesc" data-i18n="palmRejectionHelp">Um antebraço ou a palma da mão apoiados na tela não contam como toque</p></div>
+          <label class="toggle"><input id="palmRejectionToggle" data-palm-rejection-toggle type="checkbox" aria-labelledby="palmRejectionLabel" aria-describedby="palmRejectionDesc" /><span></span></label>
         </div>
         <div class="setting-row range-row">
-          <div><strong data-i18n="letterSize">Tamanho das letras</strong><p data-i18n="letterSizeHelp">Mais conforto para enxergar</p></div>
-          <input id="letterSize" type="range" min="0" max="2" value="1" aria-label="Tamanho das letras" />
+          <div><strong id="letterSizeLabel" data-i18n="letterSize">Tamanho das letras</strong><p id="letterSizeDesc" data-i18n="letterSizeHelp">Mais conforto para enxergar</p></div>
+          <input id="letterSize" type="range" min="0" max="2" value="1" aria-labelledby="letterSizeLabel" aria-describedby="letterSizeDesc" />
         </div>
         <button class="secondary-button" id="fullscreenButton" type="button"><span aria-hidden="true">⛶</span> <span data-i18n="fullscreen">Abrir em tela cheia</span></button>
 
