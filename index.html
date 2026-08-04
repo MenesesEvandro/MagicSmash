@@ -217,6 +217,7 @@
           <div><strong id="parentGateLabel" data-i18n="parentGate">Acesso dos pais</strong><p id="parentGateDesc" data-i18n="parentGateHelp">Durante a brincadeira, segure os botões do topo por 2 segundos para abrir</p></div>
           <label class="toggle"><input id="parentGateToggle" data-parent-gate-toggle type="checkbox" checked aria-labelledby="parentGateLabel" aria-describedby="parentGateDesc" /><span></span></label>
         </div>
+        <button class="text-button screen-pinning-link" id="screenPinningButton" type="button" data-i18n="screenPinningLink">Como travar a tela de vez</button>
         <div class="setting-row">
           <div><strong id="edgeDeadZoneLabel" data-i18n="edgeDeadZone">Ignorar bordas</strong><p id="edgeDeadZoneDesc" data-i18n="edgeDeadZoneHelp">Toques bem na borda da tela não contam, para mãozinhas que seguram o tablet pelas bordas</p></div>
           <label class="toggle"><input id="edgeDeadZoneToggle" data-edge-dead-zone-toggle type="checkbox" aria-labelledby="edgeDeadZoneLabel" aria-describedby="edgeDeadZoneDesc" /><span></span></label>
@@ -288,6 +289,24 @@
           <button class="secondary-button" id="shareButton" type="button"><span data-i18n="share">Compartilhar</span></button>
         </div>
       </div>
+    </dialog>
+
+    <dialog class="screen-pinning-dialog" id="screenPinningDialog">
+      <button class="dialog-close" id="closeScreenPinningDialog" type="button" aria-label="Fechar">×</button>
+      <h2 data-i18n="screenPinningTitle">Travar a tela de vez</h2>
+      <p data-i18n="screenPinningIntro">O acesso dos pais impede toques curiosos, mas não trava os gestos do próprio aparelho — um deslizar ou o botão de início ainda saem do app. Para travar de verdade, use o recurso do próprio sistema:</p>
+      <h3 data-i18n="screenPinningIosTitle">iPhone ou iPad (Acesso Guiado)</h3>
+      <ol>
+        <li data-i18n="screenPinningIosStep1">Ajustes → Acessibilidade → Acesso Guiado → ativar</li>
+        <li data-i18n="screenPinningIosStep2">Com o Magic Smash aberto, aperte o botão lateral três vezes</li>
+        <li data-i18n="screenPinningIosStep3">Toque em Iniciar, no canto superior direito</li>
+      </ol>
+      <h3 data-i18n="screenPinningAndroidTitle">Android (fixar app)</h3>
+      <ol>
+        <li data-i18n="screenPinningAndroidStep1">Ajustes → Segurança → Fixar app → ativar</li>
+        <li data-i18n="screenPinningAndroidStep2">Nos apps recentes, toque no ícone do Magic Smash e escolha Fixar</li>
+      </ol>
+      <p class="screen-pinning-note" data-i18n="screenPinningAndroidNote">O caminho exato varia um pouco de aparelho para aparelho.</p>
     </dialog>
 
     <script src="app.js"></script>

@@ -318,6 +318,12 @@ $("#fullscreenButton").addEventListener("click", async () => {
 		/* Browser may deny fullscreen until another gesture. */
 	}
 });
+$("#screenPinningButton").addEventListener("click", () => {
+	$("#screenPinningDialog").showModal();
+});
+$("#closeScreenPinningDialog").addEventListener("click", () => {
+	$("#screenPinningDialog").close();
+});
 $("#editProfile").addEventListener("click", () => {
 	$("#childName").value = data.profile;
 	$("#profileDialog").showModal();
