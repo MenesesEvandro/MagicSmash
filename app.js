@@ -1282,7 +1282,7 @@ function stopHeldKeyGrowth() {
  * pointer interactions; keyboard interactions use a random point instead.
  * @param {object} [options]
  * @param {boolean} [options.feedback=false] Discrete interaction (a keypress
- * or tap, not a mouse-trail move): plays a tone and/or vibrates, each still
+ * or tap, not a drag-trail move): plays a tone and/or vibrates, each still
  * independently gated by its own setting (`data.sound`, `data.vibration`) —
  * see {@link panFromPoint} for how `point` also steers where that tone
  * plays from, left to right.
@@ -1529,8 +1529,8 @@ function isPalmContact(event) {
  * Pointer handler for the play area; inert until languages are loaded, a
  * session is running, and the target is not a control. Interactions display
  * a random icon from the current theme: taps and clicks (pointerdown) act
- * like a full keypress with sound, while mouse movement only leaves a
- * trail, throttled to one icon per 160 ms.
+ * like a full keypress with sound, while a mouse or finger dragged across
+ * the screen only leaves a trail, throttled to one icon per 160 ms.
  * @param {PointerEvent} event
  */
 function pressPointer(event) {
@@ -1544,13 +1544,15 @@ function pressPointer(event) {
 	// Filtering (and throttling) pointermove down to what could plausibly
 	// matter *before* the dead-zone check below, rather than after, means
 	// getBoundingClientRect() — which can force a layout — never runs on
-	// the dozens of raw pointermove events a dragging mouse fires between
-	// two throttled ones.
-	const isMouseTrail =
-		event.type === "pointermove" && event.pointerType === "mouse";
-	if (event.type === "pointermove" && !isMouseTrail) return;
+	// the dozens of raw pointermove events a drag fires between two
+	// throttled ones. Pen is deliberately left out — a toddler app has no
+	// realistic pen input, so there's nothing to gain from also tracking it.
+	const isDragTrail =
+		event.type === "pointermove" &&
+		(event.pointerType === "mouse" || event.pointerType === "touch");
+	if (event.type === "pointermove" && !isDragTrail) return;
 	const now = Date.now();
-	if (isMouseTrail && now - state.lastPointerTime < 160) return;
+	if (isDragTrail && now - state.lastPointerTime < 160) return;
 	// Every event past this point is ours, whether or not the dead-zone
 	// check below goes on to ignore it — otherwise a repeated tap sitting on
 	// top of the orb's text falls through to the browser's own default
@@ -1558,8 +1560,8 @@ function pressPointer(event) {
 	// in the app ever clears that selection.
 	event.preventDefault();
 	// Also advanced for an event the dead zone below goes on to ignore, not
-	// just a registered one — otherwise a mouse trail along the edge never
-	// re-arms this throttle, and getBoundingClientRect() in isInEdgeDeadZone
+	// just a registered one — otherwise a drag along the edge never re-arms
+	// this throttle, and getBoundingClientRect() in isInEdgeDeadZone
 	// runs on every raw pointermove instead of one per 160 ms.
 	state.lastPointerTime = now;
 	// Checked before the dead zone below rather than after: it's a plain size
