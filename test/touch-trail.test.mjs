@@ -143,22 +143,30 @@ test("rapid touch moves are throttled to one trail spark per 160ms", async (t) =
 	);
 	const afterTap = trailCount(window);
 	await sleep(PAST_THROTTLE_WINDOW_MS);
-	// The first move past the window registers; the burst right behind it,
-	// well inside 160ms of that first one, must not add any more.
-	for (let x = 810; x <= 850; x += 10) {
-		area.dispatchEvent(
-			pointerEvent(window, "pointermove", {
-				clientX: x,
-				clientY: 450,
-				pointerType: "touch",
-			}),
-		);
-	}
+	// Two moves, back to back with no delay between them (rather than a
+	// timed loop, which would make this test's outcome depend on how fast
+	// the machine running it happens to be): the first, past the throttle
+	// window, registers; the second, immediately behind it and so still
+	// well inside 160ms of the first, must not add another spark.
+	area.dispatchEvent(
+		pointerEvent(window, "pointermove", {
+			clientX: 810,
+			clientY: 450,
+			pointerType: "touch",
+		}),
+	);
+	area.dispatchEvent(
+		pointerEvent(window, "pointermove", {
+			clientX: 820,
+			clientY: 450,
+			pointerType: "touch",
+		}),
+	);
 
 	assert.equal(
 		trailCount(window),
 		afterTap + 1,
-		"back-to-back moves inside the same throttle window must only draw one spark",
+		"a move right behind an already-registered one, inside the throttle window, must not draw a second spark",
 	);
 });
 

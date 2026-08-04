@@ -15,7 +15,7 @@ I went looking for one of those keyboard-mashing toy websites to point him at in
 ## Features
 
 - **Press anything** — letters, numbers, spacebar, arrow keys, all of it. There's no wrong key.
-- **Dragging a finger or the mouse paints a trail of sparkles**, no aiming or precise taps required — a gentler kind of play for a toddler who hasn't got aimed taps down yet.
+- **Moving the mouse, or dragging a finger, paints a trail of sparkles**, no aiming or precise taps required — a gentler kind of play for a toddler who hasn't got aimed taps down yet.
 - **14 themes** — Vehicles, Bubbles, Music, Colors, Weather, Dinosaurs, Farm, Party, Space, Beach, Ocean, Lights, Toys, and Bedtime. Each one has its own icon set, color palette, sound, and animation.
 - **Sound and animation for every key** — a gentle themed tone (synthesized in the browser, no audio files), a floating letter, sparkles, and a themed character animation. A tap's tone also pans left or right to match where it landed on the screen — a touch in the corner sounds like it's coming from that corner; keyboard presses, with no on-screen position of their own, always play centred.
 - **A living background** — icons drift lazily across the screen and pop when a key is pressed.
