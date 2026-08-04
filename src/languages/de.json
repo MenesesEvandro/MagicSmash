@@ -15,6 +15,8 @@
 		"appearance": "Darstellung",
 		"lightMode": "Hell",
 		"darkMode": "Dunkel",
+		"highContrast": "Hoher Kontrast",
+		"highContrastHelp": "Verstärkt den Kontrast des gewählten Modus",
 		"bottomPrompt": "Drücke einfach eine Taste",
 		"settings": "Einstellungen",
 		"stats": "Statistiken",

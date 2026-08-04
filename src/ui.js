@@ -102,6 +102,20 @@ export function updateColorMode() {
 }
 
 /**
+ * Syncs the high-contrast toggle, and applies it to the page: a `.high-contrast`
+ * body class layered on top of whichever mode is already active, rather than
+ * a mode of its own — light plus this reads as flat black-on-white, dark
+ * plus this reads as flat white-on-black, matching whichever polarity the
+ * parent already picked instead of forcing a third, separate appearance.
+ */
+export function updateHighContrast() {
+	$$("[data-high-contrast-toggle]").forEach((toggle) => {
+		toggle.checked = data.highContrast;
+	});
+	document.body.classList.toggle("high-contrast", data.highContrast);
+}
+
+/**
  * Maps the letter-size setting (0 small, 2 large, otherwise default) onto
  * body classes and syncs the slider position.
  */

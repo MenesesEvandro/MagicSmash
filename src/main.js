@@ -38,6 +38,7 @@ import {
 	showUpdateBanner,
 	updateDuration,
 	updateEdgeDeadZone,
+	updateHighContrast,
 	updateKaleidoscope,
 	updateLetterSize,
 	updateNoteColors,
@@ -243,6 +244,13 @@ $$("[data-mode-choice]").forEach((button) => {
 		setColorMode(button.dataset.modeChoice),
 	);
 });
+$$("[data-high-contrast-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.highContrast = event.target.checked;
+		updateHighContrast();
+		saveData();
+	});
+});
 $$("[data-sound-toggle]").forEach((toggle) => {
 	toggle.addEventListener("change", (event) => {
 		data.sound = event.target.checked;
@@ -346,6 +354,7 @@ $("#resetStats").addEventListener("click", () => {
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
 		noteColors: data.noteColors,
+		highContrast: data.highContrast,
 		parentGate: data.parentGate,
 		edgeDeadZone: data.edgeDeadZone,
 		edgeDeadZoneSize: data.edgeDeadZoneSize,
@@ -374,6 +383,7 @@ function initializeApp() {
 	setLanguage(data.language);
 	setTheme(data.theme);
 	setColorMode(data.colorMode);
+	updateHighContrast();
 	startBackgroundShuffle();
 	updateDuration();
 	updateSound();
