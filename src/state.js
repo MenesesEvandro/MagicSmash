@@ -10,6 +10,7 @@ export const initialData = {
 	language: "en",
 	theme: "vehicles",
 	colorMode: "light",
+	highContrast: false,
 	duration: 5,
 	sound: true,
 	vibration: false,
