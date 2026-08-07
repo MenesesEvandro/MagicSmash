@@ -75,6 +75,8 @@ const superSparkCount = (window) =>
 	window.document.querySelectorAll("#sparkles .super-spark").length;
 const themeEffectCount = (window) =>
 	window.document.querySelectorAll("#themeEffects .theme-effect").length;
+const letterPopCount = (window) =>
+	window.document.querySelectorAll("#magicLayer .letter-pop").length;
 
 test("a tap spawns 5 sparks normally, 3 with reduced motion", async (t) => {
 	const normal = bootApp();
@@ -144,4 +146,42 @@ test("Super Smash spawns 40 sparks normally, 20 with reduced motion", async (t) 
 		);
 	}
 	assert.equal(superSparkCount(reduced), 20);
+});
+
+test("a tap scatters 9 letter pops normally, 5 with reduced motion", async (t) => {
+	const normal = bootApp();
+	t.after(() => normal.close());
+	await startSession(normal);
+	normal.document
+		.getElementById("playArea")
+		.dispatchEvent(pointerEvent(normal, "pointerdown", CENTER_POINT));
+	assert.equal(letterPopCount(normal), 9);
+
+	const reduced = bootApp(true);
+	t.after(() => reduced.close());
+	await startSession(reduced);
+	reduced.document
+		.getElementById("playArea")
+		.dispatchEvent(pointerEvent(reduced, "pointerdown", CENTER_POINT));
+	assert.equal(letterPopCount(reduced), 5);
+});
+
+test("Bubbles' theme mechanic spawns 4 effects normally, 2 with reduced motion", async (t) => {
+	const normal = bootApp();
+	t.after(() => normal.close());
+	normal.setTheme("bubbles");
+	await startSession(normal);
+	normal.document
+		.getElementById("playArea")
+		.dispatchEvent(pointerEvent(normal, "pointerdown", CENTER_POINT));
+	assert.equal(themeEffectCount(normal), 4);
+
+	const reduced = bootApp(true);
+	t.after(() => reduced.close());
+	reduced.setTheme("bubbles");
+	await startSession(reduced);
+	reduced.document
+		.getElementById("playArea")
+		.dispatchEvent(pointerEvent(reduced, "pointerdown", CENTER_POINT));
+	assert.equal(themeEffectCount(reduced), 2);
 });

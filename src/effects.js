@@ -391,7 +391,7 @@ export function makeThemeMechanic(event) {
 		return;
 	}
 
-	const effectsPerTouch = data.theme === "bubbles" ? 4 : 3;
+	const effectsPerTouch = particleCount(data.theme === "bubbles" ? 4 : 3);
 	for (let index = 0; index < effectsPerTouch; index++) {
 		const effect = document.createElement("span");
 		effect.className = `theme-effect ${data.theme === "bubbles" ? "bubble-effect" : "music-effect"}`;
@@ -408,13 +408,14 @@ export function makeThemeMechanic(event) {
 }
 
 /**
- * Scatters nine copies of the pressed character across the play area, each
- * popping away and removing itself when its animation ends.
+ * Scatters nine copies (or fewer — see {@link particleCount}) of the
+ * pressed character across the play area, each popping away and removing
+ * itself when its animation ends.
  * @param {string} letter Character to display.
  */
 export function makeLetterTrail(letter) {
 	const layer = $("#magicLayer");
-	for (let index = 0; index < 9; index++) {
+	for (let index = 0; index < particleCount(9); index++) {
 		const pop = document.createElement("span");
 		pop.className = "letter-pop";
 		pop.textContent = letter;
