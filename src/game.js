@@ -480,12 +480,23 @@ export function stopHeldKeyGrowth() {
  * @param {boolean} [options.superSmash=false] A whole-hand slap: replaces
  * the usual sparkle/theme/letter effects with {@link makeSuperSmash}'s
  * screen-wide burst, and the usual single tone/buzz with a bigger pattern.
+ * @param {number} [options.dragSpeed] Pixels per millisecond the drag that
+ * triggered this was moving at, if any — computed in `pressPointer()`, next
+ * to {@link panFromPoint}. Forwarded to {@link makePointerTrail}, which
+ * sizes and times its spark by it: a slow drag leaves big, lingering
+ * sparks, a fast one leaves small, quick ones.
  */
 export function triggerInteraction(
 	displayed,
 	label,
 	point,
-	{ feedback = false, pointer = false, burst = false, superSmash = false } = {},
+	{
+		feedback = false,
+		pointer = false,
+		burst = false,
+		superSmash = false,
+		dragSpeed,
+	} = {},
 ) {
 	if (!state.playing) startGame();
 	resetIdleTimer();
@@ -513,7 +524,7 @@ export function triggerInteraction(
 		const points = kaleidoscopePoints(effectPoint);
 		if (pointer)
 			for (const kaleidoscopePoint of points)
-				makePointerTrail(kaleidoscopePoint);
+				makePointerTrail(kaleidoscopePoint, dragSpeed);
 		if (!pointer || burst) {
 			for (const kaleidoscopePoint of points) makeSparkles(kaleidoscopePoint);
 			makeLetterTrail(displayed);
@@ -748,12 +759,25 @@ export function pressPointer(event) {
 	// (selecting it, the way a rapid native double-click would), and nothing
 	// in the app ever clears that selection.
 	event.preventDefault();
+	// Read before state.lastPointerX/Y below overwrite them: how far and how
+	// fast this move travelled since the last one, in pixels per
+	// millisecond. Only meaningful for a drag with a prior point on record —
+	// a tap, or a drag's very first move, has nothing to compare against.
+	const dragSpeed =
+		isDragTrail && state.lastPointerX !== null
+			? Math.hypot(
+					event.clientX - state.lastPointerX,
+					event.clientY - state.lastPointerY,
+				) / Math.max(1, now - state.lastPointerTime)
+			: undefined;
 	// Also advanced for an event the dead zone below goes on to ignore, not
 	// just a registered one — otherwise moving or dragging along the edge
 	// never re-arms this throttle, and getBoundingClientRect() in
 	// isInEdgeDeadZone runs on every raw pointermove instead of one per
 	// 160 ms.
 	state.lastPointerTime = now;
+	state.lastPointerX = event.clientX;
+	state.lastPointerY = event.clientY;
 	// Checked before the dead zone below rather than after: it's a plain size
 	// comparison with no rect lookup, so trying it first skips
 	// isInEdgeDeadZone()'s layout-forcing getBoundingClientRect() call
@@ -788,6 +812,7 @@ export function pressPointer(event) {
 		pointer: true,
 		burst: event.type === "pointerdown",
 		feedback: event.type === "pointerdown",
+		dragSpeed,
 	});
 }
 

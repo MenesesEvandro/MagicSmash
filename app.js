@@ -60,6 +60,8 @@ const state = {
 	bestStreak: 0,
 	lastKeyTime: 0,
 	lastPointerTime: 0,
+	lastPointerX: null,
+	lastPointerY: null,
 	activePointers: new Set(),
 	startedAt: null,
 	elapsedBeforePause: 0,
@@ -485,11 +487,43 @@ function makeSparkles(event) {
 }
 
 /**
+ * Bigger-for-slower, smaller-for-faster is intentional, not inverted by
+ * mistake — think of it as painting rather than impact: a slow, lazy drag
+ * lays down a big unhurried blob, the way slowly dragging a wet brush
+ * pools more paint, while a fast flick barely touches the surface and
+ * leaves a thin streak that's already fading. Not "a bigger hit for a
+ * bigger swing."
+ */
+
+/** Drag speed (px/ms) at or below which a trail spark renders at its
+ * biggest, slowest-fading size; see {@link makePointerTrail}. */
+const TRAIL_SPEED_SLOW = 0.05;
+/** Drag speed (px/ms) at or above which a trail spark renders at its
+ * smallest, quickest-fading size; see {@link makePointerTrail}. */
+const TRAIL_SPEED_FAST = 1.2;
+/** Font-size multiplier (applied to the existing responsive clamp) at
+ * {@link TRAIL_SPEED_SLOW} and below. */
+const TRAIL_SCALE_SLOW = 1.6;
+/** Font-size multiplier at {@link TRAIL_SPEED_FAST} and above. */
+const TRAIL_SCALE_FAST = 0.65;
+/** Animation duration, in seconds, at {@link TRAIL_SPEED_SLOW} and below. */
+const TRAIL_DURATION_SLOW_S = 0.9;
+/** Animation duration, in seconds, at {@link TRAIL_SPEED_FAST} and above. */
+const TRAIL_DURATION_FAST_S = 0.45;
+
+/**
  * Leaves a single theme icon drifting upward from the given point (key orb
  * center when coordinates are missing); it removes itself after animating.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ * @param {number} [dragSpeed] Pixels per millisecond the drag that
+ * triggered this was moving at, if any — a slow drag (at or below
+ * {@link TRAIL_SPEED_SLOW}) renders a big, lingering spark, a fast one (at
+ * or above {@link TRAIL_SPEED_FAST}) a small, quick one, linearly
+ * interpolated in between. Left at the CSS defaults (matching every spark
+ * before this existed) when omitted — a tap's own incidental spark, say,
+ * has no drag to measure a speed from.
  */
-function makePointerTrail(event) {
+function makePointerTrail(event, dragSpeed) {
 	const trail = document.createElement("span");
 	const rect = $("#keyOrb").getBoundingClientRect();
 	const x = Number.isFinite(event.clientX)
@@ -507,6 +541,22 @@ function makePointerTrail(event) {
 	trail.style.setProperty("--y", `${y}px`);
 	trail.style.setProperty("--dx", `${(Math.random() - 0.5) * 80}px`);
 	trail.style.setProperty("--dy", `${-30 - Math.random() * 70}px`);
+	if (Number.isFinite(dragSpeed)) {
+		const clamped = Math.min(
+			TRAIL_SPEED_FAST,
+			Math.max(TRAIL_SPEED_SLOW, dragSpeed),
+		);
+		const fraction =
+			(clamped - TRAIL_SPEED_SLOW) / (TRAIL_SPEED_FAST - TRAIL_SPEED_SLOW);
+		trail.style.setProperty(
+			"--trail-scale",
+			`${TRAIL_SCALE_SLOW + fraction * (TRAIL_SCALE_FAST - TRAIL_SCALE_SLOW)}`,
+		);
+		trail.style.setProperty(
+			"--trail-duration",
+			`${TRAIL_DURATION_SLOW_S + fraction * (TRAIL_DURATION_FAST_S - TRAIL_DURATION_SLOW_S)}s`,
+		);
+	}
 	$("#sparkles").append(trail);
 	trail.addEventListener("animationend", () => trail.remove());
 }
@@ -1293,12 +1343,23 @@ function stopHeldKeyGrowth() {
  * @param {boolean} [options.superSmash=false] A whole-hand slap: replaces
  * the usual sparkle/theme/letter effects with {@link makeSuperSmash}'s
  * screen-wide burst, and the usual single tone/buzz with a bigger pattern.
+ * @param {number} [options.dragSpeed] Pixels per millisecond the drag that
+ * triggered this was moving at, if any — computed in `pressPointer()`, next
+ * to {@link panFromPoint}. Forwarded to {@link makePointerTrail}, which
+ * sizes and times its spark by it: a slow drag leaves big, lingering
+ * sparks, a fast one leaves small, quick ones.
  */
 function triggerInteraction(
 	displayed,
 	label,
 	point,
-	{ feedback = false, pointer = false, burst = false, superSmash = false } = {},
+	{
+		feedback = false,
+		pointer = false,
+		burst = false,
+		superSmash = false,
+		dragSpeed,
+	} = {},
 ) {
 	if (!state.playing) startGame();
 	resetIdleTimer();
@@ -1326,7 +1387,7 @@ function triggerInteraction(
 		const points = kaleidoscopePoints(effectPoint);
 		if (pointer)
 			for (const kaleidoscopePoint of points)
-				makePointerTrail(kaleidoscopePoint);
+				makePointerTrail(kaleidoscopePoint, dragSpeed);
 		if (!pointer || burst) {
 			for (const kaleidoscopePoint of points) makeSparkles(kaleidoscopePoint);
 			makeLetterTrail(displayed);
@@ -1561,12 +1622,25 @@ function pressPointer(event) {
 	// (selecting it, the way a rapid native double-click would), and nothing
 	// in the app ever clears that selection.
 	event.preventDefault();
+	// Read before state.lastPointerX/Y below overwrite them: how far and how
+	// fast this move travelled since the last one, in pixels per
+	// millisecond. Only meaningful for a drag with a prior point on record —
+	// a tap, or a drag's very first move, has nothing to compare against.
+	const dragSpeed =
+		isDragTrail && state.lastPointerX !== null
+			? Math.hypot(
+					event.clientX - state.lastPointerX,
+					event.clientY - state.lastPointerY,
+				) / Math.max(1, now - state.lastPointerTime)
+			: undefined;
 	// Also advanced for an event the dead zone below goes on to ignore, not
 	// just a registered one — otherwise moving or dragging along the edge
 	// never re-arms this throttle, and getBoundingClientRect() in
 	// isInEdgeDeadZone runs on every raw pointermove instead of one per
 	// 160 ms.
 	state.lastPointerTime = now;
+	state.lastPointerX = event.clientX;
+	state.lastPointerY = event.clientY;
 	// Checked before the dead zone below rather than after: it's a plain size
 	// comparison with no rect lookup, so trying it first skips
 	// isInEdgeDeadZone()'s layout-forcing getBoundingClientRect() call
@@ -1601,6 +1675,7 @@ function pressPointer(event) {
 		pointer: true,
 		burst: event.type === "pointerdown",
 		feedback: event.type === "pointerdown",
+		dragSpeed,
 	});
 }
 
