@@ -9,7 +9,6 @@ Ideas for where Magic Smash could go next. None of this is promised or scheduled
 
 ## Accessibility
 
-- **A more thorough `prefers-reduced-motion` story** — today it flattens animation durations and opts out of attract mode entirely; it could also cut down the number of particles spawned per keypress for kids sensitive to visual clutter.
 - **Single-switch accessibility support.** A child with limited fine motor control might play through one external switch — wired in over Bluetooth or a headphone jack, common in occupational therapy — standing in for a single spacebar press or a single primary click. That input already reaches the app today through the exact same `keydown`/`pointerdown` handlers everything else uses, so basic play already works with zero changes. What's missing is the reward matching the effort: every keypress today lands its effect at a padded-but-still-random point via `randomEffectPoint()`, the same modest single-point effect no matter which key was pressed. A browser can't tell a real spacebar tap from a switch device pretending to be one — there's no API for that distinction — so this would need to be its own opt-in setting, alongside the other accessibility toggles here, turning every press of the designated key into the whole-hand "Super Effect" already proposed below instead of an ordinary tap: a guaranteed, centred, maximal reward every time, not a matter of where the random point happens to land.
 
 ## More to press and see
