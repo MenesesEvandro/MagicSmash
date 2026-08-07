@@ -104,17 +104,30 @@ let idleTimerId = null;
 let idleTickerId = null;
 
 /**
- * @returns {boolean} Whether the visitor asked the OS for less motion.
- * Attract mode is *deliberately* attention-grabbing movement that starts
- * on its own, with nobody having touched anything — exactly what that
- * preference exists to opt out of. The stylesheet's global reduced-motion
- * rule already flattens the animations themselves, so this is mainly about
- * not running the ticker behind them for no reason.
+ * @returns {boolean} Whether the visitor asked the OS for less motion. Gates
+ * two things: attract mode, which is *deliberately* attention-grabbing
+ * movement that starts on its own with nobody having touched anything —
+ * exactly what this preference exists to opt out of — and, via
+ * {@link particleCount}, how many particles a single effect spawns. The
+ * stylesheet's global reduced-motion rule already flattens every
+ * animation's duration; neither of those touches how much stuff appears at
+ * once, which is what these two cover instead.
  */
 function prefersReducedMotion() {
 	return (
 		window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true
 	);
+}
+
+/**
+ * @param {number} base Normal particle count for an effect.
+ * @returns {number} `base`, or roughly half of it (never below 1) under
+ * {@link prefersReducedMotion} — fewer things flashing into existence at
+ * once for a child sensitive to visual clutter, since flattened animation
+ * durations alone still leave every particle appearing (just instantly).
+ */
+function particleCount(base) {
+	return prefersReducedMotion() ? Math.max(1, Math.round(base / 2)) : base;
 }
 
 /**
@@ -165,9 +178,9 @@ export function stopIdleTimer() {
 }
 
 /**
- * Bursts five theme icons outward from the given point, or from the key
- * orb's center when the point has no finite coordinates. Each spark removes
- * itself when its animation ends.
+ * Bursts five theme icons (or fewer — see {@link particleCount}) outward
+ * from the given point, or from the key orb's center when the point has no
+ * finite coordinates. Each spark removes itself when its animation ends.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
  */
 export function makeSparkles(event) {
@@ -179,7 +192,7 @@ export function makeSparkles(event) {
 		? event.clientY
 		: rect.top + rect.height / 2;
 	const icons = themeIcons[data.theme];
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < particleCount(5); i++) {
 		const spark = document.createElement("span");
 		spark.className = "spark";
 		spark.textContent = icons[Math.floor(Math.random() * icons.length)];
@@ -330,11 +343,13 @@ export function makeThemeMechanic(event) {
 			"bedtime",
 		].includes(data.theme)
 	) {
-		const effectCount = ["colors", "party"].includes(data.theme)
-			? 6
-			: data.theme === "lights"
-				? 4
-				: 3;
+		const effectCount = particleCount(
+			["colors", "party"].includes(data.theme)
+				? 6
+				: data.theme === "lights"
+					? 4
+					: 3,
+		);
 		const className = {
 			colors: "color-effect",
 			weather: "weather-effect",
@@ -376,7 +391,7 @@ export function makeThemeMechanic(event) {
 		return;
 	}
 
-	const effectsPerTouch = data.theme === "bubbles" ? 4 : 3;
+	const effectsPerTouch = particleCount(data.theme === "bubbles" ? 4 : 3);
 	for (let index = 0; index < effectsPerTouch; index++) {
 		const effect = document.createElement("span");
 		effect.className = `theme-effect ${data.theme === "bubbles" ? "bubble-effect" : "music-effect"}`;
@@ -393,13 +408,14 @@ export function makeThemeMechanic(event) {
 }
 
 /**
- * Scatters nine copies of the pressed character across the play area, each
- * popping away and removing itself when its animation ends.
+ * Scatters nine copies (or fewer — see {@link particleCount}) of the
+ * pressed character across the play area, each popping away and removing
+ * itself when its animation ends.
  * @param {string} letter Character to display.
  */
 export function makeLetterTrail(letter) {
 	const layer = $("#magicLayer");
-	for (let index = 0; index < 9; index++) {
+	for (let index = 0; index < particleCount(9); index++) {
 		const pop = document.createElement("span");
 		pop.className = "letter-pop";
 		pop.textContent = letter;
@@ -415,10 +431,11 @@ export function makeLetterTrail(letter) {
 }
 
 /**
- * Creates a massive screen-wide burst of particles and a giant central
- * emoji for a whole-hand slap. Purely visual, like every other effect in
- * this module — the game decides whether and how a Super Smash sounds or
- * vibrates, the same way it does for every other interaction.
+ * Creates a massive screen-wide burst of particles (or fewer — see
+ * {@link particleCount}) and a giant central emoji for a whole-hand slap.
+ * Purely visual, like every other effect in this module — the game decides
+ * whether and how a Super Smash sounds or vibrates, the same way it does
+ * for every other interaction.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
  */
 export function makeSuperSmash(event) {
@@ -432,7 +449,7 @@ export function makeSuperSmash(event) {
 
 	const icons = themeIcons[data.theme];
 
-	for (let i = 0; i < 40; i++) {
+	for (let i = 0; i < particleCount(40); i++) {
 		const spark = document.createElement("span");
 		spark.className = "spark super-spark";
 		spark.textContent = icons[Math.floor(Math.random() * icons.length)];
