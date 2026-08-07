@@ -761,8 +761,11 @@ export function pressPointer(event) {
 	event.preventDefault();
 	// Read before state.lastPointerX/Y below overwrite them: how far and how
 	// fast this move travelled since the last one, in pixels per
-	// millisecond. Only meaningful for a drag with a prior point on record —
-	// a tap, or a drag's very first move, has nothing to compare against.
+	// millisecond. A tap itself never gets one (isDragTrail is pointermove
+	// only) — but the first drag move after a tap does, measured against
+	// that tap's own point, since state.lastPointerX/Y update on every
+	// event below, pointerdown included. The only real gap is state's
+	// initial null, before any pointer event this session has set it yet.
 	const dragSpeed =
 		isDragTrail && state.lastPointerX !== null
 			? Math.hypot(
