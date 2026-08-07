@@ -57,6 +57,8 @@ export const state = {
 	bestStreak: 0,
 	lastKeyTime: 0,
 	lastPointerTime: 0,
+	lastPointerX: null,
+	lastPointerY: null,
 	activePointers: new Set(),
 	startedAt: null,
 	elapsedBeforePause: 0,

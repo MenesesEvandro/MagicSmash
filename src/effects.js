@@ -193,11 +193,43 @@ export function makeSparkles(event) {
 }
 
 /**
+ * Bigger-for-slower, smaller-for-faster is intentional, not inverted by
+ * mistake — think of it as painting rather than impact: a slow, lazy drag
+ * lays down a big unhurried blob, the way slowly dragging a wet brush
+ * pools more paint, while a fast flick barely touches the surface and
+ * leaves a thin streak that's already fading. Not "a bigger hit for a
+ * bigger swing."
+ */
+
+/** Drag speed (px/ms) at or below which a trail spark renders at its
+ * biggest, slowest-fading size; see {@link makePointerTrail}. */
+const TRAIL_SPEED_SLOW = 0.05;
+/** Drag speed (px/ms) at or above which a trail spark renders at its
+ * smallest, quickest-fading size; see {@link makePointerTrail}. */
+const TRAIL_SPEED_FAST = 1.2;
+/** Font-size multiplier (applied to the existing responsive clamp) at
+ * {@link TRAIL_SPEED_SLOW} and below. */
+const TRAIL_SCALE_SLOW = 1.6;
+/** Font-size multiplier at {@link TRAIL_SPEED_FAST} and above. */
+const TRAIL_SCALE_FAST = 0.65;
+/** Animation duration, in seconds, at {@link TRAIL_SPEED_SLOW} and below. */
+const TRAIL_DURATION_SLOW_S = 0.9;
+/** Animation duration, in seconds, at {@link TRAIL_SPEED_FAST} and above. */
+const TRAIL_DURATION_FAST_S = 0.45;
+
+/**
  * Leaves a single theme icon drifting upward from the given point (key orb
  * center when coordinates are missing); it removes itself after animating.
  * @param {{clientX?: number, clientY?: number}} event Pointer event or point-like object.
+ * @param {number} [dragSpeed] Pixels per millisecond the drag that
+ * triggered this was moving at, if any — a slow drag (at or below
+ * {@link TRAIL_SPEED_SLOW}) renders a big, lingering spark, a fast one (at
+ * or above {@link TRAIL_SPEED_FAST}) a small, quick one, linearly
+ * interpolated in between. Left at the CSS defaults (matching every spark
+ * before this existed) when omitted — a tap's own incidental spark, say,
+ * has no drag to measure a speed from.
  */
-export function makePointerTrail(event) {
+export function makePointerTrail(event, dragSpeed) {
 	const trail = document.createElement("span");
 	const rect = $("#keyOrb").getBoundingClientRect();
 	const x = Number.isFinite(event.clientX)
@@ -215,6 +247,22 @@ export function makePointerTrail(event) {
 	trail.style.setProperty("--y", `${y}px`);
 	trail.style.setProperty("--dx", `${(Math.random() - 0.5) * 80}px`);
 	trail.style.setProperty("--dy", `${-30 - Math.random() * 70}px`);
+	if (Number.isFinite(dragSpeed)) {
+		const clamped = Math.min(
+			TRAIL_SPEED_FAST,
+			Math.max(TRAIL_SPEED_SLOW, dragSpeed),
+		);
+		const fraction =
+			(clamped - TRAIL_SPEED_SLOW) / (TRAIL_SPEED_FAST - TRAIL_SPEED_SLOW);
+		trail.style.setProperty(
+			"--trail-scale",
+			`${TRAIL_SCALE_SLOW + fraction * (TRAIL_SCALE_FAST - TRAIL_SCALE_SLOW)}`,
+		);
+		trail.style.setProperty(
+			"--trail-duration",
+			`${TRAIL_DURATION_SLOW_S + fraction * (TRAIL_DURATION_FAST_S - TRAIL_DURATION_SLOW_S)}s`,
+		);
+	}
 	$("#sparkles").append(trail);
 	trail.addEventListener("animationend", () => trail.remove());
 }

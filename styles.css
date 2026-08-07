@@ -845,11 +845,11 @@ h1 {
 	position: absolute;
 	left: var(--x);
 	top: var(--y);
-	font-size: clamp(18px, 2.8vw, 32px);
+	font-size: calc(clamp(18px, 2.8vw, 32px) * var(--trail-scale, 1));
 	line-height: 1;
 	pointer-events: none;
 	filter: drop-shadow(0 3px 5px rgba(48, 31, 103, 0.2));
-	animation: pointerTrail 0.7s ease-out forwards;
+	animation: pointerTrail var(--trail-duration, 0.7s) ease-out forwards;
 }
 .theme-effect.with-backdrop {
 	display: grid;
