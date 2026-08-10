@@ -318,6 +318,13 @@ $("#fullscreenButton").addEventListener("click", async () => {
 		/* Browser may deny fullscreen until another gesture. */
 	}
 });
+$("#fullscreenRecoveryButton").addEventListener("click", async () => {
+	try {
+		await document.documentElement.requestFullscreen();
+	} catch {
+		/* Stays visible if the browser denies it — the same tap tries again. */
+	}
+});
 $("#screenPinningButton").addEventListener("click", () => {
 	$("#screenPinningDialog").showModal();
 });
@@ -372,7 +379,15 @@ $("#resetStats").addEventListener("click", () => {
 	updateStats();
 });
 document.addEventListener("fullscreenchange", () => {
-	if (!document.fullscreenElement) closePanel();
+	if (document.fullscreenElement) {
+		$("#fullscreenRecoveryButton").classList.add("hidden");
+		return;
+	}
+	closePanel();
+	// Only during an active session — the app never requests full screen on
+	// its own outside of one, so there's nothing to recover back into
+	// otherwise (the welcome screen's own button already covers that case).
+	if (state.playing) $("#fullscreenRecoveryButton").classList.remove("hidden");
 });
 
 /**
