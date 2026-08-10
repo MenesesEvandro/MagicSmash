@@ -51,6 +51,11 @@ function bootApp() {
 async function startSession(window) {
 	window.document.getElementById("startButton").click();
 	await sleep(50);
+	assert.equal(
+		window.document.getElementById("keyStage").classList.contains("hidden"),
+		false,
+		"session should be running",
+	);
 }
 
 const setFullscreen = (window, element) => {
