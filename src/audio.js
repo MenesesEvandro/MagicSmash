@@ -114,7 +114,7 @@ export function playTone(pan = 0) {
 		const now = audioContext.currentTime;
 		oscillator.type = ["vehicles", "dinosaurs", "toys"].includes(data.theme)
 			? "triangle"
-			: data.theme === "lights"
+			: ["lights", "robots"].includes(data.theme)
 				? "square"
 				: "sine";
 		oscillator.frequency.value = frequency;
