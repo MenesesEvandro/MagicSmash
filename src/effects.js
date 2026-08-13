@@ -343,6 +343,7 @@ export function makeThemeMechanic(event) {
 			"bedtime",
 			"safari",
 			"robots",
+			"garden",
 		].includes(data.theme)
 	) {
 		const effectCount = particleCount(
@@ -366,6 +367,7 @@ export function makeThemeMechanic(event) {
 			bedtime: "bedtime-effect",
 			safari: "safari-effect",
 			robots: "robots-effect",
+			garden: "garden-effect",
 		}[data.theme];
 		const symbols = {
 			colors: ["🔴", "🟡", "🟢", "🔵", "🟣", "✨"],
@@ -381,6 +383,7 @@ export function makeThemeMechanic(event) {
 			bedtime: themeIcons.bedtime,
 			safari: themeIcons.safari,
 			robots: themeIcons.robots,
+			garden: themeIcons.garden,
 		}[data.theme];
 		for (let index = 0; index < effectCount; index++) {
 			const effect = document.createElement("span");

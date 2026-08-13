@@ -20,6 +20,7 @@ export const themeIcons = {
 	bedtime: ["🌙", "⭐", "🐑", "☁️", "💤"],
 	safari: ["🦁", "🐘", "🦒", "🦓", "🦏", "🌴"],
 	robots: ["🤖", "⚙️", "🔧", "🔩", "🦾", "📡"],
+	garden: ["🌻", "🐝", "🦋", "🐞", "🌷", "🐛"],
 };
 
 /** Translation key for each theme's display name, keyed by theme id. */
@@ -40,4 +41,5 @@ export const themeNames = {
 	bedtime: "themeBedtime",
 	safari: "themeSafari",
 	robots: "themeRobots",
+	garden: "themeGarden",
 };

@@ -175,6 +175,15 @@ body[data-theme="robots"] {
 	--orb-b: #8a97a8;
 	--orb-c: #ff8a4c;
 }
+body[data-theme="garden"] {
+	--accent: #7cb342;
+	--accent-deep: #4f7a24;
+	--accent-soft: #e3f3d1;
+	--background: #f4fbe9;
+	--orb-a: #ffb3c6;
+	--orb-b: #ffd54a;
+	--orb-c: #7ec8e3;
+}
 body[data-mode="dark"] {
 	--ink: #f7f2ff;
 	--muted: #d3c6e2;
@@ -641,6 +650,9 @@ h1 {
 .quick-theme-button[data-theme-choice="robots"] {
 	background: linear-gradient(145deg, #4dd9e8, #8a97a8);
 }
+.quick-theme-button[data-theme-choice="garden"] {
+	background: linear-gradient(145deg, #ffb3c6, #7cb342);
+}
 .quick-control select {
 	width: 100%;
 	height: 26px;
@@ -1033,6 +1045,12 @@ h1 {
 	font-size: clamp(36px, 6vw, 76px);
 	animation: robotGlitch 0.85s ease-out forwards;
 }
+.garden-effect {
+	left: var(--x);
+	top: var(--y);
+	font-size: clamp(34px, 5vw, 72px);
+	animation: gardenFlutter 1.05s ease-out forwards;
+}
 .side-panel {
 	position: fixed;
 	z-index: 10;
@@ -1269,6 +1287,9 @@ body[data-mode="dark"] .child-card .text-button {
 }
 .robots {
 	background: linear-gradient(145deg, #4dd9e8, #8a97a8);
+}
+.garden {
+	background: linear-gradient(145deg, #ffb3c6, #7cb342);
 }
 .appearance-group {
 	display: grid;
@@ -1781,6 +1802,32 @@ body.small-letters .key-orb {
 	}
 	60% {
 		transform: translate(-50%, calc(-50% - 55px)) scale(1);
+		opacity: 1;
+	}
+	100% {
+		transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
+			scale(0.9);
+		opacity: 0;
+	}
+}
+@keyframes gardenFlutter {
+	0% {
+		transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+		opacity: 0;
+	}
+	20% {
+		transform: translate(calc(-50% - 14px), calc(-50% - 20px)) scale(1.1)
+			rotate(-12deg);
+		opacity: 1;
+	}
+	40% {
+		transform: translate(calc(-50% + 14px), calc(-50% - 40px)) scale(1)
+			rotate(12deg);
+		opacity: 1;
+	}
+	60% {
+		transform: translate(calc(-50% - 10px), calc(-50% - 60px)) scale(1.05)
+			rotate(-8deg);
 		opacity: 1;
 	}
 	100% {
