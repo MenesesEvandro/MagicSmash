@@ -157,6 +157,15 @@ body[data-theme="bedtime"] {
 	--orb-b: #a88cda;
 	--orb-c: #f1dc8e;
 }
+body[data-theme="safari"] {
+	--accent: #b8752a;
+	--accent-deep: #8a5620;
+	--accent-soft: #f7e0bd;
+	--background: #fdf4e4;
+	--orb-a: #e8b34c;
+	--orb-b: #c2703a;
+	--orb-c: #6ea45c;
+}
 body[data-mode="dark"] {
 	--ink: #f7f2ff;
 	--muted: #d3c6e2;
@@ -617,6 +626,9 @@ h1 {
 .quick-theme-button[data-theme-choice="bedtime"] {
 	background: linear-gradient(145deg, #5268bd, #a88cda);
 }
+.quick-theme-button[data-theme-choice="safari"] {
+	background: linear-gradient(145deg, #e8b34c, #c2703a);
+}
 .quick-control select {
 	width: 100%;
 	height: 26px;
@@ -997,6 +1009,12 @@ h1 {
 	font-size: clamp(34px, 5vw, 72px);
 	animation: sleepFloat 1.2s ease-out forwards;
 }
+.safari-effect {
+	left: var(--x);
+	top: var(--y);
+	font-size: clamp(38px, 6vw, 80px);
+	animation: safariLeap 0.95s ease-out forwards;
+}
 .side-panel {
 	position: fixed;
 	z-index: 10;
@@ -1227,6 +1245,9 @@ body[data-mode="dark"] .child-card .text-button {
 }
 .bedtime {
 	background: linear-gradient(145deg, #5268bd, #a88cda);
+}
+.safari {
+	background: linear-gradient(145deg, #e8b34c, #c2703a);
 }
 .appearance-group {
 	display: grid;
@@ -1698,6 +1719,25 @@ body.small-letters .key-orb {
 	100% {
 		transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
 			scale(1.1);
+		opacity: 0;
+	}
+}
+@keyframes safariLeap {
+	0% {
+		transform: translate(-50%, -50%) scale(0.4) rotate(-8deg);
+		opacity: 0;
+	}
+	35% {
+		transform: translate(-50%, calc(-50% - 50px)) scale(1.15) rotate(6deg);
+		opacity: 1;
+	}
+	65% {
+		transform: translate(-50%, calc(-50% - 10px)) scale(0.98) rotate(-3deg);
+		opacity: 1;
+	}
+	100% {
+		transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
+			scale(1.05);
 		opacity: 0;
 	}
 }

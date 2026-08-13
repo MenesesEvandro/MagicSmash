@@ -18,6 +18,7 @@ export const themeIcons = {
 	lights: ["💡", "✨", "🌟", "🟣", "🟡"],
 	toys: ["🧸", "⚽", "🧱", "🪀", "🛩️"],
 	bedtime: ["🌙", "⭐", "🐑", "☁️", "💤"],
+	safari: ["🦁", "🐘", "🦒", "🦓", "🦏", "🌴"],
 };
 
 /** Translation key for each theme's display name, keyed by theme id. */
@@ -36,4 +37,5 @@ export const themeNames = {
 	lights: "themeLights",
 	toys: "themeToys",
 	bedtime: "themeBedtime",
+	safari: "themeSafari",
 };
