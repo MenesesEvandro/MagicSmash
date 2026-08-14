@@ -348,6 +348,7 @@ export function makeThemeMechanic(event) {
 			"seasons",
 			"construction",
 			"fantasy",
+			"polar",
 		].includes(data.theme)
 	) {
 		const effectCount = particleCount(
@@ -375,6 +376,7 @@ export function makeThemeMechanic(event) {
 			seasons: "seasons-effect",
 			construction: "construction-effect",
 			fantasy: "fantasy-effect",
+			polar: "polar-effect",
 		}[data.theme];
 		const symbols = {
 			colors: ["🔴", "🟡", "🟢", "🔵", "🟣", "✨"],
@@ -394,6 +396,7 @@ export function makeThemeMechanic(event) {
 			seasons: themeIcons.seasons,
 			construction: themeIcons.construction,
 			fantasy: themeIcons.fantasy,
+			polar: themeIcons.polar,
 		}[data.theme];
 		for (let index = 0; index < effectCount; index++) {
 			const effect = document.createElement("span");
