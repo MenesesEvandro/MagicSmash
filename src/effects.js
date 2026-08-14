@@ -39,6 +39,7 @@ export function createMagicBackground() {
 		"beach",
 		"ocean",
 		"toys",
+		"construction",
 	].includes(data.theme);
 	for (let index = 0; index < (largeObjects ? 15 : 20); index++) {
 		const object = document.createElement("span");
@@ -341,6 +342,13 @@ export function makeThemeMechanic(event) {
 			"lights",
 			"toys",
 			"bedtime",
+			"safari",
+			"robots",
+			"garden",
+			"seasons",
+			"construction",
+			"fantasy",
+			"polar",
 		].includes(data.theme)
 	) {
 		const effectCount = particleCount(
@@ -362,6 +370,13 @@ export function makeThemeMechanic(event) {
 			lights: "lights-effect",
 			toys: "toys-effect",
 			bedtime: "bedtime-effect",
+			safari: "safari-effect",
+			robots: "robots-effect",
+			garden: "garden-effect",
+			seasons: "seasons-effect",
+			construction: "construction-effect",
+			fantasy: "fantasy-effect",
+			polar: "polar-effect",
 		}[data.theme];
 		const symbols = {
 			colors: ["🔴", "🟡", "🟢", "🔵", "🟣", "✨"],
@@ -375,6 +390,13 @@ export function makeThemeMechanic(event) {
 			lights: themeIcons.lights,
 			toys: themeIcons.toys,
 			bedtime: themeIcons.bedtime,
+			safari: themeIcons.safari,
+			robots: themeIcons.robots,
+			garden: themeIcons.garden,
+			seasons: themeIcons.seasons,
+			construction: themeIcons.construction,
+			fantasy: themeIcons.fantasy,
+			polar: themeIcons.polar,
 		}[data.theme];
 		for (let index = 0; index < effectCount; index++) {
 			const effect = document.createElement("span");

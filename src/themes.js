@@ -18,6 +18,13 @@ export const themeIcons = {
 	lights: ["💡", "✨", "🌟", "🟣", "🟡"],
 	toys: ["🧸", "⚽", "🧱", "🪀", "🛩️"],
 	bedtime: ["🌙", "⭐", "🐑", "☁️", "💤"],
+	safari: ["🦁", "🐘", "🦒", "🦓", "🦏", "🌴"],
+	robots: ["🤖", "⚙️", "🔧", "🔩", "🦾", "📡"],
+	garden: ["🌻", "🐝", "🦋", "🐞", "🌷", "🐛"],
+	seasons: ["❄️", "⛄", "🌸", "☀️", "🍁", "🍂"],
+	construction: ["🏗️", "🚧", "👷", "🔨", "🪜", "🧱"],
+	fantasy: ["🦄", "🌈", "🔮", "🪄", "👑", "🧚"],
+	polar: ["🐧", "🐻‍❄️", "🦭", "🧊", "🏔️", "❄️"],
 };
 
 /** Translation key for each theme's display name, keyed by theme id. */
@@ -36,4 +43,11 @@ export const themeNames = {
 	lights: "themeLights",
 	toys: "themeToys",
 	bedtime: "themeBedtime",
+	safari: "themeSafari",
+	robots: "themeRobots",
+	garden: "themeGarden",
+	seasons: "themeSeasons",
+	construction: "themeConstruction",
+	fantasy: "themeFantasy",
+	polar: "themePolar",
 };

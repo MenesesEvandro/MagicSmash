@@ -112,9 +112,14 @@ export function playTone(pan = 0) {
 			: audioContext.createGain();
 		if (supportsPanning) panner.pan.value = Math.min(1, Math.max(-1, pan));
 		const now = audioContext.currentTime;
-		oscillator.type = ["vehicles", "dinosaurs", "toys"].includes(data.theme)
+		oscillator.type = [
+			"vehicles",
+			"dinosaurs",
+			"toys",
+			"construction",
+		].includes(data.theme)
 			? "triangle"
-			: data.theme === "lights"
+			: ["lights", "robots"].includes(data.theme)
 				? "square"
 				: "sine";
 		oscillator.frequency.value = frequency;
