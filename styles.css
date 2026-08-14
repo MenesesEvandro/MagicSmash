@@ -419,6 +419,30 @@ body[data-mode="dark"] .play-area {
 			transparent 29%
 		);
 }
+/*
+ * The last stretch of a timed session (see enterWindDown() in src/game.js):
+ * a soft dimming overlay signalling playtime is wrapping up, rather than
+ * the key stage just vanishing mid-keystroke the instant the clock hits
+ * zero. Scoped to .play-area, not the whole app-shell, so the topbar (and a
+ * parent glancing for the settings button) stays fully readable throughout.
+ */
+body.winding-down .play-area:after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgba(20, 15, 40, 0.32);
+	pointer-events: none;
+	opacity: 0;
+	animation: windDownDim 4s ease-in forwards;
+}
+@keyframes windDownDim {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
 .ambient {
 	position: absolute;
 	border-radius: 50%;

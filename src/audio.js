@@ -151,3 +151,42 @@ export function playTone(pan = 0) {
 	}
 	return noteIndex;
 }
+
+/**
+ * Plays one soft, short-lived sine tone — the shared building block behind
+ * {@link playWindDownChime}, kept separate since a chime is several of
+ * these in a row rather than one theme-driven tone like {@link playTone}.
+ * @param {number} frequency
+ */
+function playChimeNote(frequency) {
+	try {
+		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+		const oscillator = audioContext.createOscillator();
+		const gain = audioContext.createGain();
+		const now = audioContext.currentTime;
+		oscillator.type = "sine";
+		oscillator.frequency.value = frequency;
+		gain.gain.setValueAtTime(0.035, now);
+		gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+		oscillator.connect(gain).connect(audioContext.destination);
+		oscillator.start();
+		oscillator.stop(now + 0.5);
+	} catch {
+		/* Sound is optional; silently continue when unavailable. */
+	}
+}
+
+/**
+ * Plays a short, calm descending phrase — four notes low in the pentatonic
+ * scale, always the same soft sine wave the Bedtime theme's own tone uses,
+ * regardless of which theme is actually playing — as a session's wind-down
+ * begins, its one audible cue that playtime is coming to a close.
+ */
+export function playWindDownChime() {
+	[380, 330, 280, 230].forEach((base, index) => {
+		window.setTimeout(
+			() => playChimeNote(nearestPentatonicNote(base)),
+			index * 260,
+		);
+	});
+}

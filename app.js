@@ -67,6 +67,7 @@ const state = {
 	elapsedBeforePause: 0,
 	paused: false,
 	idle: false,
+	windingDown: false,
 	timerId: null,
 	backgroundShuffleId: null,
 };
@@ -244,6 +245,45 @@ function playTone(pan = 0) {
 		/* Sound is optional; silently continue when unavailable. */
 	}
 	return noteIndex;
+}
+
+/**
+ * Plays one soft, short-lived sine tone — the shared building block behind
+ * {@link playWindDownChime}, kept separate since a chime is several of
+ * these in a row rather than one theme-driven tone like {@link playTone}.
+ * @param {number} frequency
+ */
+function playChimeNote(frequency) {
+	try {
+		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+		const oscillator = audioContext.createOscillator();
+		const gain = audioContext.createGain();
+		const now = audioContext.currentTime;
+		oscillator.type = "sine";
+		oscillator.frequency.value = frequency;
+		gain.gain.setValueAtTime(0.035, now);
+		gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+		oscillator.connect(gain).connect(audioContext.destination);
+		oscillator.start();
+		oscillator.stop(now + 0.5);
+	} catch {
+		/* Sound is optional; silently continue when unavailable. */
+	}
+}
+
+/**
+ * Plays a short, calm descending phrase — four notes low in the pentatonic
+ * scale, always the same soft sine wave the Bedtime theme's own tone uses,
+ * regardless of which theme is actually playing — as a session's wind-down
+ * begins, its one audible cue that playtime is coming to a close.
+ */
+function playWindDownChime() {
+	[380, 330, 280, 230].forEach((base, index) => {
+		window.setTimeout(
+			() => playChimeNote(nearestPentatonicNote(base)),
+			index * 260,
+		);
+	});
 }
 
 // ---- src/dom.js ----
@@ -1032,6 +1072,8 @@ function resetSession() {
 	state.startedAt = Date.now();
 	state.elapsedBeforePause = 0;
 	state.paused = false;
+	state.windingDown = false;
+	document.body.classList.remove("winding-down");
 	$("#keyOrb").textContent = "?";
 	$("#keyName").textContent = t("letsPlay");
 	$("#encouragement").textContent = "";
@@ -1087,11 +1129,31 @@ function startGame() {
 	state.timerId = window.setInterval(tick, 500);
 }
 
+/** How many seconds before a timed session ends its wind-down begins. */
+const WIND_DOWN_SECONDS = 15;
+
+/**
+ * Signals a timed session is about to end, rather than the key stage just
+ * vanishing mid-keystroke the instant the clock hits zero: dims the play
+ * area, plays a short calming chime, and — via {@link triggerInteraction}'s
+ * own guard — stops new key or tap effects for the rest of the countdown, a
+ * toddler's moment to notice playtime is wrapping up instead of it just
+ * stopping. No-op if already winding down, since {@link tick} calls this on
+ * every 500ms tick the countdown spends inside the window.
+ */
+function enterWindDown() {
+	if (state.windingDown) return;
+	state.windingDown = true;
+	document.body.classList.add("winding-down");
+	if (data.sound) playWindDownChime();
+}
+
 /**
  * Timer update: counts up ("+MM:SS") in free-play mode (duration 0),
- * otherwise counts down and ends the game when time runs out. A no-op while
- * paused, though in practice {@link pauseSession} already stops the interval
- * that would call this.
+ * otherwise counts down, starts the wind-down inside the last
+ * {@link WIND_DOWN_SECONDS}, and ends the game when time runs out. A no-op
+ * while paused, though in practice {@link pauseSession} already stops the
+ * interval that would call this.
  */
 function tick() {
 	if (!state.playing || state.paused) return;
@@ -1102,6 +1164,7 @@ function tick() {
 	}
 	const remaining = Number(data.duration) * 60 - elapsed;
 	$("#timer").textContent = formatTimer(remaining);
+	if (remaining <= WIND_DOWN_SECONDS) enterWindDown();
 	if (remaining <= 0) endGame();
 }
 
@@ -1149,6 +1212,8 @@ function endGame() {
 	state.playing = false;
 	state.paused = false;
 	state.activePointers.clear();
+	state.windingDown = false;
+	document.body.classList.remove("winding-down");
 	clearInterval(state.timerId);
 	releaseWakeLock();
 	updateParentGateLocks();
@@ -1421,6 +1486,10 @@ function triggerInteraction(
 	} = {},
 ) {
 	if (!state.playing) startGame();
+	// Playtime is wrapping up (see enterWindDown()) — a key or tap during
+	// this last stretch is quietly swallowed instead of firing a new effect,
+	// the whole point of giving the session a moment to notice it's ending.
+	if (state.windingDown) return;
 	resetIdleTimer();
 	const effectPoint = pointer ? point : randomEffectPoint();
 	const now = Date.now();
