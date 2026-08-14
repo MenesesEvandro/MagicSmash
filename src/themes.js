@@ -23,6 +23,7 @@ export const themeIcons = {
 	garden: ["🌻", "🐝", "🦋", "🐞", "🌷", "🐛"],
 	seasons: ["❄️", "⛄", "🌸", "☀️", "🍁", "🍂"],
 	construction: ["🏗️", "🚧", "👷", "🔨", "🪜", "🧱"],
+	fantasy: ["🦄", "🌈", "🔮", "🪄", "👑", "🧚"],
 };
 
 /** Translation key for each theme's display name, keyed by theme id. */
@@ -46,4 +47,5 @@ export const themeNames = {
 	garden: "themeGarden",
 	seasons: "themeSeasons",
 	construction: "themeConstruction",
+	fantasy: "themeFantasy",
 };
