@@ -131,7 +131,7 @@ export function updateLetterSize() {
 	$("#letterSize").value = data.letterSize;
 }
 
-/** Syncs every duration select with the stored session duration. */
+/** Syncs the duration select with the stored session duration. */
 export function updateDuration() {
 	$$("[data-duration-select]").forEach((select) => {
 		select.value = data.duration;

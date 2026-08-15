@@ -74,7 +74,6 @@ Both of these need `getUserMedia` — a genuinely sensitive-feeling permission p
 
 ## A gentler end to playtime
 
-- **A parent-set limit, behind the parent gate.** Now that the gate exists (the hold-to-open setting on the panel buttons), a longer duration option is exactly the kind of setting that belongs behind it — unlike the quick 3/5/10-minute picker on the welcome screen, which stays ungated on purpose and which any curious toddler can change.
 - **A passive "night light" mode.** A screen that just breathes: warm colours (amber, orange, red) pulsing on a slow, calm rhythm, meant to be looked at rather than played with, any touch stirring only the gentlest ripple of colour rather than a sound or a burst. Unlike most of the groundwork this document asks for, one piece of this already exists and ships today — `keepScreenAwake()` keeps the screen from dimming and locking mid-session, exactly what a night light needs to stay lit unattended. The rest leans on what's already proposed nearby: the Bedtime theme's existing calm palette and tone as a starting point, and the dark-room detection in Device sensors above as a natural, though not required, way in — a room going dark is as good a cue for "night light time" as it is for softening whatever theme is already playing.
 
 ## Routine awareness

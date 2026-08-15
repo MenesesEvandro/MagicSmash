@@ -94,15 +94,6 @@
                   <button class="quick-theme-button" type="button" data-theme-choice="polar"><span aria-hidden="true">🐧</span><span class="sr-only" data-i18n="themePolar">Polar</span></button>
                 </div>
               </div>
-              <label class="quick-control" for="quickDurationSelect"><span data-i18n="quickDuration">Tempo</span>
-                <select id="quickDurationSelect" data-duration-select aria-label="Tempo de brincadeira">
-                  <option value="0" data-i18n="unlimited">Sem limite</option>
-                  <option value="3">3 min</option>
-                  <option value="5" selected>5 min</option>
-                  <option value="10">10 min</option>
-                  <option value="15">15 min</option>
-                </select>
-              </label>
               <label class="quick-control sound-quick-control" for="quickSoundToggle"><span data-i18n="quickSound">Som</span>
                 <span class="quick-sound-switch"><input id="quickSoundToggle" data-sound-toggle type="checkbox" checked /><i></i></span>
               </label>
@@ -166,6 +157,9 @@
             <option value="5" selected>5 min</option>
             <option value="10">10 min</option>
             <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
           </select>
           <button class="secondary-button end-session-button hidden" id="endSessionButton" type="button">
             <span data-i18n="endSession">Encerrar brincadeira agora</span>
@@ -231,7 +225,7 @@
           <label class="toggle"><input id="noteColorsToggle" data-note-colors-toggle type="checkbox" aria-labelledby="noteColorsLabel" aria-describedby="noteColorsDesc" /><span></span></label>
         </div>
         <div class="setting-row">
-          <div><strong id="parentGateLabel" data-i18n="parentGate">Acesso dos pais</strong><p id="parentGateDesc" data-i18n="parentGateHelp">Durante a brincadeira, segure os botões do topo por 2 segundos para abrir</p></div>
+          <div><strong id="parentGateLabel" data-i18n="parentGate">Acesso dos pais</strong><p id="parentGateDesc" data-i18n="parentGateHelp">Segure os botões do topo por 2 segundos para abrir</p></div>
           <label class="toggle"><input id="parentGateToggle" data-parent-gate-toggle type="checkbox" checked aria-labelledby="parentGateLabel" aria-describedby="parentGateDesc" /><span></span></label>
         </div>
         <button class="text-button screen-pinning-link" id="screenPinningButton" type="button" data-i18n="screenPinningLink">Como travar a tela de vez</button>
