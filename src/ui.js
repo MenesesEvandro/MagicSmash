@@ -131,21 +131,10 @@ export function updateLetterSize() {
 	$("#letterSize").value = data.letterSize;
 }
 
-/**
- * Syncs every duration select with the stored session duration. The
- * welcome screen's own picker stays ungated on purpose and only ever
- * offers the short options — a longer duration set behind the parent gate,
- * in Settings, is a value it has no matching `<option>` for, so it falls
- * back to its disabled "—" placeholder instead of silently showing a
- * shorter time than what a session will actually run for.
- */
+/** Syncs the duration select with the stored session duration. */
 export function updateDuration() {
 	$$("[data-duration-select]").forEach((select) => {
-		const hasOption = [...select.options].some(
-			(option) =>
-				option.value !== "" && Number(option.value) === Number(data.duration),
-		);
-		select.value = hasOption ? data.duration : "";
+		select.value = data.duration;
 	});
 }
 

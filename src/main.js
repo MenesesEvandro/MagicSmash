@@ -78,13 +78,15 @@ $("#playArea").addEventListener("pointerleave", releasePointer, {
 });
 /**
  * Whether the parent gate stands between a press and the panels right now:
- * only while the setting is on and a session is actively running. On the
- * welcome screen, or while the panel is already open (session paused), the
- * buttons behave normally — the gate exists to stop a toddler's mid-play
- * taps, not to slow the parent down while they're already in control.
+ * whenever the setting is on, welcome screen included — a toddler left
+ * alone with the tablet before a session even starts can otherwise open
+ * Settings with a single tap. Once the panel is already open, the buttons
+ * behave normally again: the gate exists to stop a toddler getting in, not
+ * to slow the parent down switching between Settings and Stats once
+ * they're already past it.
  */
 function parentGateActive() {
-	return data.parentGate && state.playing && !state.paused;
+	return data.parentGate && !$("#sidePanel").classList.contains("open");
 }
 
 /**
