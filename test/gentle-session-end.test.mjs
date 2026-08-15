@@ -15,7 +15,16 @@ const appJs = readFileSync(new URL("../app.js", import.meta.url), "utf8");
 const STORAGE_KEY = "magic-smash-data-v1";
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Boots a fresh app instance: real index.html + built app.js in jsdom.
+/** Same compression idle-attract.test.mjs uses for its own timers — only
+ * exercised here by the idle-countdown-interaction test below; every other
+ * test in this file drives time via {@link fastForwardBy}/{@link freezeAt}
+ * instead and is unaffected by real timers running faster. */
+const TIME_SCALE = 20;
+/** IDLE_TIMEOUT_MS from src/effects.js, scaled, plus slack for jitter. */
+const IDLE_MS = 10000 / TIME_SCALE + 200;
+
+/** Boots a fresh app instance: real index.html + built app.js in jsdom,
+ * with the window's timers scaled by {@link TIME_SCALE}.
  * @param {object} [storedData] Pre-seeded localStorage data, as if saved by
  * an earlier session.
  */
@@ -37,6 +46,12 @@ function bootApp(storedData) {
 			this.open = false;
 		};
 	}
+	const realSetTimeout = window.setTimeout;
+	const realSetInterval = window.setInterval;
+	window.setTimeout = (handler, delay = 0, ...args) =>
+		realSetTimeout.call(window, handler, delay / TIME_SCALE, ...args);
+	window.setInterval = (handler, delay = 0, ...args) =>
+		realSetInterval.call(window, handler, delay / TIME_SCALE, ...args);
 	const script = window.document.createElement("script");
 	script.textContent = appJs;
 	window.document.body.appendChild(script);
@@ -51,8 +66,18 @@ function fastForwardBy(window, ms) {
 	window.Date.now = () => real() + ms;
 }
 
+/** Pins Date.now() to a single fixed instant `ms` past whatever it reads
+ * right now, so a test that needs several real awaits in a row (unlike
+ * {@link fastForwardBy}, which keeps advancing with real time) doesn't risk
+ * the session actually ending out from under it. */
+function freezeAt(window, ms) {
+	const frozen = window.Date.now() + ms;
+	window.Date.now = () => frozen;
+}
+
 const isWindingDown = (window) =>
 	window.document.body.classList.contains("winding-down");
+const isIdle = (window) => window.document.body.classList.contains("idle");
 const pressCount = (window) =>
 	Number(window.document.getElementById("sessionPresses").textContent);
 
@@ -152,4 +177,36 @@ test("starting a fresh session never begins already dimmed", async (t) => {
 	window.startGame();
 
 	assert.equal(isWindingDown(window), false);
+});
+
+test("a keypress during wind-down still resets the idle countdown", async (t) => {
+	const window = bootApp({ duration: 3 });
+	t.after(() => window.close());
+	window.document.getElementById("startButton").click();
+	await sleep(50);
+
+	freezeAt(window, (3 * 60 - 10) * 1000); // pinned at 10s remaining
+	window.tick();
+	assert.equal(
+		isWindingDown(window),
+		true,
+		"sanity check: should be winding down",
+	);
+
+	// Wait most of one idle window, then press a key — if wind-down swallows
+	// the reset, the original idle timer (armed back at session start) is
+	// still the one counting down, unaffected by this press.
+	await sleep(IDLE_MS * 0.7);
+	window.dispatchEvent(keyEvent(window, "a"));
+	// Wait most of another window: if the press above reset the countdown,
+	// idle mode is only 70% of the way through a *fresh* one by now and
+	// shouldn't have fired. If it didn't, the original countdown — armed
+	// ~1.4 windows ago — should already have.
+	await sleep(IDLE_MS * 0.7);
+
+	assert.equal(
+		isIdle(window),
+		false,
+		"a press during wind-down must still reset the idle countdown",
+	);
 });

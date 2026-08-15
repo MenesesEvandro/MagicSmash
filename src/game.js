@@ -525,11 +525,14 @@ export function triggerInteraction(
 	} = {},
 ) {
 	if (!state.playing) startGame();
+	// Reset before the wind-down check below, not after: still-active taps
+	// during the last stretch shouldn't let attract mode's own livelier
+	// background compete with a screen that's deliberately calming down.
+	resetIdleTimer();
 	// Playtime is wrapping up (see enterWindDown()) — a key or tap during
 	// this last stretch is quietly swallowed instead of firing a new effect,
 	// the whole point of giving the session a moment to notice it's ending.
 	if (state.windingDown) return;
-	resetIdleTimer();
 	const effectPoint = pointer ? point : randomEffectPoint();
 	const now = Date.now();
 	state.streak = now - state.lastKeyTime < 1600 ? state.streak + 1 : 1;
