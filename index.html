@@ -101,6 +101,11 @@
                   <option value="5" selected>5 min</option>
                   <option value="10">10 min</option>
                   <option value="15">15 min</option>
+                  <!-- Never a real choice here — updateDuration() selects this
+                       one programmatically, and only it, whenever a longer
+                       duration set behind the parent gate doesn't match any
+                       option this quick, ungated picker actually offers. -->
+                  <option value="" disabled>—</option>
                 </select>
               </label>
               <label class="quick-control sound-quick-control" for="quickSoundToggle"><span data-i18n="quickSound">Som</span>
@@ -166,6 +171,9 @@
             <option value="5" selected>5 min</option>
             <option value="10">10 min</option>
             <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
           </select>
           <button class="secondary-button end-session-button hidden" id="endSessionButton" type="button">
             <span data-i18n="endSession">Encerrar brincadeira agora</span>
