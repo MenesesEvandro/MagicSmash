@@ -56,6 +56,8 @@
 		"vibrationHelp": "Une petite vibration à chaque touche, si l'appareil le permet",
 		"kaleidoscope": "Kaléidoscope",
 		"kaleidoscopeHelp": "Reflète chaque effet autour de l'écran",
+		"doodleMode": "Mode gribouillis",
+		"doodleModeHelp": "Fais glisser un doigt ou la souris pour dessiner sur l'écran, avec n'importe quel thème",
 		"noteColors": "Couleur selon la note",
 		"noteColorsHelp": "La bulle centrale s'allume toujours de la même couleur pour la même note de musique",
 		"parentGate": "Accès parents",

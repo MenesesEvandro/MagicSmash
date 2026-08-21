@@ -1,6 +1,12 @@
 import { NOTE_COLORS, playTone, playWindDownChime } from "./audio.js";
 import { $ } from "./dom.js";
 import {
+	beginDoodleStroke,
+	clearDoodle,
+	continueDoodleStroke,
+	endDoodleStroke,
+} from "./doodle.js";
+import {
 	animateBackground,
 	makeLetterTrail,
 	makePointerTrail,
@@ -155,6 +161,7 @@ export function updateParentGateLocks() {
  */
 export function startGame() {
 	if (state.playing) return;
+	clearDoodle();
 	resetSession();
 	state.playing = true;
 	keepScreenAwake();
@@ -251,6 +258,7 @@ export function endGame() {
 	state.playing = false;
 	state.paused = false;
 	state.activePointers.clear();
+	clearDoodle();
 	state.windingDown = false;
 	document.body.classList.remove("winding-down");
 	clearInterval(state.timerId);
@@ -784,6 +792,22 @@ export function pressPointer(event) {
 		event.type === "pointermove" &&
 		(event.pointerType === "mouse" || event.pointerType === "touch");
 	if (event.type === "pointermove" && !isDragTrail) return;
+	const drawsDoodle = data.doodleMode;
+	// Drawing needs every movement event to make a continuous line, unlike
+	// the normal icon trail that deliberately throttles visual effects.
+	// Check the same safety filters first so the parent-set edge and palm
+	// protections apply to paint as well as to ordinary interactions.
+	if (
+		drawsDoodle &&
+		event.type === "pointermove" &&
+		((data.palmRejection && isPalmContact(event)) ||
+			(data.edgeDeadZone && isInEdgeDeadZone(event)))
+	)
+		return;
+	if (drawsDoodle && event.type === "pointermove") {
+		event.preventDefault();
+		continueDoodleStroke(event);
+	}
 	const now = Date.now();
 	if (isDragTrail && now - state.lastPointerTime < 160) return;
 	// Every event past this point is ours, whether or not the dead-zone
@@ -827,6 +851,7 @@ export function pressPointer(event) {
 
 	if (event.type === "pointerdown") {
 		state.activePointers.add(event.pointerId);
+		if (drawsDoodle) beginDoodleStroke(event);
 		if (state.activePointers.size >= SUPER_SMASH_TOUCH_THRESHOLD) {
 			state.activePointers.clear();
 			// Goes through triggerInteraction like any other press — not a
@@ -857,5 +882,6 @@ export function pressPointer(event) {
  * @param {PointerEvent} event
  */
 export function releasePointer(event) {
+	endDoodleStroke(event.pointerId);
 	state.activePointers.delete(event.pointerId);
 }

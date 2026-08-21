@@ -15,6 +15,7 @@ export const initialData = {
 	sound: true,
 	vibration: false,
 	kaleidoscope: false,
+	doodleMode: false,
 	noteColors: false,
 	parentGate: true,
 	edgeDeadZone: false,

@@ -1,4 +1,5 @@
 import { $, $$ } from "./dom.js";
+import { clearDoodle } from "./doodle.js";
 import { createMagicBackground } from "./effects.js";
 import {
 	pauseSession,
@@ -69,6 +70,7 @@ export function setTheme(theme) {
 		button.classList.toggle("active", button.dataset.themeChoice === theme);
 	});
 	updateThemeName();
+	clearDoodle();
 	createMagicBackground();
 	saveData();
 }
@@ -157,6 +159,21 @@ export function updateKaleidoscope() {
 	$$("[data-kaleidoscope-toggle]").forEach((toggle) => {
 		toggle.checked = data.kaleidoscope;
 	});
+}
+
+/**
+ * Syncs the doodle-mode toggle, and applies it to the page: a `.doodle-mode`
+ * body class makes the drawing canvas visible on top of whichever theme is
+ * playing. Turning it off also clears the canvas — leftover strokes from
+ * the last time it was on would otherwise still be sitting there, invisible,
+ * ready to reappear the moment it's switched back on.
+ */
+export function updateDoodleMode() {
+	$$("[data-doodle-mode-toggle]").forEach((toggle) => {
+		toggle.checked = data.doodleMode;
+	});
+	document.body.classList.toggle("doodle-mode", data.doodleMode);
+	if (!data.doodleMode) clearDoodle();
 }
 
 /**
