@@ -113,6 +113,49 @@ test("with the mode off, dragging never paints anything", async (t) => {
 	);
 });
 
+test("a doodle move reuses the same play-area rect for both the dead zone and the stroke", async (t) => {
+	const { window, calls } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("edgeDeadZoneToggle").click();
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	const area = window.document.getElementById("playArea");
+	let rectCalls = 0;
+	area.getBoundingClientRect = () => {
+		rectCalls++;
+		return AREA;
+	};
+
+	area.dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+	rectCalls = 0;
+	area.dispatchEvent(
+		pointerEvent(window, "pointermove", {
+			clientX: 420,
+			clientY: 400,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+
+	assert.equal(
+		rectCalls,
+		1,
+		"doodle stroke updates should reuse the same rect instead of doing a second layout read for the dead-zone guard",
+	);
+	assert.ok(
+		calls.some(([method]) => method === "lineTo"),
+		"the stroke must still continue drawing with the edge dead zone enabled",
+	);
+});
+
 test("the mode layers onto whichever theme is already playing, not a theme of its own", async (t) => {
 	const { window, calls } = bootApp();
 	t.after(() => window.close());

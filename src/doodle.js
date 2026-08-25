@@ -54,8 +54,7 @@ function scheduleClear() {
 	clearTimerId = window.setTimeout(clearDoodle, DOODLE_CLEAR_AFTER_MS);
 }
 
-function pointInCanvas(event) {
-	const rect = $("#playArea").getBoundingClientRect();
+function pointInCanvas(event, rect = $("#playArea").getBoundingClientRect()) {
 	return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
@@ -86,11 +85,14 @@ export function beginDoodleStroke(event) {
 }
 
 /** Extends an active finger or pressed mouse stroke without throttling it. */
-export function continueDoodleStroke(event) {
+export function continueDoodleStroke(
+	event,
+	rect = $("#playArea").getBoundingClientRect(),
+) {
 	const stroke = strokes.get(event.pointerId);
 	if (!data.doodleMode || !state.playing || !context || !stroke) return;
 	if (event.pointerType === "mouse" && event.buttons !== 1) return;
-	const point = pointInCanvas(event);
+	const point = pointInCanvas(event, rect);
 	context.save();
 	context.strokeStyle = stroke.color;
 	context.lineWidth = stroke.width;

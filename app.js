@@ -354,8 +354,7 @@ function scheduleClear() {
 	clearTimerId = window.setTimeout(clearDoodle, DOODLE_CLEAR_AFTER_MS);
 }
 
-function pointInCanvas(event) {
-	const rect = $("#playArea").getBoundingClientRect();
+function pointInCanvas(event, rect = $("#playArea").getBoundingClientRect()) {
 	return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
@@ -386,11 +385,14 @@ function beginDoodleStroke(event) {
 }
 
 /** Extends an active finger or pressed mouse stroke without throttling it. */
-function continueDoodleStroke(event) {
+function continueDoodleStroke(
+	event,
+	rect = $("#playArea").getBoundingClientRect(),
+) {
 	const stroke = strokes.get(event.pointerId);
 	if (!data.doodleMode || !state.playing || !context || !stroke) return;
 	if (event.pointerType === "mouse" && event.buttons !== 1) return;
-	const point = pointInCanvas(event);
+	const point = pointInCanvas(event, rect);
 	context.save();
 	context.strokeStyle = stroke.color;
 	context.lineWidth = stroke.width;
@@ -1799,9 +1801,11 @@ const EDGE_DEAD_ZONE_MARGIN_PX = [16, 32, 48];
  * that setting themselves, so this only ever does the (layout-forcing)
  * rect lookup when it might actually matter.
  */
-function isInEdgeDeadZone(event) {
+function isInEdgeDeadZone(
+	event,
+	rect = $("#playArea").getBoundingClientRect(),
+) {
 	const margin = EDGE_DEAD_ZONE_MARGIN_PX[data.edgeDeadZoneSize];
-	const rect = $("#playArea").getBoundingClientRect();
 	return (
 		event.clientX - rect.left < margin ||
 		rect.right - event.clientX < margin ||
@@ -1861,20 +1865,26 @@ function pressPointer(event) {
 		(event.pointerType === "mouse" || event.pointerType === "touch");
 	if (event.type === "pointermove" && !isDragTrail) return;
 	const drawsDoodle = data.doodleMode;
+	const doodleAreaRect =
+		drawsDoodle && event.type === "pointermove"
+			? $("#playArea").getBoundingClientRect()
+			: null;
 	// Drawing needs every movement event to make a continuous line, unlike
 	// the normal icon trail that deliberately throttles visual effects.
 	// Check the same safety filters first so the parent-set edge and palm
-	// protections apply to paint as well as to ordinary interactions.
+	// protections apply to paint as well as to ordinary interactions. Reuse
+	// the same rect for both the dead-zone guard and stroke mapping so a
+	// doodle move only forces one layout read in its hot path.
 	if (
 		drawsDoodle &&
 		event.type === "pointermove" &&
 		((data.palmRejection && isPalmContact(event)) ||
-			(data.edgeDeadZone && isInEdgeDeadZone(event)))
+			(data.edgeDeadZone && isInEdgeDeadZone(event, doodleAreaRect)))
 	)
 		return;
 	if (drawsDoodle && event.type === "pointermove") {
 		event.preventDefault();
-		continueDoodleStroke(event);
+		continueDoodleStroke(event, doodleAreaRect);
 	}
 	const now = Date.now();
 	if (isDragTrail && now - state.lastPointerTime < 160) return;
