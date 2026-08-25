@@ -482,6 +482,19 @@ body.winding-down .play-area:after {
 	pointer-events: none;
 	z-index: -1;
 }
+.doodle-canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	z-index: 0;
+	opacity: 0;
+	transition: opacity 0.25s ease;
+}
+body.doodle-mode .doodle-canvas {
+	opacity: 1;
+}
 .magic-object {
 	position: absolute;
 	left: var(--left);
@@ -521,6 +534,8 @@ body.idle .magic-object {
 	animation: letterFly 0.92s cubic-bezier(0.16, 0.8, 0.3, 1) forwards;
 }
 .welcome-card {
+	position: relative;
+	z-index: 2;
 	max-width: 680px;
 	margin-top: -15px;
 	text-align: center;
@@ -872,6 +887,8 @@ h1 {
 	box-shadow: 0 9px 20px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 .key-stage {
+	position: relative;
+	z-index: 2;
 	text-align: center;
 	width: min(520px, 100%);
 	margin-top: -15px;
@@ -2221,7 +2238,6 @@ body.small-letters .key-orb {
 		opacity: 0;
 	}
 }
-
 .super-spark {
 	font-size: clamp(35px, 5vw, 60px);
 	filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));

@@ -45,6 +45,7 @@
         <div class="ambient ambient-two"></div>
         <div class="ambient ambient-three"></div>
         <div class="magic-layer" id="magicLayer" aria-hidden="true"></div>
+        <canvas class="doodle-canvas" id="doodleCanvas" aria-hidden="true"></canvas>
         <div class="sparkles" id="sparkles" aria-hidden="true"></div>
         <div class="theme-effects" id="themeEffects" aria-hidden="true"></div>
 
@@ -219,6 +220,10 @@
         <div class="setting-row">
           <div><strong id="kaleidoscopeLabel" data-i18n="kaleidoscope">Caleidoscópio</strong><p id="kaleidoscopeDesc" data-i18n="kaleidoscopeHelp">Espelha os efeitos ao redor da tela</p></div>
           <label class="toggle"><input id="kaleidoscopeToggle" data-kaleidoscope-toggle type="checkbox" aria-labelledby="kaleidoscopeLabel" aria-describedby="kaleidoscopeDesc" /><span></span></label>
+        </div>
+        <div class="setting-row">
+          <div><strong id="doodleModeLabel" data-i18n="doodleMode">Modo rabiscos</strong><p id="doodleModeDesc" data-i18n="doodleModeHelp">Arraste o dedo ou o mouse para desenhar por cima da tela, em qualquer tema</p></div>
+          <label class="toggle"><input id="doodleModeToggle" data-doodle-mode-toggle type="checkbox" aria-labelledby="doodleModeLabel" aria-describedby="doodleModeDesc" /><span></span></label>
         </div>
         <div class="setting-row">
           <div><strong id="noteColorsLabel" data-i18n="noteColors">Cor por nota</strong><p id="noteColorsDesc" data-i18n="noteColorsHelp">A bolinha central sempre acende a mesma cor para a mesma nota musical</p></div>

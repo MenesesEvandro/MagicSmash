@@ -1,4 +1,5 @@
 import { $, $$ } from "./dom.js";
+import { initializeDoodle } from "./doodle.js";
 import {
 	resetIdleTimer,
 	startBackgroundShuffle,
@@ -36,6 +37,7 @@ import {
 	showIosInstallTip,
 	showParentGateHint,
 	showUpdateBanner,
+	updateDoodleMode,
 	updateDuration,
 	updateEdgeDeadZone,
 	updateHighContrast,
@@ -47,6 +49,8 @@ import {
 	updateSound,
 	updateVibration,
 } from "./ui.js";
+
+initializeDoodle();
 
 $("#startButton").addEventListener("click", async () => {
 	if (!document.fullscreenElement) {
@@ -274,6 +278,13 @@ $$("[data-kaleidoscope-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-doodle-mode-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.doodleMode = event.target.checked;
+		updateDoodleMode();
+		saveData();
+	});
+});
 $$("[data-note-colors-toggle]").forEach((toggle) => {
 	toggle.addEventListener("change", (event) => {
 		data.noteColors = event.target.checked;
@@ -368,6 +379,7 @@ $("#resetStats").addEventListener("click", () => {
 		sound: data.sound,
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
+		doodleMode: data.doodleMode,
 		noteColors: data.noteColors,
 		highContrast: data.highContrast,
 		parentGate: data.parentGate,
@@ -412,6 +424,7 @@ function initializeApp() {
 	updateSound();
 	updateVibration();
 	updateKaleidoscope();
+	updateDoodleMode();
 	updateNoteColors();
 	updateParentGate();
 	updateParentGateLocks();
