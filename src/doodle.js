@@ -49,6 +49,16 @@ export function clearDoodle() {
 	context.clearRect(0, 0, element.width, element.height);
 }
 
+export function saveDoodleArtwork() {
+	const element = canvas();
+	if (!element) return;
+	const link = document.createElement("a");
+	link.href = element.toDataURL("image/png");
+	link.download = `magic-smash-drawing-${Date.now()}.png`;
+	link.click();
+	link.remove();
+}
+
 function scheduleClear() {
 	clearTimeout(clearTimerId);
 	clearTimerId = window.setTimeout(clearDoodle, DOODLE_CLEAR_AFTER_MS);

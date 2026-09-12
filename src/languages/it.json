@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Riflette ogni effetto intorno allo schermo",
 		"doodleMode": "Modalità scarabocchi",
 		"doodleModeHelp": "Trascina un dito o il mouse per disegnare sullo schermo, con qualsiasi tema",
+		"clearDrawing": "Cancella disegno",
+		"saveDrawing": "Salva disegno",
 		"noteColors": "Colore per nota",
 		"noteColorsHelp": "La sfera centrale si accende sempre dello stesso colore per la stessa nota musicale",
 		"parentGate": "Accesso genitori",

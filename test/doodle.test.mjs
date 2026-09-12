@@ -212,3 +212,33 @@ test("turning the mode off clears the canvas", async (t) => {
 		"turning the mode off should clear whatever was drawn",
 	);
 });
+
+test("the doodle panel exposes a clear button for saving or wiping the drawing", async (t) => {
+	const { window, calls } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	const area = window.document.getElementById("playArea");
+	area.dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+	calls.length = 0;
+
+	const clearButton = window.document.getElementById("clearDoodleButton");
+	assert.ok(
+		clearButton,
+		"there should be an explicit button to clear the drawing",
+	);
+	clearButton.click();
+
+	assert.ok(
+		calls.some(([method]) => method === "clearRect"),
+		"the explicit clear control should wipe the drawing when pressed",
+	);
+});
