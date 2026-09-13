@@ -1,5 +1,5 @@
 import { $, $$ } from "./dom.js";
-import { initializeDoodle } from "./doodle.js";
+import { clearDoodle, initializeDoodle, saveDoodleArtwork } from "./doodle.js";
 import {
 	resetIdleTimer,
 	startBackgroundShuffle,
@@ -51,6 +51,13 @@ import {
 } from "./ui.js";
 
 initializeDoodle();
+
+$("#clearDoodleButton").addEventListener("click", () => {
+	clearDoodle();
+});
+$("#saveDoodleButton").addEventListener("click", () => {
+	saveDoodleArtwork();
+});
 
 $("#startButton").addEventListener("click", async () => {
 	if (!document.fullscreenElement) {

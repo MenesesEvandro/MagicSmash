@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Refleja los efectos alrededor de la pantalla",
 		"doodleMode": "Modo garabatos",
 		"doodleModeHelp": "Arrastra el dedo o el mouse para dibujar sobre la pantalla, en cualquier tema",
+		"clearDrawing": "Borrar dibujo",
+		"saveDrawing": "Guardar dibujo",
 		"noteColors": "Color por nota",
 		"noteColorsHelp": "La bolita central siempre se enciende del mismo color para la misma nota musical",
 		"parentGate": "Acceso para adultos",

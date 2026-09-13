@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Mirrors every effect around the screen",
 		"doodleMode": "Doodle mode",
 		"doodleModeHelp": "Drag a finger or the mouse to paint over the play area, on any theme",
+		"clearDrawing": "Clear drawing",
+		"saveDrawing": "Save drawing",
 		"noteColors": "Colour by note",
 		"noteColorsHelp": "The centre orb always lights up the same colour for the same musical note",
 		"parentGate": "Parent gate",
