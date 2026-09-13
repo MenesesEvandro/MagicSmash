@@ -351,9 +351,17 @@ function clearDoodle() {
 
 function saveDoodleArtwork() {
 	const element = canvas();
-	if (!element) return;
+	if (!element || !context) return;
+	let dataUrl;
+	try {
+		dataUrl = element.toDataURL("image/png");
+	} catch {
+		// Canvas export isn't guaranteed everywhere (older browsers, some
+		// embedded WebViews); nothing to save then, rather than a broken click.
+		return;
+	}
 	const link = document.createElement("a");
-	link.href = element.toDataURL("image/png");
+	link.href = dataUrl;
 	link.download = `magic-smash-drawing-${Date.now()}.png`;
 	link.click();
 	link.remove();

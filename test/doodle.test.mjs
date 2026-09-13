@@ -213,7 +213,7 @@ test("turning the mode off clears the canvas", async (t) => {
 	);
 });
 
-test("the doodle panel exposes a clear button for saving or wiping the drawing", async (t) => {
+test("the doodle panel exposes an explicit clear button for wiping the drawing", async (t) => {
 	const { window, calls } = bootApp();
 	t.after(() => window.close());
 	window.document.getElementById("doodleModeToggle").click();
@@ -241,4 +241,57 @@ test("the doodle panel exposes a clear button for saving or wiping the drawing",
 		calls.some(([method]) => method === "clearRect"),
 		"the explicit clear control should wipe the drawing when pressed",
 	);
+});
+
+test("the save button downloads the canvas as a PNG", async (t) => {
+	const { window, calls } = bootApp();
+	t.after(() => window.close());
+	const clicks = [];
+	window.HTMLCanvasElement.prototype.toDataURL = () =>
+		"data:image/png;base64,x";
+	const nativeClick = window.HTMLAnchorElement.prototype.click;
+	window.HTMLAnchorElement.prototype.click = function () {
+		clicks.push({ href: this.href, download: this.download });
+	};
+	t.after(() => {
+		window.HTMLAnchorElement.prototype.click = nativeClick;
+	});
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	window.document.getElementById("playArea").dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+	calls.length = 0;
+
+	window.document.getElementById("saveDoodleButton").click();
+
+	assert.equal(clicks.length, 1, "the save control should trigger a download");
+	assert.match(clicks[0].href, /^data:image\/png/);
+	assert.match(clicks[0].download, /^magic-smash-drawing-\d+\.png$/);
+});
+
+test("saving does nothing, rather than throwing, when canvas export isn't supported", async (t) => {
+	const { window } = bootApp();
+	t.after(() => window.close());
+	window.HTMLCanvasElement.prototype.toDataURL = () => {
+		throw new Error("canvas export not supported");
+	};
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+
+	// Calling the function directly, rather than going through the button's
+	// click handler, is what makes this a real test of the throw: jsdom (like
+	// real browsers) swallows an exception raised inside a DOM event listener
+	// instead of letting it reach the click() caller, so asserting around a
+	// button .click() here would pass whether or not the guard exists.
+	assert.doesNotThrow(() => {
+		window.saveDoodleArtwork();
+	});
 });
