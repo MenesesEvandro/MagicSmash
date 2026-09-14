@@ -177,6 +177,44 @@ function playChimeNote(frequency) {
 }
 
 /**
+ * Plays a short burst of filtered white noise, its tone sweeping from
+ * bright to dull as it fades — a "whoosh," for the shake-to-clear gesture.
+ * The one sound in the app that isn't a synthesized oscillator tone: a
+ * swept pitch reads as a siren, not a gust of air, so this shapes noise
+ * through a lowpass filter instead.
+ */
+export function playShakeSwoosh() {
+	try {
+		audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+		const duration = 0.45;
+		const sampleCount = Math.round(audioContext.sampleRate * duration);
+		const buffer = audioContext.createBuffer(
+			1,
+			sampleCount,
+			audioContext.sampleRate,
+		);
+		const samples = buffer.getChannelData(0);
+		for (let i = 0; i < sampleCount; i++) samples[i] = Math.random() * 2 - 1;
+		const noise = audioContext.createBufferSource();
+		noise.buffer = buffer;
+		const filter = audioContext.createBiquadFilter();
+		filter.type = "lowpass";
+		const now = audioContext.currentTime;
+		filter.frequency.setValueAtTime(2600, now);
+		filter.frequency.exponentialRampToValueAtTime(240, now + duration);
+		const gain = audioContext.createGain();
+		gain.gain.setValueAtTime(0.001, now);
+		gain.gain.exponentialRampToValueAtTime(0.09, now + 0.05);
+		gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+		noise.connect(filter).connect(gain).connect(audioContext.destination);
+		noise.start();
+		noise.stop(now + duration);
+	} catch {
+		/* Sound is optional; silently continue when unavailable. */
+	}
+}
+
+/**
  * Plays a short, calm descending phrase — four notes low in the pentatonic
  * scale, always the same soft sine wave the Bedtime theme's own tone uses,
  * regardless of which theme is actually playing — as a session's wind-down

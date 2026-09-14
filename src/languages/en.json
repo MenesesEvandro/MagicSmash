@@ -60,6 +60,8 @@
 		"doodleModeHelp": "Drag a finger or the mouse to paint over the play area, on any theme",
 		"clearDrawing": "Clear drawing",
 		"saveDrawing": "Save drawing",
+		"shakeToClear": "Shake to clear",
+		"shakeToClearHelp": "Shake the device to wipe the screen with a soft \"whoosh\", Etch A Sketch style",
 		"noteColors": "Colour by note",
 		"noteColorsHelp": "The centre orb always lights up the same colour for the same musical note",
 		"parentGate": "Parent gate",

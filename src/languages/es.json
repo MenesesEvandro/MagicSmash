@@ -60,6 +60,8 @@
 		"doodleModeHelp": "Arrastra el dedo o el mouse para dibujar sobre la pantalla, en cualquier tema",
 		"clearDrawing": "Borrar dibujo",
 		"saveDrawing": "Guardar dibujo",
+		"shakeToClear": "Sacudir para limpiar",
+		"shakeToClearHelp": "Sacude el aparato para limpiar la pantalla con un suave \"shhh\", como una pizarra mágica",
 		"noteColors": "Color por nota",
 		"noteColorsHelp": "La bolita central siempre se enciende del mismo color para la misma nota musical",
 		"parentGate": "Acceso para adultos",

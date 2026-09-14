@@ -177,6 +177,18 @@ export function updateDoodleMode() {
 }
 
 /**
+ * Syncs the shake-to-clear toggle. Only the checkbox itself — actually
+ * turning the gesture on or off (and, on iOS, the permission prompt that
+ * takes) is asynchronous and lives in the toggle's own change handler in
+ * main.js, not here alongside every other setting's synchronous sync.
+ */
+export function updateShakeToClear() {
+	$$("[data-shake-to-clear-toggle]").forEach((toggle) => {
+		toggle.checked = data.shakeToClear;
+	});
+}
+
+/**
  * Syncs the note-colours toggle, and clears any colour a previous tap left
  * on the key orb when the setting is off — otherwise it would keep showing
  * whatever note played last instead of the theme's own accent.

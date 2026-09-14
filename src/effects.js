@@ -59,6 +59,16 @@ export function createMagicBackground() {
 }
 
 /**
+ * Removes every sparkle, drag trail, and theme effect still mid-animation —
+ * the visual clutter {@link createMagicBackground} doesn't already cover,
+ * since each of those lives in its own container instead of #magicLayer.
+ */
+export function clearEffects() {
+	$("#sparkles").replaceChildren();
+	$("#themeEffects").replaceChildren();
+}
+
+/**
  * Restarts the interval that rebuilds the background every 30 seconds,
  * clearing any previous one so only a single shuffle timer ever runs.
  */

@@ -60,6 +60,8 @@
 		"doodleModeHelp": "Mit dem Finger oder der Maus über den Bildschirm malen, bei jedem Thema",
 		"clearDrawing": "Zeichnung löschen",
 		"saveDrawing": "Zeichnung speichern",
+		"shakeToClear": "Schütteln zum Löschen",
+		"shakeToClearHelp": "Das Gerät schütteln, um den Bildschirm mit einem sanften „Wusch“ zu löschen, wie eine Zaubertafel",
 		"noteColors": "Farbe nach Ton",
 		"noteColorsHelp": "Die Kugel in der Mitte leuchtet für denselben Musikton immer in derselben Farbe",
 		"parentGate": "Elternsicherung",
