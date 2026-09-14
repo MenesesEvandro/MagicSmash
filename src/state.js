@@ -16,6 +16,7 @@ export const initialData = {
 	vibration: false,
 	kaleidoscope: false,
 	doodleMode: false,
+	doodlePermanent: false,
 	shakeToClear: false,
 	noteColors: false,
 	parentGate: true,

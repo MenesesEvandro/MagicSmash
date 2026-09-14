@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Espelha os efeitos ao redor da tela",
 		"doodleMode": "Modo rabiscos",
 		"doodleModeHelp": "Arraste o dedo ou o mouse para desenhar por cima da tela, em qualquer tema",
+		"doodlePermanent": "Manter o desenho",
+		"doodlePermanentHelp": "O desenho não some sozinho — use Limpar ou sacuda o aparelho quando quiser recomeçar",
 		"clearDrawing": "Limpar desenho",
 		"saveDrawing": "Salvar desenho",
 		"shakeToClear": "Sacudir para limpar",

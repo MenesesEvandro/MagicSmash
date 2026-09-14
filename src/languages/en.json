@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Mirrors every effect around the screen",
 		"doodleMode": "Doodle mode",
 		"doodleModeHelp": "Drag a finger or the mouse to paint over the play area, on any theme",
+		"doodlePermanent": "Keep the drawing",
+		"doodlePermanentHelp": "The drawing won't clear on its own — use Clear or a shake when it's time for a fresh page",
 		"clearDrawing": "Clear drawing",
 		"saveDrawing": "Save drawing",
 		"shakeToClear": "Shake to clear",

@@ -1,5 +1,5 @@
 import { $, $$ } from "./dom.js";
-import { clearDoodle } from "./doodle.js";
+import { cancelScheduledClear, clearDoodle } from "./doodle.js";
 import { createMagicBackground } from "./effects.js";
 import {
 	pauseSession,
@@ -174,6 +174,21 @@ export function updateDoodleMode() {
 	});
 	document.body.classList.toggle("doodle-mode", data.doodleMode);
 	if (!data.doodleMode) clearDoodle();
+}
+
+/**
+ * Syncs the doodle-permanence toggle. Turning it on cancels any auto-clear
+ * already ticking down from a stroke drawn before the switch — otherwise
+ * that timer would still fire once and wipe the canvas despite the setting
+ * now saying the drawing should stay. Turning it off leaves whatever's
+ * currently on screen alone; the ordinary auto-clear only resumes with the
+ * next stroke.
+ */
+export function updateDoodlePermanent() {
+	$$("[data-doodle-permanent-toggle]").forEach((toggle) => {
+		toggle.checked = data.doodlePermanent;
+	});
+	if (data.doodlePermanent) cancelScheduledClear();
 }
 
 /**

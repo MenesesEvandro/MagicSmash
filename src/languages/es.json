@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Refleja los efectos alrededor de la pantalla",
 		"doodleMode": "Modo garabatos",
 		"doodleModeHelp": "Arrastra el dedo o el mouse para dibujar sobre la pantalla, en cualquier tema",
+		"doodlePermanent": "Mantener el dibujo",
+		"doodlePermanentHelp": "El dibujo no se borra solo — usa Borrar o sacude el aparato cuando quieras empezar de nuevo",
 		"clearDrawing": "Borrar dibujo",
 		"saveDrawing": "Guardar dibujo",
 		"shakeToClear": "Sacudir para limpiar",

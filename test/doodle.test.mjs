@@ -213,6 +213,143 @@ test("turning the mode off clears the canvas", async (t) => {
 	);
 });
 
+test("with permanence off (default), a stroke still arms the usual auto-clear timer", async (t) => {
+	const { window } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	const scheduled = [];
+	const nativeSetTimeout = window.setTimeout;
+	window.setTimeout = (handler, delay, ...args) => {
+		scheduled.push(delay);
+		return nativeSetTimeout(handler, delay, ...args);
+	};
+
+	window.document.getElementById("playArea").dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+
+	assert.ok(
+		scheduled.includes(12000),
+		"a stroke should still arm the 12-second auto-clear by default",
+	);
+});
+
+test("with permanence on, a stroke never arms an auto-clear", async (t) => {
+	const { window } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("doodlePermanentToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	const scheduled = [];
+	const nativeSetTimeout = window.setTimeout;
+	window.setTimeout = (handler, delay, ...args) => {
+		scheduled.push(delay);
+		return nativeSetTimeout(handler, delay, ...args);
+	};
+
+	window.document.getElementById("playArea").dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+
+	assert.ok(
+		!scheduled.includes(12000),
+		"a permanent drawing must not arm the auto-clear timer at all",
+	);
+});
+
+test("turning permanence on mid-session cancels an auto-clear already armed", async (t) => {
+	const { window } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	window.document.getElementById("playArea").dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+	let cleared = false;
+	const nativeClearTimeout = window.clearTimeout;
+	window.clearTimeout = (id) => {
+		cleared = true;
+		return nativeClearTimeout(id);
+	};
+
+	window.document.getElementById("doodlePermanentToggle").click();
+
+	assert.equal(
+		cleared,
+		true,
+		"switching permanence on should cancel the timer armed before the switch, or the drawing would still vanish once",
+	);
+});
+
+test("turning permanence off leaves the current drawing alone until the next stroke", async (t) => {
+	const { window, calls } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("doodlePermanentToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	window.document.getElementById("playArea").dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+	calls.length = 0;
+
+	window.document.getElementById("doodlePermanentToggle").click();
+
+	assert.ok(
+		calls.every(([method]) => method !== "clearRect"),
+		"switching permanence off shouldn't itself clear what's already drawn",
+	);
+});
+
+test("the explicit clear button still wipes a permanent drawing", async (t) => {
+	const { window, calls } = bootApp();
+	t.after(() => window.close());
+	window.document.getElementById("doodleModeToggle").click();
+	window.document.getElementById("doodlePermanentToggle").click();
+	window.document.getElementById("startButton").click();
+	await sleep(0);
+	window.document.getElementById("playArea").dispatchEvent(
+		pointerEvent(window, "pointerdown", {
+			clientX: 260,
+			clientY: 320,
+			pointerId: 7,
+			pointerType: "touch",
+		}),
+	);
+	calls.length = 0;
+
+	window.document.getElementById("clearDoodleButton").click();
+
+	assert.ok(
+		calls.some(([method]) => method === "clearRect"),
+		"the explicit Clear button must still work even when the drawing is set to stay",
+	);
+});
+
 test("the doodle panel exposes an explicit clear button for wiping the drawing", async (t) => {
 	const { window, calls } = bootApp();
 	t.after(() => window.close());

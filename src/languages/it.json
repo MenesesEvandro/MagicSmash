@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Riflette ogni effetto intorno allo schermo",
 		"doodleMode": "Modalità scarabocchi",
 		"doodleModeHelp": "Trascina un dito o il mouse per disegnare sullo schermo, con qualsiasi tema",
+		"doodlePermanent": "Mantieni il disegno",
+		"doodlePermanentHelp": "Il disegno non si cancella da solo — usa Cancella o scuoti il dispositivo per ricominciare",
 		"clearDrawing": "Cancella disegno",
 		"saveDrawing": "Salva disegno",
 		"shakeToClear": "Scuoti per cancellare",

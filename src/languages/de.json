@@ -58,6 +58,8 @@
 		"kaleidoscopeHelp": "Spiegelt jeden Effekt rund um den Bildschirm",
 		"doodleMode": "Kritzelmodus",
 		"doodleModeHelp": "Mit dem Finger oder der Maus über den Bildschirm malen, bei jedem Thema",
+		"doodlePermanent": "Zeichnung behalten",
+		"doodlePermanentHelp": "Die Zeichnung verschwindet nicht von selbst — zum Neustarten Löschen tippen oder das Gerät schütteln",
 		"clearDrawing": "Zeichnung löschen",
 		"saveDrawing": "Zeichnung speichern",
 		"shakeToClear": "Schütteln zum Löschen",

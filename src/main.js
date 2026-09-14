@@ -43,6 +43,7 @@ import {
 	showParentGateHint,
 	showUpdateBanner,
 	updateDoodleMode,
+	updateDoodlePermanent,
 	updateDuration,
 	updateEdgeDeadZone,
 	updateHighContrast,
@@ -299,6 +300,13 @@ $$("[data-doodle-mode-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-doodle-permanent-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", (event) => {
+		data.doodlePermanent = event.target.checked;
+		updateDoodlePermanent();
+		saveData();
+	});
+});
 $$("[data-shake-to-clear-toggle]").forEach((toggle) => {
 	toggle.addEventListener("change", async (event) => {
 		const turningOn = event.target.checked;
@@ -407,6 +415,7 @@ $("#resetStats").addEventListener("click", () => {
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
 		doodleMode: data.doodleMode,
+		doodlePermanent: data.doodlePermanent,
 		shakeToClear: data.shakeToClear,
 		noteColors: data.noteColors,
 		highContrast: data.highContrast,
@@ -453,6 +462,7 @@ function initializeApp() {
 	updateVibration();
 	updateKaleidoscope();
 	updateDoodleMode();
+	updateDoodlePermanent();
 	updateShakeToClear();
 	updateNoteColors();
 	updateParentGate();

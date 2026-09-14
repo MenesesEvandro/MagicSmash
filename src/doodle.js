@@ -68,8 +68,19 @@ export function saveDoodleArtwork() {
 }
 
 function scheduleClear() {
+	if (data.doodlePermanent) return;
 	clearTimeout(clearTimerId);
 	clearTimerId = window.setTimeout(clearDoodle, DOODLE_CLEAR_AFTER_MS);
+}
+
+/**
+ * Cancels a pending auto-clear without touching anything already drawn —
+ * for the moment {@link data.doodlePermanent} is switched on mid-session,
+ * so a timer armed before that switch doesn't still wipe the canvas once.
+ */
+export function cancelScheduledClear() {
+	clearTimeout(clearTimerId);
+	clearTimerId = null;
 }
 
 function pointInCanvas(event, rect = $("#playArea").getBoundingClientRect()) {
