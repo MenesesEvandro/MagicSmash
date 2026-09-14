@@ -18,6 +18,11 @@ import {
 } from "./game.js";
 import { languages, loadLanguages, populateLanguageSelect, t } from "./i18n.js";
 import {
+	disableShakeToClear,
+	enableShakeToClear,
+	initializeShakeToClear,
+} from "./motion.js";
+import {
 	dismissIosInstallTip,
 	linkManifest,
 	registerServiceWorker,
@@ -46,11 +51,13 @@ import {
 	updateNoteColors,
 	updatePalmRejection,
 	updateParentGate,
+	updateShakeToClear,
 	updateSound,
 	updateVibration,
 } from "./ui.js";
 
 initializeDoodle();
+initializeShakeToClear();
 
 $("#clearDoodleButton").addEventListener("click", () => {
 	clearDoodle();
@@ -292,6 +299,19 @@ $$("[data-doodle-mode-toggle]").forEach((toggle) => {
 		saveData();
 	});
 });
+$$("[data-shake-to-clear-toggle]").forEach((toggle) => {
+	toggle.addEventListener("change", async (event) => {
+		const turningOn = event.target.checked;
+		// A real click, so the exact moment enableShakeToClear() can ask iOS
+		// for its motion permission — deferring past this handler would make
+		// that request silently fail.
+		const active = turningOn ? await enableShakeToClear() : false;
+		if (!turningOn) disableShakeToClear();
+		data.shakeToClear = active;
+		updateShakeToClear();
+		saveData();
+	});
+});
 $$("[data-note-colors-toggle]").forEach((toggle) => {
 	toggle.addEventListener("change", (event) => {
 		data.noteColors = event.target.checked;
@@ -387,6 +407,7 @@ $("#resetStats").addEventListener("click", () => {
 		vibration: data.vibration,
 		kaleidoscope: data.kaleidoscope,
 		doodleMode: data.doodleMode,
+		shakeToClear: data.shakeToClear,
 		noteColors: data.noteColors,
 		highContrast: data.highContrast,
 		parentGate: data.parentGate,
@@ -432,6 +453,7 @@ function initializeApp() {
 	updateVibration();
 	updateKaleidoscope();
 	updateDoodleMode();
+	updateShakeToClear();
 	updateNoteColors();
 	updateParentGate();
 	updateParentGateLocks();
