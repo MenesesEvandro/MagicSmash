@@ -241,6 +241,25 @@ test("on a platform that gates DeviceMotion, a setting left on from a previous s
 	assert.equal(getSound(), 0, "no listener should have been attached");
 });
 
+test("on a platform with no DeviceMotion at all, a setting left on from a previous session is turned back off at boot", async (t) => {
+	const { window, getSound } = bootApp({ shakeToClear: true }, (win) => {
+		// Most laptops, and some Android tablets, never define this at all —
+		// distinct from the iOS case above, which has the constructor but
+		// gates it behind requestPermission().
+		delete win.DeviceMotionEvent;
+	});
+	t.after(() => window.close());
+
+	assert.equal(
+		window.document.getElementById("shakeToClearToggle").checked,
+		false,
+		"a listener can never attach here, so the setting must come back unchecked instead of staying checked but inert",
+	);
+	window.dispatchEvent(shakeEvent(window, { x: 0, y: 0, z: 0 }));
+	window.dispatchEvent(shakeEvent(window, { x: 20, y: 20, z: 20 }));
+	assert.equal(getSound(), 0, "no listener should have been attached");
+});
+
 test("on a platform that gates DeviceMotion, a granted prompt turns the setting on", async (t) => {
 	const { window, getSound } = bootApp();
 	t.after(() => window.close());

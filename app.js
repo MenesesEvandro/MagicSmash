@@ -2067,6 +2067,11 @@ function handleMotion(event) {
 	};
 }
 
+/** Whether this platform exposes DeviceMotion at all — most laptops, and some Android tablets, never fire it or lack the constructor entirely. */
+function hasDeviceMotion() {
+	return typeof window.DeviceMotionEvent !== "undefined";
+}
+
 /** Whether this platform gates DeviceMotion behind an explicit, gesture-triggered grant (iOS 13+). */
 function needsMotionPermission() {
 	return typeof window.DeviceMotionEvent?.requestPermission === "function";
@@ -2080,7 +2085,7 @@ function needsMotionPermission() {
  * @returns {Promise<boolean>} Whether the listener is actually active now.
  */
 async function enableShakeToClear() {
-	if (typeof window.DeviceMotionEvent === "undefined") return false;
+	if (!hasDeviceMotion()) return false;
 	if (needsMotionPermission()) {
 		try {
 			if ((await window.DeviceMotionEvent.requestPermission()) !== "granted")
@@ -2112,15 +2117,20 @@ function disableShakeToClear() {
 /**
  * Reconciles the persisted setting with what boot can actually do: attaches
  * the listener right away where no fresh permission prompt is needed, or —
- * on a platform like iOS that never grants that permission outside a live
- * gesture — turns the setting back off and persists that, instead of
- * leaving it checked but inert until the next toggle. That's the same
- * "checked but inert" state the denied-permission path in the toggle's own
- * change handler (main.js) already avoids; this is boot's equivalent of it.
+ * on a platform with no DeviceMotion at all, or one like iOS that never
+ * grants its permission outside a live gesture — turns the setting back off
+ * and persists that, instead of leaving it checked but inert until the next
+ * toggle. That's the same "checked but inert" state the denied-permission
+ * path in the toggle's own change handler (main.js) already avoids; this is
+ * boot's equivalent of it, checked synchronously so the correction is in
+ * place before initializeApp()'s own updateShakeToClear() call reads it —
+ * enableShakeToClear() resolves asynchronously even when nothing async
+ * actually happens, which would otherwise leave the toggle showing the
+ * stale, pre-correction value.
  */
 function initializeShakeToClear() {
 	if (!data.shakeToClear) return;
-	if (needsMotionPermission()) {
+	if (!hasDeviceMotion() || needsMotionPermission()) {
 		data.shakeToClear = false;
 		saveData();
 		return;
