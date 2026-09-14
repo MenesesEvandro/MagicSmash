@@ -2096,22 +2096,36 @@ async function enableShakeToClear() {
 	return true;
 }
 
-/** Turns shake-to-clear off and forgets the last reading, so a later re-enable starts clean. */
+/**
+ * Turns shake-to-clear off and forgets both the last reading and the last
+ * trigger time, so a later re-enable starts clean — otherwise a quick
+ * off/on still has the old cooldown live, and the first real shake right
+ * after turning it back on can silently do nothing.
+ */
 function disableShakeToClear() {
 	window.removeEventListener("devicemotion", handleMotion);
 	listening = false;
 	lastReading = null;
+	lastShakeAt = 0;
 }
 
 /**
- * Re-arms shake-to-clear on boot if it was already on last session — but
- * only where that needs no fresh permission prompt. iOS never grants that
- * permission outside a live user gesture, so there a parent who left the
- * setting on has to toggle it once more to pass a new prompt; nothing here
- * can do that silently on page load.
+ * Reconciles the persisted setting with what boot can actually do: attaches
+ * the listener right away where no fresh permission prompt is needed, or —
+ * on a platform like iOS that never grants that permission outside a live
+ * gesture — turns the setting back off and persists that, instead of
+ * leaving it checked but inert until the next toggle. That's the same
+ * "checked but inert" state the denied-permission path in the toggle's own
+ * change handler (main.js) already avoids; this is boot's equivalent of it.
  */
 function initializeShakeToClear() {
-	if (data.shakeToClear && !needsMotionPermission()) enableShakeToClear();
+	if (!data.shakeToClear) return;
+	if (needsMotionPermission()) {
+		data.shakeToClear = false;
+		saveData();
+		return;
+	}
+	enableShakeToClear();
 }
 
 // ---- src/pwa.js ----

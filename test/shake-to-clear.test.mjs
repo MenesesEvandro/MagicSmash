@@ -71,13 +71,27 @@ function seedLiveEffects(window) {
 		'<span class="theme-effect"></span>';
 }
 
-function bootApp() {
+/**
+ * @param {object} [storedData] Pre-seeded localStorage data, as if saved by
+ * an earlier session.
+ * @param {(window: Window) => void} [beforeBoot] Runs right before the app
+ * script executes — the only way to have something (like a stubbed iOS
+ * `requestPermission`) already in place for the app's own boot-time code
+ * to see, since that code runs synchronously as the script is appended.
+ */
+function bootApp(storedData, beforeBoot) {
 	const dom = new JSDOM(html, {
 		url: "http://localhost/",
 		runScripts: "dangerously",
 		pretendToBeVisual: true,
 	});
 	const { window } = dom;
+	if (storedData) {
+		window.localStorage.setItem(
+			"magic-smash-data-v1",
+			JSON.stringify(storedData),
+		);
+	}
 	const calls = [];
 	const context = Object.fromEntries(
 		["setTransform", "clearRect"].map((method) => [
@@ -88,6 +102,7 @@ function bootApp() {
 	window.CanvasRenderingContext2D = function CanvasRenderingContext2D() {};
 	window.HTMLCanvasElement.prototype.getContext = () => context;
 	const getSound = installFakeAudioContext(window);
+	beforeBoot?.(window);
 	const script = window.document.createElement("script");
 	script.textContent = appJs;
 	window.document.body.append(script);
@@ -186,6 +201,44 @@ test("turning the setting off stops it reacting to further shakes", async (t) =>
 	window.dispatchEvent(shakeEvent(window, { x: 20, y: 20, z: 20 }));
 
 	assert.equal(getSound(), 0, "no listener should still be attached");
+});
+
+test("turning the setting off and back on right away doesn't leave the old cooldown suppressing the next real shake", async (t) => {
+	const { window, getSound } = bootApp();
+	t.after(() => window.close());
+	await enableViaToggle(window);
+	window.dispatchEvent(shakeEvent(window, { x: 0, y: 0, z: 0 }));
+	window.dispatchEvent(shakeEvent(window, { x: 20, y: 20, z: 20 }));
+	assert.equal(getSound(), 1, "sanity check: the first shake should fire");
+
+	// Off, then straight back on — quick enough that, without resetting the
+	// cooldown, the next shake would still fall inside the old window.
+	window.document.getElementById("shakeToClearToggle").click();
+	await enableViaToggle(window);
+	window.dispatchEvent(shakeEvent(window, { x: 0, y: 0, z: 0 }));
+	window.dispatchEvent(shakeEvent(window, { x: 20, y: 20, z: 20 }));
+
+	assert.equal(
+		getSound(),
+		2,
+		"a real shake right after re-enabling must not be swallowed by the previous session's cooldown",
+	);
+});
+
+test("on a platform that gates DeviceMotion, a setting left on from a previous session is turned back off at boot", async (t) => {
+	const { window, getSound } = bootApp({ shakeToClear: true }, (win) => {
+		win.DeviceMotionEvent.requestPermission = () => Promise.resolve("granted");
+	});
+	t.after(() => window.close());
+
+	assert.equal(
+		window.document.getElementById("shakeToClearToggle").checked,
+		false,
+		"boot can't silently pass iOS's permission prompt, so the setting must come back unchecked instead of staying checked but inert",
+	);
+	window.dispatchEvent(shakeEvent(window, { x: 0, y: 0, z: 0 }));
+	window.dispatchEvent(shakeEvent(window, { x: 20, y: 20, z: 20 }));
+	assert.equal(getSound(), 0, "no listener should have been attached");
 });
 
 test("on a platform that gates DeviceMotion, a granted prompt turns the setting on", async (t) => {
